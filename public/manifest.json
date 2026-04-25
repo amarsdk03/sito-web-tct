@@ -1,0 +1,23 @@
+{
+  "name": "Torneo Città di Trento",
+  "short_name": "Torneo CdT",
+  "themeColor": "#0F0D0D",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "viewportFit": "cover",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
