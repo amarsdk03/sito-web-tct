@@ -38,7 +38,7 @@ export default function NotificationDialog() {
                 </DialogHeader>
                 <div className="-mx-4 no-scrollbar max-h-[50vh] overflow-y-auto px-4">
                     <p className="my-8 italic text-center">
-                        Coming soon... :)
+                        Coming soon...
                     </p>
                 </div>
                 <DialogFooter>
