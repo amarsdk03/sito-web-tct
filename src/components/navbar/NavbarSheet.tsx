@@ -1,5 +1,5 @@
 'use client'
-import {navbarLink} from "@/types/otherTypes";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +12,8 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import NavbarSheetCard from "@/components/navbar/NavbarSheetCard";
+
+import {navbarLink} from "@/types/otherTypes";
 import {RiMenuLine} from "@remixicon/react";
 
 const navbarLinks: navbarLink[] = [
@@ -54,37 +56,40 @@ const navbarLinks: navbarLink[] = [
 ]
 
 export function NavbarSheet() {
+
+    const pathname = usePathname();
+    const shownNavbarLinks = navbarLinks.filter(link => link.href !== pathname);
+
     return (
-        <div className="flex flex-wrap gap-2">
-            <Sheet>
-                <SheetTrigger asChild>
-                    <Button variant="secondary" className="rounded-lg" size="icon-lg" aria-label={"Menu"}>
-                        <RiMenuLine />
-                    </Button>
-                </SheetTrigger>
-                <SheetContent
-                    side={"left"}
-                    className="navbar-menu"
-                >
-                    <SheetHeader>
-                        <SheetTitle>
-                            Torneo Città di Trento
-                        </SheetTitle>
-                    </SheetHeader>
-                    <div className="no-scrollbar overflow-y-auto px-6">
-                        {
-                            navbarLinks.map((link, index) => (
-                                <NavbarSheetCard key={index} link={link} />
-                            ))
-                        }
-                    </div>
-                    <SheetFooter>
-                        <SheetDescription>
-                            IV Edizione - 2025/2026
-                        </SheetDescription>
-                    </SheetFooter>
-                </SheetContent>
-            </Sheet>
-        </div>
+        <Sheet>
+            <SheetTrigger asChild>
+                <Button variant="secondary" size="lg" className="rounded-xl" aria-label={"Menu"}>
+                    <RiMenuLine />
+                    <span className="hidden sm:block">
+                        Menù principale
+                    </span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent
+                side={"left"}
+                className="navbar-menu"
+            >
+                <SheetHeader className={"pb-4"}>
+                    <SheetTitle className={"text-2xl font-bold"}>
+                        Torneo della Città di Trento
+                    </SheetTitle>
+                    <SheetDescription className={"text-lg -translate-y-1"}>
+                        <b>IV</b> edizione - 2025/2026
+                    </SheetDescription>
+                </SheetHeader>
+                <div className="no-scrollbar overflow-y-auto px-6 pb-4">
+                    {
+                        shownNavbarLinks.map((link, index) => (
+                            <NavbarSheetCard key={index} link={link} />
+                        ))
+                    }
+                </div>
+            </SheetContent>
+        </Sheet>
     )
 }

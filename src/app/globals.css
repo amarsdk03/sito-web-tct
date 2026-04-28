@@ -77,7 +77,7 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
 
-    --max-content-width: 1550px;
+    --max-content-width: 1920px;
 }
 
 :root {
@@ -172,7 +172,7 @@
 }
 
 .navbar-logo {
-    filter: grayscale(50%) brightness(1.1);
+    filter: grayscale(25%) brightness(1.1) drop-shadow(0 0 10px #00000050);
     transform: translateY(4px);
     flex-shrink: 0;
     user-select: none;
@@ -181,7 +181,8 @@
 
 .navbar-logo:hover {
     scale: 1.03;
-    filter: grayscale(25%) brightness(1.2) drop-shadow(0 0 10px #00000050);
+    translate: 0 1px;
+    filter: grayscale(25%) brightness(1.2) drop-shadow(0 0 10px #00000080);
 }
 
 .navbar-menu {
@@ -209,4 +210,59 @@
     color: white;
     text-shadow: 0 0 20px #000000;
     transition: all 0.3s ease-in-out;
+}
+
+
+
+/* Animazioni per rendere un elemento "shiny" */
+@keyframes shine {
+    0% {
+        -webkit-mask-position: 220%;
+    }
+    50% {
+        -webkit-mask-position: -80%;
+    }
+    100% {
+        -webkit-mask-position: -80%;
+    }
+}
+
+.shine-anim {
+    mask-image: linear-gradient(
+            -75deg,
+            rgb(0, 0, 0) 15%,
+            rgba(0, 0, 0, 0.5),
+            rgb(0, 0, 0) 65%
+    );
+    mask-size: 150%;
+    mask-position: 225%;
+    animation: shine 4s infinite ease-in-out;
+    animation-delay: 4s;
+}
+
+@keyframes shine-hover {
+    0% {
+        -webkit-mask-position: 200%;
+    }
+    50% {
+        -webkit-mask-position: -25%;
+    }
+    100% {
+        -webkit-mask-position: -25%;
+    }
+}
+
+.shine-anim-hover {
+    mask-image: linear-gradient(
+            -75deg,
+            rgb(0, 0, 0) 15%,
+            rgba(0, 0, 0, 0.5),
+            rgb(0, 0, 0) 65%
+    );
+    mask-size: 175%;
+    mask-position: 200%;
+}
+
+.shine-anim-hover:hover {
+    animation: shine-hover 3s normal;
 }
