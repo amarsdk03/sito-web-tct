@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-import NotificationDialog from "@/components/navbar/NotificationDialog";
-import {NavbarSheet} from "@/components/navbar/NavbarSheet";
+import NavbarNewsDialog from "@/components/navbar/NavbarNewsDialog";
+import {NavbarMenu} from "@/components/navbar/NavbarMenu";
 import Link from "next/link";
 
 export default function Navbar() {
@@ -9,7 +9,7 @@ export default function Navbar() {
         <div className={"navbar-div w-full sticky top-0 z-50"}>
             <nav className={"navbar grid grid-cols-5 items-center px-5 h-18"}>
                 <div className="flex justify-start items-center gap-2">
-                    <NavbarSheet/>
+                    <NavbarMenu/>
                 </div>
                 <div className="flex justify-center items-center col-span-3 h-18">
                     <Link href={"/"} className={"navbar-link"}>
@@ -20,11 +20,12 @@ export default function Navbar() {
                             height={175}
                             className={"navbar-logo"}
                             draggable={false}
+                            loading={"eager"}
                         />
                     </Link>
                 </div>
                 <div className="flex justify-end items-center gap-2">
-                    <NotificationDialog />
+                    <NavbarNewsDialog />
                 </div>
             </nav>
         </div>

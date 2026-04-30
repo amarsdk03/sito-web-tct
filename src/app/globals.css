@@ -5,31 +5,31 @@
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 900;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF-Heavy.woff2) format('woff');
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Heavy.woff2) format('woff');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 800;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF-ExtraBold.woff2) format('woff');
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-ExtraBold.woff2) format('woff');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 700;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF-Bold.woff2) format('woff');
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Bold.woff2) format('woff');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 600;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF-Medium.woff2) format('woff');
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Medium.woff2) format('woff');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 500;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF-Regular.woff2) format('woff');
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Regular.woff2) format('woff');
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -38,7 +38,7 @@
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --font-sans: var(--font-sans);
-    --font-mono: var(--font-geist-mono);
+    --font-mono: var(--font-mono);
     --font-heading: var(--font-heading);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
@@ -191,27 +191,69 @@
 }
 
 .navbar-card-img {
-    filter: grayscale(100%) brightness(0.3) blur(1px);
+    filter: grayscale(80%) brightness(0.5) saturate(2) blur(1px);
     transition: all 0.3s ease-in-out;
 }
 
 .navbar-card:hover > .navbar-card-img {
     scale: 1.02;
-    filter: grayscale(50%) brightness(0.6) blur(0px);
-}
-
-.navbar-card:hover > .navbar-card-title {
-    transform: translateX(5px);
+    filter: grayscale(50%) brightness(0.7) saturate(1.5) blur(0px);
 }
 
 .navbar-card-title {
-    font-size: 1.8rem;
+    font-size: 2.2em;
     font-weight: 800;
     color: white;
     text-shadow: 0 0 20px #000000;
     transition: all 0.3s ease-in-out;
 }
 
+.navbar-card:hover > .navbar-card-title {
+    transform: translateX(5px);
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-content {
+    width: min(1000px, 100%);
+    padding: 0 20px;
+}
+
+.page-title {
+    font-family: 'IntegralCF', 'Roboto', sans-serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: min(12vw, 3.75em);
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+    margin: 25px 0 15px;
+    transition: color 0.3s ease-in-out;
+}
+
+.page-title:hover {
+    color: var(--chart-1);
+}
+
+.match-result-row {
+    transition: all 0.3s ease-in-out;
+}
+
+.match-result-row:hover {
+    background-color: #3a5634;
+}
+
+.match-info {
+    gap: calc(var(--spacing) * 4);
+    transition: all 0.5s ease-in-out;
+}
+
+.match-result-row:hover > .match-info {
+    gap: calc(var(--spacing) * 5);
+}
 
 
 /* Animazioni per rendere un elemento "shiny" */
@@ -264,5 +306,5 @@
 }
 
 .shine-anim-hover:hover {
-    animation: shine-hover 3s normal;
+    animation: shine-hover 4s normal;
 }

@@ -1,22 +1,22 @@
 {
   "name": "Torneo Città di Trento",
-  "short_name": "Torneo CdT",
-  "themeColor": "#0F0D0D",
+  "short_name": "Torneo CDT",
+  "themeColor": "#6e9843",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#1a1a1a",
+  "theme_color": "#6e9843",
   "orientation": "portrait",
   "viewportFit": "cover",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/logo_eagle_only.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/favicon.png",
-      "sizes": "512x512",
+      "src": "/logo_eagle_only.png",
+      "sizes": "320x320",
       "type": "image/png"
     }
   ]
