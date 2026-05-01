@@ -3,9 +3,21 @@ import {sampleSquadre} from "@/sampleData/squadre";
 
 
 export const samplePartite: PartitaDTO[] = [
+    // Partita di sample
+    {
+        id: "11",
+        girone: "Finale",
+        giornata: 8,
+        squadraCasa: sampleSquadre[5],
+        squadraOspite: sampleSquadre[6],
+        esito: "3 - 2",
+        dataSvolgimento: new Date("2025-07-05T20:30:00")
+    },
+
+    // Partite girone tesserati
     {
         id: "1",
-        girone: "A",
+        girone: "Girone A",
         giornata: 1,
         squadraCasa: sampleSquadre[0],
         squadraOspite: sampleSquadre[4],
@@ -14,7 +26,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "2",
-        girone: "A",
+        girone: "Girone A",
         giornata: 1,
         squadraCasa: sampleSquadre[1],
         squadraOspite: sampleSquadre[3],
@@ -23,7 +35,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "3",
-        girone: "A",
+        girone: "Girone A",
         giornata: 2,
         squadraCasa: sampleSquadre[2],
         squadraOspite: sampleSquadre[0],
@@ -32,7 +44,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "4",
-        girone: "A",
+        girone: "Girone A",
         giornata: 3,
         squadraCasa: sampleSquadre[1],
         squadraOspite: sampleSquadre[2],
@@ -41,7 +53,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "5",
-        girone: "A",
+        girone: "Girone A",
         giornata: 3,
         squadraCasa: sampleSquadre[3],
         squadraOspite: sampleSquadre[4],
@@ -50,7 +62,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "6",
-        girone: "A",
+        girone: "Girone A",
         giornata: 4,
         squadraCasa: sampleSquadre[0],
         squadraOspite: sampleSquadre[1],
@@ -59,7 +71,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "7",
-        girone: "A",
+        girone: "Girone A",
         giornata: 5,
         squadraCasa: sampleSquadre[2],
         squadraOspite: sampleSquadre[3],
@@ -68,7 +80,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "8",
-        girone: "A",
+        girone: "Girone A",
         giornata: 6,
         squadraCasa: sampleSquadre[0],
         squadraOspite: sampleSquadre[3],
@@ -77,7 +89,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "9",
-        girone: "A",
+        girone: "Girone A",
         giornata: 6,
         squadraCasa: sampleSquadre[4],
         squadraOspite: sampleSquadre[1],
@@ -86,7 +98,7 @@ export const samplePartite: PartitaDTO[] = [
     },
     {
         id: "10",
-        girone: "A",
+        girone: "Girone A",
         giornata: 7,
         squadraCasa: sampleSquadre[2],
         squadraOspite: sampleSquadre[4],

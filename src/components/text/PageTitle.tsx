@@ -4,9 +4,10 @@ import {motion} from "framer-motion";
 interface PageMainTitleProps {
     title: string,
     description?: string,
+    smallerTitle?: boolean,
 }
 
-export default function PageTitle({ title, description } : PageMainTitleProps ) {
+export default function PageTitle({ title, description, smallerTitle } : PageMainTitleProps ) {
     const titleAnim = {
         start: { opacity: 0, x: -25 },
         finish: {
@@ -23,6 +24,7 @@ export default function PageTitle({ title, description } : PageMainTitleProps ) 
                 initial={"start"}
                 animate={"finish"}
                 className={"page-title shine-anim-hover"}
+                style={{ fontSize: smallerTitle ? "2rem" : "min(12vw, 3.75em)" }}
             >
                 { title }
             </motion.h1>

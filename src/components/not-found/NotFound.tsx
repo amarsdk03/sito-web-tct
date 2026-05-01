@@ -24,7 +24,7 @@ export default function NotFound() {
                     </div>
                 )
             }
-            <div className={"w-full h-80 flex flex-col justify-center items-center"}>
+            <div className={"w-full h-80 flex flex-col justify-center items-center text-center p-12"}>
                 <h1 className={"text-4xl font-bold mt-64 mb-4"}>
                     Pagina in lavorazione!
                 </h1>
