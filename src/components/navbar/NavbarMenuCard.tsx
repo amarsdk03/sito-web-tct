@@ -13,7 +13,7 @@ export default function NavbarMenuCard({link, globalTranslate}: { link: navbarLi
                 </div>
                     <Image
                         src={link.imageSrc}
-                        alt="Card image cover"
+                        alt={link.title}
                         width={500}
                         height={500}
                         className={`navbar-card-img relative z-20 object-cover`}

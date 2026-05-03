@@ -8,7 +8,7 @@ interface PageMainTitleProps {
 }
 
 export default function PageTitle({ title, description, smallerTitle } : PageMainTitleProps ) {
-    const titleAnim = {
+    const slideAnim = {
         start: { opacity: 0, x: -25 },
         finish: {
             opacity: 1,
@@ -18,23 +18,19 @@ export default function PageTitle({ title, description, smallerTitle } : PageMai
     }
 
     return (
-        <div>
+        <>
             <motion.h1
-                variants={titleAnim}
+                variants={slideAnim}
                 initial={"start"}
                 animate={"finish"}
                 className={"page-title shine-anim-hover"}
-                style={{ fontSize: smallerTitle ? "2rem" : "min(12vw, 3.75em)" }}
+                style={{ fontSize: smallerTitle ? "min(5vw, 1.8em)" : "min(12vw, 3.75em)" }}
             >
                 { title }
             </motion.h1>
             {
-                description && (
-                    <p>
-                        { description }
-                    </p>
-                )
+                description && <p>{ description }</p>
             }
-        </div>
+        </>
     )
 }

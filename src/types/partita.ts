@@ -7,7 +7,8 @@ export default interface Partita {
     idGirone: string,
     giornata: number,
     squadraCasa: string,
-    squadraOspite: string,
+    squadraOspiti: string,
+    esito: esitoPartita,
     fischioInizio: Date,
     idGiocatoreMvp?: string,
     campo: string,
@@ -18,9 +19,17 @@ export interface PartitaDTO {
     girone: string,
     giornata: number,
     squadraCasa: SquadraDTO,
-    squadraOspite: SquadraDTO,
-    esito: string,
-    dataSvolgimento: Date,
+    squadraOspiti: SquadraDTO,
+    esito: esitoPartita,
+    fischioInizio: Date,
+}
+
+interface esitoPartita {
+    vittoriaTavolino?: boolean,
+    goalCasa: number,
+    goalOspiti: number,
+    rigoriCasa?: number,
+    rigoriOspiti?: number,
 }
 
 export enum fasePartita {

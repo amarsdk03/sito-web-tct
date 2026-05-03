@@ -5,13 +5,13 @@ import {samplePartite} from "@/sampleData/partite";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import MatchResultRow from "@/features/partite/components/MatchResultRow";
-import MatchResultFilters from "@/features/partite/components/MatchResultFilters";
+import FixtureResultRow from "@/features/partite/components/FixtureResultRow";
+import FixtureSearchFilters from "@/features/partite/components/FixtureSearchFilters";
 
 import {Separator} from "@/components/ui/separator";
 import PageTitle from "@/components/text/PageTitle";
 
-export default function Partite() {
+export default function Fixtures() {
     const containerAnim = {
         start: { opacity: 0 },
         finish: {
@@ -44,7 +44,7 @@ export default function Partite() {
                         <h2 className={"font-semibold text-lg mb-2"}>
                             Filtra per:
                         </h2>
-                        <MatchResultFilters />
+                        <FixtureSearchFilters />
                     </div>
                     <Separator className={"my-6"} />
                     <motion.div
@@ -59,7 +59,7 @@ export default function Partite() {
                                         key={partita.id}
                                         variants={itemAnim}
                                     >
-                                        <MatchResultRow partita={partita} />
+                                        <FixtureResultRow partita={partita} />
                                     </motion.div>
                                 ))
                             }

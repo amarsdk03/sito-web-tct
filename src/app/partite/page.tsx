@@ -1,7 +1,7 @@
-import Partite from "@/features/partite/Partite";
+import Fixtures from "@/features/partite/Fixtures";
 
 export default function Page() {
     return (
-        <Partite />
+        <Fixtures />
     );
 }

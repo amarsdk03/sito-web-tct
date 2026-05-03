@@ -237,6 +237,22 @@
     color: var(--chart-1);
 }
 
+.text-hover-color {
+    transition: color 0.3s ease-in-out;
+}
+
+.text-hover-color:hover {
+    color: var(--chart-1);
+}
+
+.text-hover-translate {
+    transition: transform 0.3s ease-in-out;
+}
+
+.text-hover-translate:hover {
+    transform: translateX(5px);
+}
+
 .match-result-row {
     transition: all 0.3s ease-in-out;
 }
@@ -251,24 +267,81 @@
 }
 
 .match-result-row:hover > .match-info {
-    gap: calc(var(--spacing) * 8);
+    gap: calc(var(--spacing) * 7);
 }
 
-.match-result {
+.integral-title {
     font-family: 'IntegralCF', 'Roboto', sans-serif;
     font-style: italic;
-    font-weight: 700;
+}
+
+.integral-title-hover {
+    font-family: 'IntegralCF', 'Roboto', sans-serif;
+    font-style: italic;
     transition: all 0.3s ease-in-out;
 }
 
-.match-result:hover {
+.integral-title-hover:hover {
     color: var(--chart-1);
-    letter-spacing: 0.02em;
 }
 
-.action-icon {
-
+.live-circle {
+    animation: pulseLive 2s infinite;
 }
+
+@keyframes pulseLive {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.25;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.squad-result-card > .squad-result-badge {
+    transform: scale(1);
+    transition: transform 0.5s ease-in-out;
+}
+
+.squad-result-card > .squad-result-info {
+    transform: translateX(0px);
+    transition: transform 0.5s ease-in-out;
+}
+
+.squad-result-card:hover > .squad-result-badge {
+    transform: scale(1.1);
+}
+
+.squad-result-card:hover > .squad-result-info {
+    transform: translateX(5px);
+}
+
+.player-info-stemma {
+    position: relative;
+    min-width: min(20vw, 125px);
+    aspect-ratio: 1/1;
+    transition: scale 0.3s ease-in-out;
+}
+
+.player-info-stemma:hover {
+    scale: 1.05;
+}
+
+.player-info-title {
+    transition: letter-spacing 0.5s ease-in-out;
+}
+
+.player-info-title:hover {
+    letter-spacing: 0.01em;
+}
+
+.player-card-stemma {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
 
 
 /* Animazioni per rendere un elemento "shiny" */

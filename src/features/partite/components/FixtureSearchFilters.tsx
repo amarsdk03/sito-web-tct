@@ -14,7 +14,7 @@ interface MatchResultFiltersProps {
     giornata?: string;
 }
 
-export default function MatchResultFilters(
+export default function FixtureSearchFilters(
     { edizione, categoria, giornata } : MatchResultFiltersProps)
 {
     const selectEdizione = "2025/2026";
@@ -23,7 +23,7 @@ export default function MatchResultFilters(
 
     return (
         <div className={"flex flex-wrap items-center gap-2 mb-4"}>
-            <Select>
+            <Select defaultValue={"2025/2026"}>
                 <SelectTrigger className="w-full max-w-full sm:max-w-48 rounded-lg">
                     <SelectValue placeholder="Edizione" />
                 </SelectTrigger>
@@ -37,14 +37,14 @@ export default function MatchResultFilters(
                 </SelectContent>
             </Select>
             <span className={"text-2xl font-medium text-chart-1 mx-1 hidden md:block"}>&gt;</span>
-            <Select>
+            <Select defaultValue={"amatori"}>
                 <SelectTrigger className="w-full max-w-full sm:max-w-48 rounded-lg">
                     <SelectValue placeholder="Categoria" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup className={"bg-background"}>
                         <SelectLabel>Categoria squadre</SelectLabel>
-                        <SelectItem value="Categoria">Tesserati</SelectItem>
+                        <SelectItem value="tesserati">Tesserati</SelectItem>
                         <SelectItem value="amatori">Amatori</SelectItem>
                     </SelectGroup>
                 </SelectContent>

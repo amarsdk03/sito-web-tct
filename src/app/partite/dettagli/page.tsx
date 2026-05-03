@@ -1,7 +1,7 @@
-import Partita from "@/features/partite/InfoPartita";
+import FixtureInfo from "@/features/partite/FixtureInfo";
 
 export default function Page() {
     return (
-        <Partita />
+        <FixtureInfo />
     );
 }

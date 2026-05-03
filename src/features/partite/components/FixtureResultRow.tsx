@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { PartitaDTO } from "@/types/partita";
 
-export default function MatchResultRow({partita}: { partita: PartitaDTO }) {
+export default function FixtureResultRow({partita}: { partita: PartitaDTO }) {
+    const aiCalciDiRigore = partita.esito.rigoriCasa && partita.esito.rigoriOspiti;
+
+    const esitoRegolare = (partita.esito.goalCasa.toString() || "?") + " - " + (partita.esito.goalOspiti.toString() || "?");
+    const esitoRigori = (partita.esito.rigoriCasa?.toString() || "?") + " - " + (partita.esito.rigoriOspiti?.toString() || "?");
+
     return (
         <Link href={`/partite/dettagli?id=${partita.id}`}>
             <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-white/10 p-4 sm:p-6 mb-4 rounded-xl"}>
@@ -9,11 +14,13 @@ export default function MatchResultRow({partita}: { partita: PartitaDTO }) {
                     <div className={"text-gray-400 sm:text-gray-100 text-xs sm:text-base font-bold"}>
                         {"Giornata " + (partita.giornata ?? "?")}
                     </div>
+
                     <div className={"text-gray-300 hidden lg:block"}>
                         {partita.girone ?? "?"}
                     </div>
+
                     <div className={"text-gray-400 sm:text-gray-100 text-xs sm:text-base font-bold block lg:hidden"}>
-                        {partita.dataSvolgimento.toLocaleDateString() ?? "TBD"}
+                        {partita.fischioInizio.toLocaleDateString() ?? "TBD"}
                     </div>
                 </div>
 
@@ -22,12 +29,21 @@ export default function MatchResultRow({partita}: { partita: PartitaDTO }) {
                         {partita.squadraCasa.nome ?? "???"}
                     </span>
 
-                    <span className={"match-result text-xl sm:text-3xl text-chart-1 font-bold flex-shrink-0 -translate-y-0.5 md:-translate-y-0.75"}>
-                        {partita.esito || " - "}
-                    </span>
+                    <div className={"flex flex-col items-center justify-center w-auto flex-shrink-0"}>
+                        <span className={"integral-title text-xl sm:text-3xl text-chart-1 font-bold -translate-y-0.5 sm:-translate-y-0.75"}>
+                            {esitoRegolare}
+                        </span>
+                        {
+                            aiCalciDiRigore && (
+                                <span className={"integral-title text-xs sm:text-base text-gray-300"}>
+                                    {esitoRigori + " D.C.R."}
+                                </span>
+                            )
+                        }
+                    </div>
 
                     <span className={"w-full sm:w-64 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
-                        {partita.squadraOspite.nome ?? "???"}
+                        {partita.squadraOspiti.nome ?? "???"}
                     </span>
                 </div>
 
@@ -35,11 +51,13 @@ export default function MatchResultRow({partita}: { partita: PartitaDTO }) {
                     <div className={"text-gray-400 text-xs sm:text-sm block lg:hidden"}>
                         {partita.girone ?? "?"}
                     </div>
+
                     <div className={"font-bold hidden lg:block"}>
-                        {partita.dataSvolgimento.toLocaleDateString() ?? "TBD"}
+                        {partita.fischioInizio.toLocaleDateString() ?? "TBD"}
                     </div>
+
                     <div className={"text-gray-400 lg:text-gray-300 text-xs sm:text-sm"}>
-                        {partita.dataSvolgimento.toLocaleTimeString().substring(0, 5) ?? "TBD"}
+                        {partita.fischioInizio.toLocaleTimeString().substring(0, 5) ?? "TBD"}
                     </div>
                 </div>
             </div>
