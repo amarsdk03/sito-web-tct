@@ -7,7 +7,7 @@ export const teamInfoSample: TeamInfoData[] = [
         nome: "Pink Gorillaz",
         acronimo: "PNK",
         linkStemma: "/temp/pink_gorillaz.png",
-        colore: "#FD2F70",
+        colore: "#fd2f70",
         usernameIg: "pink_gorillaz",
 
         idCapitano: "0",

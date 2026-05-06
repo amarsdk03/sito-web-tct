@@ -330,16 +330,39 @@
     scale: 1.05;
 }
 
-.player-info-title {
-    transition: letter-spacing 0.5s ease-in-out;
-}
-
-.player-info-title:hover {
-    letter-spacing: 0.01em;
-}
-
 .player-card-stemma {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.player-anim-hover {
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes player-hover {
+    0% {
+        -webkit-mask-position: 100%;
+    }
+    100% {
+        -webkit-mask-position: -100%;
+    }
+}
+
+.player-anim-hover {
+    mask-image: linear-gradient(
+            -75deg,
+            rgb(0, 0, 0) 30%,
+            rgba(0, 0, 0, 0.9),
+            rgb(0, 0, 0) 50%
+    );
+    mask-size: 175%;
+    mask-position: -25%;
+}
+
+.player-anim-hover:hover {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
+    animation: shine-hover 1.5s ease-out;
 }
 
 
