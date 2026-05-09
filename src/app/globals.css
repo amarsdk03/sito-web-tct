@@ -154,7 +154,7 @@
         @apply border-border outline-ring/50;
     }
     body {
-        @apply bg-background text-foreground;
+        background-color: var(--background);
     }
     html {
         @apply font-sans;
@@ -173,7 +173,7 @@
 
 .navbar-logo {
     filter: grayscale(25%) brightness(1.1) drop-shadow(0 0 10px #00000050);
-    transform: translateY(4px);
+    transform: translateY(6px);
     flex-shrink: 0;
     user-select: none;
     transition: all 0.3s ease-in-out;

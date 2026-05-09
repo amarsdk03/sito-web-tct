@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-import PlayerInfoData from "@/types/player";
-import DynamicReactFlag from "@/components/flags/DynamicReactFlag";
+import {datiSquadraType} from "@/features/squadre/queries";
+import {profiloGiocatoreType, statisticheGiocatoreType} from "@/features/giocatori/queries";
+import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 
 import {
     Dialog,
-    DialogContent,
+    DialogContent, DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -16,12 +17,19 @@ import { Button } from "@/components/ui/button";
 import { RiShareFill, RiDownloadCloud2Line, RiInstagramLine, RiGlobalLine, RiLink } from "@remixicon/react";
 
 interface ShareProfileDialogProps {
-    datiGiocatore: PlayerInfoData;
+    datiGiocatore: profiloGiocatoreType;
+    datiSquadra: datiSquadraType;
+    statisticheGiocatore: statisticheGiocatoreType;
     coloreSquadra: string;
 }
 
 export default function ShareProfileDialog(
-    { datiGiocatore, coloreSquadra }: ShareProfileDialogProps
+    {
+        datiGiocatore,
+        datiSquadra,
+        statisticheGiocatore,
+        coloreSquadra,
+    } : ShareProfileDialogProps
 ) {
     const cardRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
@@ -96,6 +104,9 @@ export default function ShareProfileDialog(
                     <DialogTitle>
                         Condividi player card
                     </DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Condividi player card
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div
@@ -111,7 +122,7 @@ export default function ShareProfileDialog(
                             <div className="flex-1 text-md font-bold opacity-90 pe-8">
                                 <div className="flex items-center gap-1 mb-2">
                                     <Image
-                                        src={datiGiocatore.linkStemmaSquadra ?? "/logo_eagle_only.png"}
+                                        src={datiSquadra.link_stemma ?? "/logo_eagle_only.png"}
                                         alt="Stemma squadra"
                                         width={20}
                                         height={20}
@@ -120,7 +131,7 @@ export default function ShareProfileDialog(
                                         priority
                                     />
                                     <div className="font-semibold tracking-wide opacity-80 -translate-y-0.25">
-                                        {datiGiocatore.nomeSquadra}
+                                        {datiSquadra.nome}
                                     </div>
                                 </div>
                                 <h1 className="integral-title text-3xl font-black leading-tight">
@@ -132,10 +143,10 @@ export default function ShareProfileDialog(
                             </div>
 
                             {
-                                datiGiocatore.numeroMaglia && (
+                                datiGiocatore.numero_maglia && (
                                     <div className="flex flex-col items-center mt-4">
                                         <div className="text-6xl font-black leading-none">
-                                            {datiGiocatore.numeroMaglia}
+                                            {datiGiocatore.numero_maglia}
                                         </div>
                                         <div className="text-xs uppercase tracking-wider mt-1 opacity-80">
                                             Numero
@@ -148,7 +159,7 @@ export default function ShareProfileDialog(
                         <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white border-opacity-20">
                             <div className="space-y-1">
                                 <div className="text-4xl font-black">
-                                    {datiGiocatore.numeroPartiteGiocate || 0}
+                                    {statisticheGiocatore[0]?.n_partite || 0}
                                 </div>
                                 <div className="text-sm uppercase tracking-wider opacity-80 font-semibold">
                                     Partite
@@ -157,7 +168,7 @@ export default function ShareProfileDialog(
 
                             <div className="space-y-1">
                                 <div className="text-4xl font-black">
-                                    {datiGiocatore.numeroGoal || 0}
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
                                 </div>
                                 <div className="text-sm uppercase tracking-wider opacity-80 font-semibold">
                                     Goal
@@ -166,7 +177,7 @@ export default function ShareProfileDialog(
 
                             <div className="space-y-1">
                                 <div className="text-4xl font-black">
-                                    {datiGiocatore.numeroAssist || 0}
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
                                 </div>
                                 <div className="text-sm uppercase tracking-wider opacity-80 font-semibold">
                                     Assist
@@ -175,7 +186,7 @@ export default function ShareProfileDialog(
 
                             <div className="space-y-1">
                                 <div className="text-4xl font-black">
-                                    {datiGiocatore.numeroMVP || 0}
+                                    {statisticheGiocatore[0]?.num_mvp || 0}
                                 </div>
                                 <div className="flex text-sm uppercase tracking-wider opacity-80 font-semibold">
                                     MVP <span className={"hidden sm:block ms-1"}>of the match</span>
@@ -183,9 +194,9 @@ export default function ShareProfileDialog(
                             </div>
                         </div>
 
-                        {(datiGiocatore.altezza || datiGiocatore.peso || datiGiocatore.piedePreferito) && (
+                        {(datiGiocatore.altezza || datiGiocatore.peso || datiGiocatore.piede_principale) && (
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-4 pt-7 border-t border-white border-opacity-20 text-sm">
-                                {datiGiocatore.ruoloPrincipale && (
+                                {datiGiocatore.ruolo_principale && (
                                     <div>
                                         <div className="opacity-80 text-xs uppercase tracking-wider mb-1 pe-7">
                                             Ruolo
@@ -199,18 +210,18 @@ export default function ShareProfileDialog(
                                             }}
                                         >
                                             <span className={"translate-y-0.25"}>
-                                                {datiGiocatore.ruoloPrincipale}
+                                                {datiGiocatore.ruolo_principale}
                                             </span>
                                         </Badge>
                                     </div>
                                 )}
-                                {datiGiocatore.piedePreferito && (
+                                {datiGiocatore.piede_principale && (
                                     <div className={"translate-x-7"}>
                                         <div className="opacity-80 text-xs uppercase tracking-wider mb-1">
                                             Piede
                                         </div>
                                         <div className="font-bold text-base">
-                                            {datiGiocatore.piedePreferito}
+                                            {datiGiocatore.piede_principale}
                                         </div>
                                     </div>
                                 )}

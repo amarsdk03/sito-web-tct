@@ -1,26 +1,27 @@
 import Link from "next/link";
 import Image from "next/image";
-import {SquadraDTO} from "@/types/squadra";
+
+import {listaSquadreContateType} from "@/features/squadre/Teams";
 
 import {
     Card,
 } from "@/components/ui/card";
 
-export default function TeamInfoCard({squadra}: { squadra: SquadraDTO }) {
-    const linkBadge = squadra.logo ?? "/logo_eagle_only.png";
-    const coloreSquadra = squadra.colore || "#222222";
+export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreContateType }) {
+    const linkStemma = infoSquadra.s_link_stemma ?? "/logo_eagle_only.png";
+    const coloreSquadra = infoSquadra.s_colore_squadra || "#222222";
 
     return (
-        <Link href={`/squadre/dettagli?id=${squadra.id}`}>
+        <Link href={`/squadre/dettagli?id=${infoSquadra.s_id}`}>
             <Card
-                className={`squad-result-card flex flex-row p-4 md:p-6`}
+                className={`h-full flex flex-row p-4 md:p-6`}
                 style={{
                     background: `linear-gradient(145deg, ${coloreSquadra}70 0%, ${coloreSquadra}e3 100%)`,
                 }}
             >
                 <div className="flex-shrink-0 squad-result-badge flex items-center justify-center">
                     <Image
-                        src={linkBadge}
+                        src={linkStemma}
                         alt="Stemma Squadra"
                         width={80}
                         height={80}
@@ -32,17 +33,17 @@ export default function TeamInfoCard({squadra}: { squadra: SquadraDTO }) {
                 <div className="squad-result-info flex flex-col justify-center my-0 sm:my-2">
                     <div className={"font-semibold text-md"}>
                         <span className={"not-italic text-gray-100"}>
-                            {squadra.acronimo}
+                            {infoSquadra.s_acronimo}
                         </span>
                     </div>
                     <div className={"integral-title font-semibold text-2xl"}>
                         <span className={"not-italic text-gray-100"}>
-                            {squadra.nome}
+                            {infoSquadra.s_nome}
                         </span>
                     </div>
                     <div className={"font-semibold text-md mt-1"}>
                         <span className={"not-italic text-gray-100"}>
-                            Ultima: 2025/2026
+                            Giocatori registrati: {infoSquadra.n_giocatori}
                         </span>
                     </div>
                 </div>

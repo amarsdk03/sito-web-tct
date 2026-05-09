@@ -26,20 +26,20 @@ import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {FilterIcon} from "lucide-react";
 
-interface PlayerSearchFiltersProps {
+interface TeamSearchFiltersProps {
     loading?: boolean,
     pathname: string,
     torneoParamName: string,
     listaTornei: listaTorneiType
 }
 
-export default function PlayerSearchFilters(
+export default function TeamSearchFilters(
     {
         loading = false,
         pathname,
         torneoParamName,
         listaTornei,
-    }: PlayerSearchFiltersProps
+    }: TeamSearchFiltersProps
 ) {
     const router = useRouter();
     const hasInitialized = useRef(false);

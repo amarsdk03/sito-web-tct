@@ -1,6 +1,6 @@
 import Players from "@/features/giocatori/Players";
 
-export default function Page() {
+export default async function PlayersPage() {
     return (
         <Players />
     );
