@@ -13,12 +13,14 @@ export const navbarLinks: navbarLink[] = [
         imageSrc: "/torneo/DSC_3389.JPG",
         imageTraslate: 120,
     },
+    /*
     {
         title: "Classifiche",
         href: "/classifiche",
         imageSrc: "/torneo/DSC_3748.JPG",
         imageTraslate: 230,
     },
+    */
     {
         title: "Squadre",
         href: "/squadre",
@@ -31,10 +33,12 @@ export const navbarLinks: navbarLink[] = [
         imageSrc: "/torneo/DSC_2980.JPG",
         imageTraslate: 90,
     },
+    /*
     {
         title: "Altro",
         href: "/menu",
         imageSrc: "/torneo/DSC_2614.JPG",
         imageTraslate: 250,
     }
+    */
 ]

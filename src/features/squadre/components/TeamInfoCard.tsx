@@ -3,9 +3,7 @@ import Image from "next/image";
 
 import {listaSquadreContateType} from "@/features/squadre/Teams";
 
-import {
-    Card,
-} from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 
 export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreContateType }) {
     const linkStemma = infoSquadra.s_link_stemma ?? "/logo_eagle_only.png";

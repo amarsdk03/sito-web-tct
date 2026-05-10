@@ -11,8 +11,8 @@ export default function Homepage() {
             <div className={"page-container"}>
                 <div className={"page-content mt-2 lg:mt-12"}>
                     <PageTitle
-                        title={"Home"}
-                        description={"Work in progress!"}
+                        title={"Homepage"}
+                        description={"Presto in arrivo..."}
                     />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-8">
                         {

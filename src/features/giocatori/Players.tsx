@@ -26,6 +26,7 @@ import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
 import {SearchIcon, XIcon} from "lucide-react";
 import PlayerSearchFilters from "@/features/giocatori/components/PlayerSearchFilters";
+import LoadingInfo from "@/components/data-info/LoadingInfo";
 
 export default function Players() {
     return (
@@ -38,12 +39,13 @@ export default function Players() {
         </>
     );
 }
+
 export function PlayersContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const searchParamName = 'c';
+    const searchParamName = 'q';
     const torneoParamName = 't';
     const pageParamName = 'p';
     const resultsPerPage = 20;
@@ -74,6 +76,11 @@ export function PlayersContent() {
     }, []);
 
     useEffect(() => {
+        // Non fare nulla finché listaTornei non è caricato
+        if (listaTornei.length === 0) {
+            return;
+        }
+
         (async () => {
             setError(false);
             setLoading(true);
@@ -88,11 +95,10 @@ export function PlayersContent() {
 
                 const giocatori = await getListaGiocatori(
                     searchQueryFromParams,
-                    selectedTorneoId,
+                    selectedTorneoId - 1,
                     pageParam,
                     resultsPerPage,
                 );
-
                 setListaGiocatori(giocatori.result);
                 setCount(giocatori.count || 0);
             }
@@ -163,7 +169,7 @@ export function PlayersContent() {
                             <Input
                                 id="search"
                                 type="text"
-                                placeholder="Cerca per nome, cognome, squadra..."
+                                placeholder="Cerca per nome, cognome..."
                                 aria-label="Cerca giocatore"
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 value={searchInput}
@@ -199,7 +205,10 @@ export function PlayersContent() {
                             <EmptyContent className={"pt-4"}>
                                 <Button
                                     variant="outline"
-                                    onClick={() => router.push(pathname)}
+                                    onClick={() => {
+                                        setSearchInput('');
+                                        router.push(pathname);
+                                    }}
                                 >
                                     Ricarica pagina
                                 </Button>
@@ -207,14 +216,9 @@ export function PlayersContent() {
                         </EmptyHeader>
                     </Empty>
                 ) : loading ? (
-                    <Empty className="w-full text-start text-zinc-500">
-                        <EmptyHeader>
-                            <EmptyTitle className="flex items-center justify-center text-xl">
-                                <Spinner className="me-2" />
-                                Ricerca in corso...
-                            </EmptyTitle>
-                        </EmptyHeader>
-                    </Empty>
+                    <div className={"mt-12"}>
+                        <LoadingInfo infoMessage={"Ricerca in corso..."} contentOpacity={0.75} />
+                    </div>
                 ) : (
                     <>
                         <motion.div
@@ -235,31 +239,30 @@ export function PlayersContent() {
                             </AnimatePresence>
                         </motion.div>
 
-                        <div className={"mt-12"}>
-                            <SearchPagination
-                                pathname={pathname}
-                                searchParams={searchParams}
-                                pageParamName={pageParamName}
-                                totalResults={count}
-                                resultsPerPage={resultsPerPage}
-                                currentPage={pageParam}
-                            />
-                        </div>
-
                         {listaGiocatori.length === 0 ? (
                             <Empty className="w-full text-zinc-300">
                                 <EmptyHeader>
-                                    <EmptyTitle className="flex items-center justify-center text-2xl">
+                                    <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">
                                         <XIcon className="me-1" /> Nessun risultato trovato
                                     </EmptyTitle>
-                                    <EmptyDescription className="text-base -translate-y-1">
+                                    <EmptyDescription className="text-sm sm:text-base">
                                         Prova a cambiare i filtri di ricerca
                                     </EmptyDescription>
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="text-center text-gray-500 mt-2">
-                                Risultati totali: <b>{count}</b>
+                            <div className={"mt-12"}>
+                                <SearchPagination
+                                    pathname={pathname}
+                                    searchParams={searchParams}
+                                    pageParamName={pageParamName}
+                                    totalResults={count}
+                                    resultsPerPage={resultsPerPage}
+                                    currentPage={pageParam}
+                                />
+                                <div className="text-center text-gray-500 mt-2">
+                                    Risultati totali: <b>{count}</b>
+                                </div>
                             </div>
                         )}
                     </>

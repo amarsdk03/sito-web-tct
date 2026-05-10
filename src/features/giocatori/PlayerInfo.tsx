@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {Suspense, useEffect, useState} from "react";
+import {Suspense, useEffect, useRef, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {motion} from "framer-motion";
 
@@ -13,6 +13,14 @@ import {
     profiloGiocatoreType,
     statisticheGiocatoreType
 } from "@/features/giocatori/queries";
+import {
+    datiSquadraType,
+    formazioneSquadraType,
+    getDatiSquadra,
+    getFormazioneSquadra,
+    getIdSquadraGiocatore
+} from "@/features/squadre/queries";
+import {getListaTornei} from "@/features/tornei/queries";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -20,6 +28,8 @@ import PageTitle from "@/components/text/PageTitle";
 import PlayerSilhouette from "@/features/giocatori/components/PlayerSilhouette";
 import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 import ShareProfileDialog from "@/features/giocatori/components/ShareProfileDialog";
+import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
+import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
 import AwardCardInfo from "@/components/awards/AwardCardInfo";
 
 import {
@@ -28,13 +38,11 @@ import {
     FootprintsIcon,
     PencilRulerIcon,
     RulerIcon,
-    WeightIcon, XIcon
+    WeightIcon,
 } from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {Separator} from "@/components/ui/separator";
-import {datiSquadraType, getDatiSquadra, getIdSquadraGiocatore} from "@/features/squadre/queries";
-import {Empty, EmptyHeader, EmptyTitle} from "@/components/ui/empty";
 import {RiInstagramLine} from "@remixicon/react";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
@@ -59,9 +67,13 @@ export function PlayerInfoContent() {
     const [datiGiocatore, setDatiGiocatore] = useState<profiloGiocatoreType | null>(null);
     const [statisticheGiocatore, setStatisticheGiocatore] = useState<statisticheGiocatoreType | null>(null);
     const [datiSquadra, setDatiSquadra] = useState<datiSquadraType | null>(null);
+    const [formazioneSquadra, setFormazioneSquadra] = useState<formazioneSquadraType | null>(null);
 
+    const [showAsSilhouette, setShowAsSilhouette] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -69,15 +81,39 @@ export function PlayerInfoContent() {
             setLoading(true);
 
             try {
-                const resultDatiGiocatore = await getProfiloGiocatore(idGiocatore);
-                setDatiGiocatore(resultDatiGiocatore);
+                const [resultDatiGiocatore, idSquadraResult, resultStatisticheGiocatore, tornei] = await Promise.all([
+                    getProfiloGiocatore(idGiocatore),
+                    getIdSquadraGiocatore(idGiocatore),
+                    getStatisticheGiocatore(idGiocatore),
+                    getListaTornei()
+                ]);
 
-                const idSquadra = (await getIdSquadraGiocatore(idGiocatore))?.id_squadra || -1;
-                const resultDatiSquadra = await getDatiSquadra(idSquadra);
+                setDatiGiocatore(resultDatiGiocatore);
+                setStatisticheGiocatore(resultStatisticheGiocatore);
+
+                const idSquadra = idSquadraResult?.id_squadra || -1;
+                const idUltimoTorneo = tornei[0]?.id || -1;
+
+                const [resultDatiSquadra, resultFormazioneSquadra] = await Promise.all([
+                    getDatiSquadra(idSquadra),
+                    getFormazioneSquadra(idSquadra, idUltimoTorneo)
+                ]);
+
                 setDatiSquadra(resultDatiSquadra);
 
-                const resultStatisticheGiocatore = await getStatisticheGiocatore(idGiocatore);
-                setStatisticheGiocatore(resultStatisticheGiocatore);
+                // Salvo la formazione dell'ultimo torneo, ad esclusione del profilo del giocatore stesso
+                const filteredFormazioneSquadra = resultFormazioneSquadra.filter(
+                    p => p.giocatore.id !== idGiocatore
+                );
+
+                // Aspetto 1 secondo per lasciare che le animazioni dei motion.div siano eseguite senza lag
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                }
+
+                timeoutRef.current = setTimeout(() => {
+                    setFormazioneSquadra(filteredFormazioneSquadra);
+                }, 500);
             }
             // eslint-disable-next-line
             catch (error: any) {
@@ -94,6 +130,7 @@ export function PlayerInfoContent() {
         finish: { opacity: 1, x: 0, },
     }
 
+    const stemmaSquadra = datiSquadra?.link_stemma ?? "/logo_eagle_only.png";
     const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
 
     if (loading) {
@@ -158,7 +195,7 @@ export function PlayerInfoContent() {
                             className={"flex justify-center"}
                         >
                             <div
-                                className={`player-anim-hover max-w-64 ${!datiGiocatore.link_foto ? 'pt-5 px-4' : ''} translate-y-5`}>
+                                className={`player-anim-hover max-w-64 pt-5 px-4 translate-y-5`}>
                                 <PlayerSilhouette
                                     teamColor={coloreSquadra}
                                     teamBadge={datiSquadra.link_stemma || undefined}
@@ -311,7 +348,7 @@ export function PlayerInfoContent() {
                 <Separator className={"my-8 sm:my-10"} />
 
                 <div className={"w-full mt-10"}>
-                    <div className={"text-3xl md:text-4xl font-extrabold mb-6 sm:mb-10"}>
+                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-6 sm:mb-10"}>
                         Statistiche all-time
                     </div>
 
@@ -370,7 +407,7 @@ export function PlayerInfoContent() {
                 <Separator className={"my-8 sm:my-16"} />
 
                 <div className={"w-full mt-10"}>
-                    <div className={"text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
+                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
                         Trofei ottenuti
                     </div>
                     <div className={"w-full italic"}>
@@ -402,14 +439,33 @@ export function PlayerInfoContent() {
                 <Separator className={"my-8 sm:my-16"} />
 
                 <div className={"w-full mt-10"}>
-                    <div className={"text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Compagni di squadra
-                    </div>
-                    <div className={"w-full italic"}>
-                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                            Sezione presto in arrivo...
+                    <div className={"flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8"}>
+                        <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
+                            Compagni di squadra
                         </div>
+                        <TeamFormationFilters
+                            loading={loading}
+                            showAsSilhouette={showAsSilhouette}
+                            setShowAsSilhouette={setShowAsSilhouette}
+                        />
                     </div>
+                    {
+                        formazioneSquadra && formazioneSquadra.length > 0 ? (
+                            <TeamFormationList
+                                showAsSilhouette={showAsSilhouette}
+                                showBadgeCapitani={true}
+                                stemmaSquadra={stemmaSquadra}
+                                coloreSquadra={coloreSquadra}
+                                formazioneSquadra={formazioneSquadra}
+                            />
+                        ) : (
+                            <div className={"w-full"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Nessuna formazione trovata.
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
 
                 <Separator className={"my-8 sm:my-16"} />

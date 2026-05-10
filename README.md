@@ -1,1 +1,2 @@
+- Generate database types: `npx supabase gen types typescript --project-id "$PROJECT_REF" --schema public > src/types/database.types.ts`
 - ShadCN preset code: `b1fLyIMp9M`

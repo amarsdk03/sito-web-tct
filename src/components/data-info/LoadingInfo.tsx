@@ -4,15 +4,16 @@ import {Empty, EmptyHeader, EmptyTitle} from "@/components/ui/empty";
 import Image from "next/image";
 
 interface LoadingInfoProps {
-    defaultSpinner?: boolean;
     infoMessage: string;
+    contentOpacity?: number;
+    defaultSpinner?: boolean;
 }
 
-export default function LoadingInfo({defaultSpinner = false, infoMessage}: LoadingInfoProps) {
+export default function LoadingInfo({defaultSpinner = false, contentOpacity = 1, infoMessage}: LoadingInfoProps) {
     return (
-        <Empty className="w-full text-start text-zinc-300">
+        <Empty className="w-full text-start text-zinc-200" style={{opacity: contentOpacity}}>
             <EmptyHeader className={"max-w-none"}>
-                <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">
+                <EmptyTitle className="flex items-center justify-center text-lg sm:text-xl">
                     {
                         defaultSpinner ? (
                             <Spinner className="me-2"/>
@@ -22,7 +23,7 @@ export default function LoadingInfo({defaultSpinner = false, infoMessage}: Loadi
                                 alt="Loading"
                                 width={24}
                                 height={24}
-                                className="me-2 animate-spin opacity-80"
+                                className="me-2 animate-spin"
                             />
                         )
                     }

@@ -89,6 +89,13 @@ export type Database = {
             foreignKeyName: "assegnazione_trofeo_id_torneo_fkey"
             columns: ["id_torneo"]
             isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["torneo_id"]
+          },
+          {
+            foreignKeyName: "assegnazione_trofeo_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
             referencedRelation: "torneo"
             referencedColumns: ["id"]
           },
@@ -174,6 +181,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "partita"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "azione_id_partita_fkey"
+            columns: ["id_partita"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["id_partita"]
           },
         ]
       }
@@ -261,6 +275,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["t_id"]
+          },
+          {
+            foreignKeyName: "categoria_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["torneo_id"]
           },
           {
             foreignKeyName: "categoria_id_torneo_fkey"
@@ -408,6 +429,20 @@ export type Database = {
             foreignKeyName: "iscrizione_id_squadra_fkey"
             columns: ["id_squadra"]
             isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_squadra_fkey"
+            columns: ["id_squadra"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_squadra_fkey"
+            columns: ["id_squadra"]
+            isOneToOne: false
             referencedRelation: "squadra"
             referencedColumns: ["id"]
           },
@@ -424,6 +459,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["t_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["torneo_id"]
           },
           {
             foreignKeyName: "iscrizione_id_torneo_fkey"
@@ -513,11 +555,32 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "partita_id_categoria_fkey"
+            columns: ["id_categoria"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["categoria_id"]
+          },
+          {
             foreignKeyName: "partita_id_squadra_casa_fkey"
             columns: ["id_squadra_casa"]
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["s_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_casa_fkey"
+            columns: ["id_squadra_casa"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_casa_fkey"
+            columns: ["id_squadra_casa"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
           },
           {
             foreignKeyName: "partita_id_squadra_casa_fkey"
@@ -532,6 +595,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["s_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_ospite_fkey"
+            columns: ["id_squadra_ospite"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_ospite_fkey"
+            columns: ["id_squadra_ospite"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
           },
           {
             foreignKeyName: "partita_id_squadra_ospite_fkey"
@@ -833,6 +910,20 @@ export type Database = {
             foreignKeyName: "iscrizione_id_squadra_fkey"
             columns: ["id_squadra_azione"]
             isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_squadra_fkey"
+            columns: ["id_squadra_azione"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_squadra_fkey"
+            columns: ["id_squadra_azione"]
+            isOneToOne: false
             referencedRelation: "squadra"
             referencedColumns: ["id"]
           },
@@ -861,6 +952,20 @@ export type Database = {
             foreignKeyName: "partita_id_squadra_casa_fkey"
             columns: ["p_id_squadra_casa"]
             isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_casa_fkey"
+            columns: ["p_id_squadra_casa"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_casa_fkey"
+            columns: ["p_id_squadra_casa"]
+            isOneToOne: false
             referencedRelation: "squadra"
             referencedColumns: ["id"]
           },
@@ -870,6 +975,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["s_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_ospite_fkey"
+            columns: ["p_id_squadra_ospite"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_casa_id"]
+          },
+          {
+            foreignKeyName: "partita_id_squadra_ospite_fkey"
+            columns: ["p_id_squadra_ospite"]
+            isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["squadra_ospite_id"]
           },
           {
             foreignKeyName: "partita_id_squadra_ospite_fkey"
@@ -951,6 +1070,13 @@ export type Database = {
             foreignKeyName: "iscrizione_id_torneo_fkey"
             columns: ["id_torneo"]
             isOneToOne: false
+            referencedRelation: "risultati_partite"
+            referencedColumns: ["torneo_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
             referencedRelation: "torneo"
             referencedColumns: ["id"]
           },
@@ -995,6 +1121,84 @@ export type Database = {
           {
             foreignKeyName: "squadra_id_capitano_fkey"
             columns: ["s_id_capitano"]
+            isOneToOne: false
+            referencedRelation: "ricerca_squadre"
+            referencedColumns: ["g_id"]
+          },
+        ]
+      }
+      risultati_partite: {
+        Row: {
+          campo_svolgimento: number | null
+          categoria_id: number | null
+          categoria_nome: string | null
+          durata_partita: number | null
+          fase: string | null
+          fischio_inizio: string | null
+          giornata: number | null
+          girone: string | null
+          goal_casa: number | null
+          goal_ospite: number | null
+          id_arbitro: number | null
+          id_partita: number | null
+          mvp_partita: number | null
+          rigori_casa: number | null
+          rigori_ospite: number | null
+          squadra_casa_acronimo: string | null
+          squadra_casa_colore: string | null
+          squadra_casa_id: number | null
+          squadra_casa_nome: string | null
+          squadra_casa_stemma: string | null
+          squadra_ospite_acronimo: string | null
+          squadra_ospite_colore: string | null
+          squadra_ospite_id: number | null
+          squadra_ospite_nome: string | null
+          squadra_ospite_stemma: string | null
+          torneo_id: number | null
+          torneo_nome: string | null
+          vinta_a_tavolino:
+            | Database["public"]["Enums"]["vittoria_tavolino"]
+            | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partita_campo_svolgimento_fkey"
+            columns: ["campo_svolgimento"]
+            isOneToOne: false
+            referencedRelation: "campo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partita_id_arbitro_fkey"
+            columns: ["id_arbitro"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partita_mvp_partita_fkey"
+            columns: ["mvp_partita"]
+            isOneToOne: false
+            referencedRelation: "azioni_giocatori"
+            referencedColumns: ["g_id"]
+          },
+          {
+            foreignKeyName: "partita_mvp_partita_fkey"
+            columns: ["mvp_partita"]
+            isOneToOne: false
+            referencedRelation: "giocatore"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partita_mvp_partita_fkey"
+            columns: ["mvp_partita"]
+            isOneToOne: false
+            referencedRelation: "ricerca_giocatori"
+            referencedColumns: ["g_id"]
+          },
+          {
+            foreignKeyName: "partita_mvp_partita_fkey"
+            columns: ["mvp_partita"]
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["g_id"]

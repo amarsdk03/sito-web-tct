@@ -22,6 +22,14 @@ export default function PlayerSilhouette(
 } : PlayerSilhouetteProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    // Cache to avoid reprocessing the same image
+    const cacheRef = useRef<{
+        playerImage: string | null | undefined;
+        teamColor: string;
+        teamBadge: string | undefined;
+        dataUrl: string;
+    } | null>(null);
+
     // Rimuovo il prefisso # se presente nel codice HEX
     const targetColor = teamColor.startsWith("#") ? teamColor.slice(1) : teamColor;
 
@@ -31,6 +39,23 @@ export default function PlayerSilhouette(
 
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) return;
+
+        // Check cache first
+        if (cacheRef.current &&
+            cacheRef.current.playerImage === playerImage &&
+            cacheRef.current.teamColor === targetColor &&
+            cacheRef.current.teamBadge === teamBadge) {
+
+            // CACHE HIT: Use cached image
+            const cachedImg = new Image();
+            cachedImg.onload = () => {
+                canvas.width = cachedImg.width;
+                canvas.height = cachedImg.height;
+                ctx.drawImage(cachedImg, 0, 0);
+            };
+            cachedImg.src = cacheRef.current.dataUrl;
+            return;
+        }
 
         const img = new Image();
         img.src = playerImage || "/other/player_front.png";
@@ -128,20 +153,27 @@ export default function PlayerSilhouette(
 
                 // Draw player number
                 if (playerNumber) {
-                    setTimeout(() => {
-                        const fontSize = Math.round(canvas.width * 0.26);
-                        ctx.font = `bold ${fontSize}px Roboto, sans-serif`;
-                        ctx.letterSpacing = "-0.05em";
-                        ctx.fillStyle = "rgba(255, 255, 255, 1)";
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
+                    const fontSize = Math.round(canvas.width * 0.26);
+                    ctx.font = `bold ${fontSize}px Roboto, sans-serif`;
+                    ctx.textRendering = "geometricPrecision";
+                    ctx.letterSpacing = "-0.05em";
+                    ctx.fillStyle = "rgba(255, 255, 255, 1)";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
 
-                        const textX = canvas.width * 0.49;
-                        const textY = canvas.height * 0.63;
+                    const textX = canvas.width * 0.49;
+                    const textY = canvas.height * 0.63;
 
-                        ctx.fillText(playerNumber.toString(), textX, textY);
-                    }, 100);
+                    ctx.fillText(playerNumber.toString(), textX, textY);
                 }
+
+                // Cache the processed result
+                cacheRef.current = {
+                    playerImage,
+                    teamColor: targetColor,
+                    teamBadge,
+                    dataUrl: canvas.toDataURL()
+                };
             }
         };
     }, [targetColor, teamBadge, playerImage, playerNumber, desaturationAmount, brightnessFactor]);

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {motion} from "framer-motion";
-import {Suspense, useEffect, useState} from "react";
+import {Suspense, useEffect, useRef, useState} from "react";
 import {usePathname, useSearchParams} from "next/navigation";
 
 import {
@@ -18,7 +18,8 @@ import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import PageTitle from "@/components/text/PageTitle";
-import FormationYearFilter from "@/features/squadre/components/FormationYearFilter";
+import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
+import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
 
 import {
     ShieldUserIcon,
@@ -26,14 +27,12 @@ import {
     Tally5Icon,
     CalendarCheckIcon,
     CalendarFoldIcon,
-    CalendarMinusIcon, XIcon,
+    CalendarMinusIcon,
 } from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import {RiInstagramLine} from "@remixicon/react";
-import {Empty, EmptyHeader, EmptyTitle} from "@/components/ui/empty";
 import {Spinner} from "@/components/ui/spinner";
-import TeamFormationList from "@/features/squadre/components/TeamFormationList";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
 
@@ -191,8 +190,11 @@ export function TeamInfoContent() {
     const [statisticheSquadra, setStatisticheSquadra] = useState<statisticheTotaliType>();
     const [formazioneSquadra, setFormazioneSquadra] = useState<formazioneSquadraType | null>(null);
 
+    const [showAsSilhouette, setShowAsSilhouette] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -214,24 +216,33 @@ export function TeamInfoContent() {
             setLoading(true);
 
             try {
-                const resultDatiSquadra = await getDatiSquadra(idSquadra);
-                setDatiSquadra(resultDatiSquadra);
+                const [resultDatiSquadra, resultPartiteSquadra, resultStatisticheSquadra, resultFormazioneSquadra] = await Promise.all([
+                    getDatiSquadra(idSquadra),
+                    getPartiteSquadra(idSquadra),
+                    getStatisticheSquadra(idSquadra),
+                    getFormazioneSquadra(idSquadra, idTorneo)
+                ]);
 
-                const resultPartiteSquadra = await getPartiteSquadra(idSquadra);
-                setPartiteSquadra(resultPartiteSquadra);
-
-                const resultStatisticheSquadra = await getStatisticheSquadra(idSquadra);
                 const objectStatisticheSquadra = aggregateStatisticheSquadra(
                     resultStatisticheSquadra,
                     resultPartiteSquadra,
                     idSquadra
                 );
+
+                setDatiSquadra(resultDatiSquadra);
+                setPartiteSquadra(resultPartiteSquadra);
                 setStatisticheSquadra(objectStatisticheSquadra);
 
-                const resultFormazioneSquadra = await getFormazioneSquadra(idSquadra, idTorneo);
-                setFormazioneSquadra(resultFormazioneSquadra);
+                // Aspetto 1 secondo per lasciare che le animazioni dei motion.div siano eseguite senza lag
+                if (timeoutRef.current) {
+                    clearTimeout(timeoutRef.current);
+                }
+
+                timeoutRef.current = setTimeout(() => {
+                    setFormazioneSquadra(resultFormazioneSquadra);
+                }, 500);
             }
-                // eslint-disable-next-line
+            // eslint-disable-next-line
             catch (error: any) {
                 setError(true);
             }
@@ -241,14 +252,11 @@ export function TeamInfoContent() {
         })();
     }, [idSquadra, idTorneo]);
 
-    console.log("Partite squadra:", partiteSquadra);
-
     const slideAnim = {
         start: { opacity: 0, x: -25 },
         finish: { opacity: 1, x: 0, },
     }
 
-    const stemmaSquadra = datiSquadra?.link_stemma ?? "/logo_eagle_only.png";
     const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
 
     if (loading) {
@@ -286,7 +294,7 @@ export function TeamInfoContent() {
                         className={"player-info-stemma"}
                     >
                         <Image
-                            src={stemmaSquadra}
+                            src={datiSquadra.link_stemma ?? "/logo_eagle_only.png"}
                             alt="Stemma squadra"
                             fill={true}
                             className={`bg-none rounded-full object-cover`}
@@ -349,7 +357,7 @@ export function TeamInfoContent() {
                 <Separator className={"mt-4 mb-8 sm:mb-14"} />
 
                 <div className={"w-full"}>
-                    <div className={"text-3xl md:text-4xl font-extrabold mb-8 sm:mb-10"}>
+                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-8 sm:mb-10"}>
                         Info principali
                     </div>
 
@@ -481,8 +489,10 @@ export function TeamInfoContent() {
                         <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
                             Rosa della squadra
                         </div>
-                        <FormationYearFilter
+                        <TeamFormationFilters
                             loading={loading}
+                            showAsSilhouette={showAsSilhouette}
+                            setShowAsSilhouette={setShowAsSilhouette}
                             pathname={pathname}
                             idSquadra={idSquadra}
                             squadraParamName={squadraParamName}
@@ -493,7 +503,10 @@ export function TeamInfoContent() {
                     {
                         formazioneSquadra && formazioneSquadra.length > 0 ? (
                             <TeamFormationList
-                                stemmaSquadra={stemmaSquadra}
+                                showAsSilhouette={showAsSilhouette}
+                                showBadgeCapitani={true}
+                                idCapitano={datiSquadra.giocatore?.id || -1}
+                                stemmaSquadra={datiSquadra.link_stemma}
                                 coloreSquadra={coloreSquadra}
                                 formazioneSquadra={formazioneSquadra}
                             />

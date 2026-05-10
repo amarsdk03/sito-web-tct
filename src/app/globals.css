@@ -161,6 +161,10 @@
     }
 }
 
+.coming-soon {
+    display: none;
+}
+
 .navbar-div {
     background-color: #6e9843;
     border-bottom: 4px solid var(--primary);

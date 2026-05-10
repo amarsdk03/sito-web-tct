@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import {listaGiocatoriType} from "@/features/giocatori/queries";
 
-import { Card } from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 
 export default function PlayerInfoCard({infoGiocatore}: { infoGiocatore: listaGiocatoriType }) {
     const idGiocatore = infoGiocatore.g_id;
@@ -45,7 +45,7 @@ export default function PlayerInfoCard({infoGiocatore}: { infoGiocatore: listaGi
                     </div>
                     <div className={"font-semibold text-md mt-1"}>
                         <span className={"not-italic text-zinc-100"}>
-                            { ruolo || <span className={"italic text-zinc-300"}>Nessun ruolo specificato</span> }
+                            { ruolo || <span className={"italic text-zinc-300"}>Ruolo non specificato</span> }
                         </span>
                     </div>
                 </div>

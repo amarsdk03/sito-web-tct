@@ -1,77 +1,157 @@
+import {useState, useEffect, useRef} from "react";
+import {useRouter} from "next/navigation";
+
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
-interface MatchResultFiltersProps {
-    edizione?: string;
-    categoria?: string;
-    giornata?: string;
+interface FixtureSearchFiltersProps {
+    loading?: boolean;
+    pathname: string;
+    torneoParamName: string;
+    categoriaParamName: string;
+    gironeParamName: string;
+    edizioni: { id: number; nome: string }[];
+    categorie: { id: string; nome: string }[];
+    gironi: { girone: string }[];
 }
 
 export default function FixtureSearchFilters(
-    { edizione, categoria, giornata } : MatchResultFiltersProps)
-{
-    const selectEdizione = "2025/2026";
-    const selectCategoria = "Tesserati";
-    const selectGiornata = "1";
+    {
+        loading = false,
+        pathname,
+        torneoParamName,
+        categoriaParamName,
+        gironeParamName,
+        edizioni,
+        categorie,
+        gironi,
+    } : FixtureSearchFiltersProps
+) {
+    const router = useRouter();
+    const hasInitialized = useRef(false);
+
+    const [filtroEdizione, setFiltroEdizione] = useState<string>("");
+    const [filtroCategoria, setFiltroCategoria] = useState<string>("");
+    const [filtroGirone, setFiltroGirone] = useState<string>("");
+
+    useEffect(() => {
+        if (edizioni.length > 0 && !hasInitialized.current) {
+            setFiltroEdizione(edizioni[0].id.toString());
+            setFiltroCategoria("show-all-key");
+            setFiltroGirone("show-all-key");
+
+            hasInitialized.current = true;
+        }
+    }, [edizioni, categorie, gironi]);
+
+    function handleFiltering() {
+        const params = new URLSearchParams();
+
+        params.set(torneoParamName, filtroEdizione);
+        if (filtroCategoria !== "show-all-key") params.set(categoriaParamName, filtroCategoria);
+        if (filtroGirone !== "show-all-key") params.set(gironeParamName, filtroGirone);
+
+        router.push(`${pathname}?${params.toString()}`);
+    }
+
+    if (edizioni.length === 0 || loading) return;
 
     return (
-        <div className={"flex flex-wrap items-center gap-2 mb-4"}>
-            <Select defaultValue={"2025/2026"}>
-                <SelectTrigger className="w-full max-w-full sm:max-w-48 rounded-lg">
-                    <SelectValue placeholder="Edizione" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup className={"bg-background"}>
-                        <SelectLabel>Edizione torneo</SelectLabel>
-                        <SelectItem value="2025/2026">2025/2026</SelectItem>
-                        <SelectItem value="2024/2025" disabled>2024/2025 (in arrivo...)</SelectItem>
-                        <SelectItem value="2023/2024" disabled>2023/2024 (in arrivo...)</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-            <span className={"text-2xl font-medium text-chart-1 mx-1 hidden md:block"}>&gt;</span>
-            <Select defaultValue={"amatori"}>
-                <SelectTrigger className="w-full max-w-full sm:max-w-48 rounded-lg">
-                    <SelectValue placeholder="Categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup className={"bg-background"}>
-                        <SelectLabel>Categoria squadre</SelectLabel>
-                        <SelectItem value="tesserati">Tesserati</SelectItem>
-                        <SelectItem value="amatori">Amatori</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-            <span className={"text-2xl font-medium text-chart-1 mx-1 hidden md:block"}>&gt;</span>
-            <Select>
-                <SelectTrigger className="w-full max-w-full sm:max-w-48 rounded-lg">
-                    <SelectValue placeholder="Giornata" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup className={"bg-background"}>
-                        <SelectLabel>Giornata campionato</SelectLabel>
-                        <SelectItem value="1">Giornata 1</SelectItem>
-                        <SelectItem value="2">Giornata 2</SelectItem>
-                        <SelectItem value="3">Giornata 3</SelectItem>
-                        <SelectItem value="4">Giornata 4</SelectItem>
-                        <SelectItem value="5">Giornata 5</SelectItem>
-                        <SelectItem value="6">Giornata 6</SelectItem>
-                        <SelectItem value="7">Giornata 7</SelectItem>
-                        <SelectItem value="8">Giornata 8</SelectItem>
-                        <SelectItem value="9">Giornata 9</SelectItem>
-                        <SelectItem value="10">Giornata 10</SelectItem>
-                        <SelectItem value="11">Giornata 11</SelectItem>
-                        <SelectItem value="12">Giornata 2</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+        <div className={"flex flex-wrap items-end justify-start sm:justify-between mt-3 gap-2 md:gap-4"}>
+            <div className={"flex flex-wrap items-center w-full sm:w-fit gap-4 sm:gap-3 md:gap-4 mb-4 sm:mb-0"}>
+                {/* Edizione */}
+                <div className={"w-full sm:w-40 md:w-48 lg:w-52"}>
+                    <label className="text-sm font-medium mb-2 block">
+                        Filtra per edizione:
+                    </label>
+                    <Select value={filtroEdizione} onValueChange={setFiltroEdizione}>
+                        <SelectTrigger className="w-full max-w-full sm:max-w-48 lg:max-w-52 rounded-lg">
+                            <SelectValue placeholder="Seleziona edizione" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background">
+                            <SelectGroup>
+                                {edizioni.map((edizione) => (
+                                    <SelectItem
+                                        key={edizione.id}
+                                        value={edizione.id.toString()}
+                                    >
+                                        {edizione.nome}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <span className={"text-2xl font-medium text-chart-1 mt-7 hidden lg:block"}>&gt;</span>
+
+                {/* Categoria */}
+                <div className={"w-full sm:w-40 md:w-48 lg:w-52"}>
+                    <label className="text-sm font-medium mb-2 block">
+                        Filtra per categoria:
+                    </label>
+                    <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
+                        <SelectTrigger className="w-full max-w-full sm:max-w-48 lg:max-w-52 rounded-lg">
+                            <SelectValue placeholder="Seleziona categoria" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background">
+                            <SelectGroup>
+                                <SelectItem value="show-all-key">
+                                    Mostra tutto
+                                </SelectItem>
+                                {categorie.map((categoria) => (
+                                    <SelectItem
+                                        key={categoria.id}
+                                        value={categoria.id}
+                                    >
+                                        {categoria.nome}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <span className={"text-2xl font-medium text-chart-1 mt-7 hidden lg:block"}>&gt;</span>
+
+                {/* Girone */}
+                <div className={"w-full sm:w-40 md:w-48 lg:w-52"}>
+                    <label className="text-sm font-medium mb-2 block">
+                        Filtra per girone:
+                    </label>
+                    <Select value={filtroGirone} onValueChange={setFiltroGirone}>
+                        <SelectTrigger className="w-full max-w-full sm:max-w-48 lg:max-w-52 rounded-lg">
+                            <SelectValue placeholder="Seleziona girone" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background">
+                            <SelectGroup>
+                                <SelectItem value="show-all-key">
+                                    Mostra tutto
+                                </SelectItem>
+                                {gironi.map((girone) => (
+                                    <SelectItem
+                                        key={girone.girone}
+                                        value={girone.girone}
+                                    >
+                                        {girone.girone}
+                                    </SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <Button type="button" className="w-full sm:w-fit" onClick={handleFiltering}>
+                Applica
+            </Button>
         </div>
-    )
+    );
 }

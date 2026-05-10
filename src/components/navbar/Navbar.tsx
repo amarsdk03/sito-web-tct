@@ -9,7 +9,7 @@ export default function Navbar() {
         <div className={"navbar-div w-full sticky top-0 z-50"}>
             <nav className={"navbar grid grid-cols-5 items-center px-5 h-16"}>
                 <div className="flex justify-start items-center gap-2">
-                    <NavbarMenu/>
+                    <NavbarMenu />
                 </div>
                 <div className="flex justify-center items-center col-span-3 h-16">
                     <Link href={"/"} className={"navbar-link"}>

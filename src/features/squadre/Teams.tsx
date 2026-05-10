@@ -25,6 +25,7 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
 import {SearchIcon, XIcon} from "lucide-react";
+import LoadingInfo from "@/components/data-info/LoadingInfo";
 
 export type listaSquadreContateType = listaSquadreType & { n_giocatori: number };
 
@@ -39,12 +40,13 @@ export default function Teams() {
         </>
     );
 }
+
 export function TeamsContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const searchParamName = 'c';
+    const searchParamName = 'q';
     const torneoParamName = 't';
     const pageParamName = 'p';
 
@@ -73,6 +75,11 @@ export function TeamsContent() {
     }, []);
 
     useEffect(() => {
+        // Non fare nulla finché listaTornei non è caricato
+        if (listaTornei.length === 0) {
+            return;
+        }
+
         (async () => {
             setError(false);
             setLoading(true);
@@ -87,10 +94,10 @@ export function TeamsContent() {
 
                 const squadre = await getListaSquadre(
                     searchQueryFromParams,
-                    selectedTorneoId,
+                    selectedTorneoId - 1,
                 );
 
-                // Raggruppo ogni riga della tabella in un singolo risultato, e conto il numero di iscrizioni
+                // Raggruppo ogni riga con la stessa squadra in un singolo risultato, sommando il numero di iscrizioni
                 const squadreMap = new Map<string, listaSquadreContateType>();
 
                 squadre?.forEach((row) => {
@@ -214,7 +221,10 @@ export function TeamsContent() {
                             <EmptyContent className={"pt-4"}>
                                 <Button
                                     variant="outline"
-                                    onClick={() => router.push(pathname)}
+                                    onClick={() => {
+                                        setSearchInput('');
+                                        router.push(pathname);
+                                    }}
                                 >
                                     Ricarica pagina
                                 </Button>
@@ -222,14 +232,9 @@ export function TeamsContent() {
                         </EmptyHeader>
                     </Empty>
                 ) : loading ? (
-                    <Empty className="w-full text-start text-zinc-500">
-                        <EmptyHeader>
-                            <EmptyTitle className="flex items-center justify-center text-xl">
-                                <Spinner className="me-2" />
-                                Ricerca in corso...
-                            </EmptyTitle>
-                        </EmptyHeader>
-                    </Empty>
+                    <div className={"mt-12"}>
+                        <LoadingInfo infoMessage={"Ricerca in corso..."} contentOpacity={0.75} />
+                    </div>
                 ) : (
                     <>
                         <motion.div
@@ -253,10 +258,10 @@ export function TeamsContent() {
                         {listaSquadre.length === 0 ? (
                             <Empty className="w-full text-zinc-300">
                                 <EmptyHeader>
-                                    <EmptyTitle className="flex items-center justify-center text-2xl">
+                                    <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">
                                         <XIcon className="me-1" /> Nessun risultato trovato
                                     </EmptyTitle>
-                                    <EmptyDescription className="text-base -translate-y-1">
+                                    <EmptyDescription className="text-sm sm:text-base">
                                         Prova a cambiare i filtri di ricerca
                                     </EmptyDescription>
                                 </EmptyHeader>

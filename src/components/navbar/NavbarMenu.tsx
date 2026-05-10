@@ -14,10 +14,11 @@ import NavbarMenuCard from "@/components/navbar/NavbarMenuCard";
 import {RiMenuLine} from "@remixicon/react";
 import {navbarLinks} from "@/const/page-cards";
 
-export function NavbarMenu() {
-
+export function NavbarMenu({ showCurrentPage = true } : { showCurrentPage?: boolean }) {
     const pathname = usePathname();
-    const shownNavbarLinks = navbarLinks.filter(link => link.href !== pathname);
+    const shownNavbarLinks = showCurrentPage ?
+        navbarLinks :
+        navbarLinks.filter(link => link.href !== pathname);
 
     return (
         <Sheet>

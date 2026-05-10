@@ -21,6 +21,14 @@ export function calcolaEta(dataDiNascita: Date) {
     return eta;
 }
 
+export function string_to_snake_case(str: string | null) {
+    const matches = str && str.match(
+        /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g
+    );
+
+    return matches ? matches.map(s => s.toLowerCase()).join('_') : '';
+}
+
 export function convertiHexToHsl(hex: string) {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
