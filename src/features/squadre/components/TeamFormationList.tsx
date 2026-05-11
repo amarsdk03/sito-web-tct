@@ -8,6 +8,8 @@ import {formazioneSquadraType} from "@/features/squadre/queries";
 
 import PlayerSilhouette from "@/features/giocatori/components/PlayerSilhouette";
 import {Badge} from "@/components/ui/badge";
+import {calcolaRapportoContrasto} from "@/lib/utils";
+import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
 
 interface TeamComponentsTableProps {
     showAsSilhouette?: boolean,
@@ -44,6 +46,10 @@ export const TeamFormationList = memo(
             null
         ], []);
 
+        const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+            ? coloreSquadra
+            : "#bdbdbd";
+
         return roles.map((role) => {
             const playersWithRole = normalizedFormation.filter(
                 f => f.giocatore?.ruolo_principale === role
@@ -55,7 +61,7 @@ export const TeamFormationList = memo(
                 <div key={role} className={"mb-6"}>
                     <h3
                         className="integral-title font-semibold tracking-wide text-xl sm:text-3xl mb-4 sm:mb-6 -translate-x-0.75"
-                        style={{color: (coloreSquadra + "ee")}}
+                        style={{color: coloreLeggibile}}
                     >
                         {role === null ? "Senza ruolo" : role.slice(0, -1) + "i"}
                     </h3>

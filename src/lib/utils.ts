@@ -53,3 +53,35 @@ export function convertiHexToHsl(hex: string) {
         b: Math.round(max * 100),
     };
 }
+
+export function calcolaRapportoContrasto(hex1: string, hex2: string) {
+    function hexToRgb(hex: string) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16) / 255,
+            g: parseInt(result[2], 16) / 255,
+            b: parseInt(result[3], 16) / 255
+        } : null;
+    }
+
+    function getLuminance(rgb: { r: number; g: number; b: number; }) {
+        if (!rgb) return 0;
+        const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(val =>
+            val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4)
+        );
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    const rgb1 = hexToRgb(hex1);
+    const rgb2 = hexToRgb(hex2);
+
+    if (!rgb1 || !rgb2) return 0;
+
+    const lum1 = getLuminance(rgb1);
+    const lum2 = getLuminance(rgb2);
+    const lighter = Math.max(lum1, lum2);
+    const darker = Math.min(lum1, lum2);
+    const ratio = (lighter + 0.05) / (darker + 0.05);
+
+    return Math.min(ratio / 21, 1);
+}

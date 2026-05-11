@@ -4,11 +4,15 @@ import NavbarNewsDialog from "@/components/navbar/NavbarNewsDialog";
 import {NavbarMenu} from "@/components/navbar/NavbarMenu";
 import Link from "next/link";
 
-export default function Navbar() {
+interface NavbarProps {
+    noButtons?: boolean
+}
+
+export default function Navbar({noButtons = false}: NavbarProps) {
     return (
         <div className={"navbar-div w-full sticky top-0 z-50"}>
             <nav className={"navbar grid grid-cols-5 items-center px-5 h-16"}>
-                <div className="flex justify-start items-center gap-2">
+                <div className="flex justify-start items-center gap-2" hidden={noButtons}>
                     <NavbarMenu />
                 </div>
                 <div className="flex justify-center items-center col-span-3 h-16">
@@ -16,15 +20,15 @@ export default function Navbar() {
                         <Image
                             src="/logo_eagle_only.png"
                             alt="Logo torneo"
-                            width={160}
-                            height={160}
+                            width={150}
+                            height={150}
                             className={"navbar-logo"}
                             draggable={false}
                             loading={"eager"}
                         />
                     </Link>
                 </div>
-                <div className="flex justify-end items-center gap-2">
+                <div className="flex justify-end items-center gap-2" hidden={noButtons}>
                     <NavbarNewsDialog />
                 </div>
             </nav>

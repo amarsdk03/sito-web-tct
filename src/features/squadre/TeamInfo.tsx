@@ -35,6 +35,9 @@ import {RiInstagramLine} from "@remixicon/react";
 import {Spinner} from "@/components/ui/spinner";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
+import {calcolaRapportoContrasto} from "@/lib/utils";
+import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 interface statisticheTotaliType {
     totalePartite: number;
@@ -258,6 +261,9 @@ export function TeamInfoContent() {
     }
 
     const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+        ? coloreSquadra
+        : "#bdbdbd";
 
     if (loading) {
         return (
@@ -312,7 +318,7 @@ export function TeamInfoContent() {
                         <div className={"font-semibold text-sm sm:text-lg lg:text-xl"}>
                                 <span
                                     className={`player-info-title w-full overflow-hidden text-ellipsis`}
-                                    style={{color: coloreSquadra}}
+                                    style={{color: coloreLeggibile}}
                                 >
                                     {datiSquadra.acronimo || ""}
                                 </span>
@@ -342,7 +348,7 @@ export function TeamInfoContent() {
                                     size="sm"
                                     variant="outline"
                                     className={"cursor-pointer"}
-                                    style={{color: coloreSquadra}}
+                                    style={{color: coloreLeggibile}}
                                 >
                                     <RiInstagramLine />
                                     <span className={"not-italic -translate-y-0.5"}>
@@ -546,18 +552,7 @@ export function TeamInfoContent() {
                     </div>
                 </div>
 
-                <div className={"w-full mt-20 sm:mt-40"}>
-                    <div className={"w-full flex flex-col justify-center items-center text-center"}>
-                        <h1 className={"text-2xl font-bold mb-4"}>
-                            Informazioni errate o mancanti?
-                        </h1>
-                        <Link href="/contatti">
-                            <Button variant="default" size="lg" className="text-lg font-medium p-5">
-                                Faccelo sapere!
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
+                <WrongDataContact />
 
             </div>
         </div>

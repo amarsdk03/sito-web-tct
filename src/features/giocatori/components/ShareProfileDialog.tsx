@@ -15,6 +15,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RiShareFill, RiDownloadCloud2Line, RiInstagramLine, RiGlobalLine, RiLink } from "@remixicon/react";
+import {calcolaRapportoContrasto} from "@/lib/utils";
+import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
 
 interface ShareProfileDialogProps {
     datiGiocatore: profiloGiocatoreType;
@@ -85,13 +87,17 @@ export default function ShareProfileDialog(
         }
     };
 
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+        ? coloreSquadra
+        : "#bdbdbd";
+
     return (
         <Dialog>
             <DialogTrigger asChild>
                 <Button
                     size="sm"
                     variant="outline"
-                    style={{ color: coloreSquadra }}
+                    style={{ color: coloreLeggibile }}
                 >
                     <RiShareFill />
                     <span className="not-italic -translate-y-0.5">

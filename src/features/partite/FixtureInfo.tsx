@@ -23,6 +23,7 @@ import {RiCheckboxBlankCircleFill} from "@remixicon/react";
 import {TextIcon, UserIcon} from "lucide-react";
 import FixtureActionList from "@/features/partite/components/FixtureActionList";
 import {string_to_snake_case} from "@/lib/utils";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 export default function FixtureInfo() {
     return (
@@ -479,6 +480,8 @@ export function FixtureInfoContent() {
                         }
                     </div>
                 </div>
+
+                <WrongDataContact />
 
             </div>
         </div>

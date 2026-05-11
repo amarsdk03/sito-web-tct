@@ -11,23 +11,23 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
 
     return (
         <Link href={`/partite/dettagli?id=${partita.id_partita}`}>
-            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-white/10 p-4 sm:p-6 mb-4 rounded-xl"}>
+            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-gray-500/25 p-4 sm:p-6 mb-4 rounded-xl"}>
                 <div className={"flex flex-row lg:flex-col justify-between text-start w-full lg:w-36"}>
-                    <div className={"text-gray-400 sm:text-gray-100 text-xs sm:text-base font-bold"}>
+                    <div className={"text-gray-300 sm:text-gray-100 text-xs sm:text-base font-bold"}>
                         { partita.fase || partita.giornata || "?" }
                     </div>
 
                     <div className={"text-gray-300 hidden lg:block"}>
-                        Girone { partita.girone ?? "?" }
+                        { partita.categoria_nome }
                     </div>
 
-                    <div className={"text-gray-400 sm:text-gray-100 text-xs sm:text-base font-bold block lg:hidden"}>
+                    <div className={"text-gray-300 sm:text-gray-100 text-xs sm:text-base font-bold block lg:hidden"}>
                         { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleDateString() : "TBD" }
                     </div>
                 </div>
 
                 <div className={"match-info flex items-center justify-center py-2 sm:py-4 lg:py-0 w-full md:flex-1"}>
-                    <span className={"w-full sm:w-64 text-right text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
+                    <span className={"w-full sm:w-64 py-0.5 text-right text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
                         { partita.squadra_casa_nome ?? "???" }
                     </span>
 
@@ -44,21 +44,21 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
                         }
                     </div>
 
-                    <span className={"w-full sm:w-64 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
+                    <span className={"w-full sm:w-64 py-0.5 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
                         { partita.squadra_ospite_nome ?? "???" }
                     </span>
                 </div>
 
                 <div className={"flex flex-row lg:flex-col justify-between text-end w-full lg:w-36"}>
-                    <div className={"text-gray-400 text-xs sm:text-sm block lg:hidden"}>
-                        Girone { partita.girone ?? "?" }
+                    <div className={"text-gray-200 text-xs sm:text-sm block lg:hidden"}>
+                        { partita.categoria_nome }
                     </div>
 
                     <div className={"font-bold hidden lg:block"}>
                         { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleDateString() : "TBD" }
                     </div>
 
-                    <div className={"text-gray-400 lg:text-gray-300 text-xs sm:text-sm"}>
+                    <div className={"text-gray-200 lg:text-gray-300 text-xs sm:text-sm"}>
                         { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleTimeString().substring(0, 5) : "TBD" }
                     </div>
                 </div>

@@ -94,7 +94,7 @@ export function TeamsContent() {
 
                 const squadre = await getListaSquadre(
                     searchQueryFromParams,
-                    selectedTorneoId - 1,
+                    selectedTorneoId,
                 );
 
                 // Raggruppo ogni riga con la stessa squadra in un singolo risultato, sommando il numero di iscrizioni
@@ -241,7 +241,7 @@ export function TeamsContent() {
                             variants={containerAnim}
                             initial={"start"}
                             animate={"finish"}
-                            className={"grid grid-cols-1 md:grid-cols-2 gap-4"}
+                            className={"grid grid-cols-1 md:grid-cols-2 gap-5"}
                         >
                             <AnimatePresence>
                                 {listaSquadre.map((infoSquadra) => (

@@ -116,7 +116,7 @@
 }
 
 .dark {
-    --background: oklch(0.218 0 89.876);
+    --background: hsl(0, 0%, 15%);
     --foreground: oklch(0.987 0.002 197.1);
     --card: oklch(0.218 0.008 223.9);
     --card-foreground: oklch(0.987 0.002 197.1);
@@ -155,6 +155,11 @@
     }
     body {
         background-color: var(--background);
+
+        /*noinspection CssUnknownTarget*/
+        background-image: url("/other/grass_texture.jpg");
+        background-blend-mode: soft-light;
+        background-size: 300px;
     }
     html {
         @apply font-sans;
@@ -167,7 +172,11 @@
 
 .navbar-div {
     background-color: #6e9843;
-    border-bottom: 4px solid var(--primary);
+    border-bottom: 2px solid var(--primary);
+
+    /*noinspection CssUnknownTarget*/
+    background-image: url("/other/bg_texture.png");
+    background-size: 250px;
 }
 
 .navbar {
@@ -266,12 +275,12 @@
 }
 
 .match-info {
-    gap: clamp(8px, 3vw, calc(var(--spacing) * 6));
+    gap: clamp(8px, 3vw, calc(var(--spacing) * 5));
     transition: all 0.5s ease-in-out;
 }
 
 .match-result-row:hover > .match-info {
-    gap: calc(var(--spacing) * 7);
+    gap: clamp(var(--spacing), calc(100vw / 25), calc(var(--spacing) * 6.5));
 }
 
 .integral-title {

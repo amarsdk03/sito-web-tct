@@ -95,7 +95,7 @@ export function PlayersContent() {
 
                 const giocatori = await getListaGiocatori(
                     searchQueryFromParams,
-                    selectedTorneoId - 1,
+                    selectedTorneoId,
                     pageParam,
                     resultsPerPage,
                 );

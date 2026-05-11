@@ -34,7 +34,7 @@ export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreC
                             {infoSquadra.s_acronimo}
                         </span>
                     </div>
-                    <div className={"integral-title font-semibold text-2xl"}>
+                    <div className={"integral-title font-semibold text-xl sm:text-2xl wrap-anywhere"}>
                         <span className={"not-italic text-gray-100"}>
                             {infoSquadra.s_nome}
                         </span>

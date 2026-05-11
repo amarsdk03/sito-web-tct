@@ -6,7 +6,7 @@ import {Suspense, useEffect, useRef, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {motion} from "framer-motion";
 
-import {calcolaEta} from "@/lib/utils";
+import {calcolaEta, calcolaRapportoContrasto} from "@/lib/utils";
 import {
     getProfiloGiocatore,
     getStatisticheGiocatore,
@@ -46,6 +46,8 @@ import {Separator} from "@/components/ui/separator";
 import {RiInstagramLine} from "@remixicon/react";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
+import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 export default function PlayerInfo() {
     return (
@@ -132,6 +134,9 @@ export function PlayerInfoContent() {
 
     const stemmaSquadra = datiSquadra?.link_stemma ?? "/logo_eagle_only.png";
     const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+        ? coloreSquadra
+        : "#bdbdbd";
 
     if (loading) {
         return (
@@ -176,7 +181,7 @@ export function PlayerInfoContent() {
                                     {
                                         datiGiocatore.is_capitano && (
                                             <span className={"text-[0.6em]"}
-                                                  style={{color: coloreSquadra}}
+                                                  style={{color: coloreLeggibile}}
                                             >
                                                 Capitano
                                             </span>
@@ -228,7 +233,7 @@ export function PlayerInfoContent() {
                                 <div className={"font-semibold text-sm sm:text-lg pb-1.5"}>
                                     <span
                                         className={`player-info-title w-full overflow-hidden text-ellipsis`}
-                                        style={{color: coloreSquadra}}
+                                        style={{color: coloreLeggibile}}
                                     >
                                         {datiSquadra.nome}
                                     </span>
@@ -257,7 +262,7 @@ export function PlayerInfoContent() {
                                                 size="sm"
                                                 variant="outline"
                                                 className={"cursor-pointer"}
-                                                style={{color: coloreSquadra}}
+                                                style={{color: coloreLeggibile}}
                                             >
                                                 <RiInstagramLine />
                                                 <span className={"not-italic -translate-y-0.5"}>
@@ -439,7 +444,7 @@ export function PlayerInfoContent() {
                 <Separator className={"my-8 sm:my-16"} />
 
                 <div className={"w-full mt-10"}>
-                    <div className={"flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8"}>
+                    <div className={"flex flex-row sm:items-center justify-between gap-2 mb-8"}>
                         <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
                             Compagni di squadra
                         </div>
@@ -481,18 +486,7 @@ export function PlayerInfoContent() {
                     </div>
                 </div>
 
-                <div className={"w-full mt-20 sm:mt-40"}>
-                    <div className={"w-full flex flex-col justify-center items-center text-center"}>
-                        <h1 className={"text-2xl font-bold mb-4"}>
-                            Informazioni errate o mancanti?
-                        </h1>
-                        <Link href="/contatti">
-                            <Button variant="default" size="lg" className="text-lg font-medium p-5">
-                                Faccelo sapere!
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
+                <WrongDataContact />
 
             </div>
         </div>
