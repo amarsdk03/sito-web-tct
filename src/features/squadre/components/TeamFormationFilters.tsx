@@ -1,21 +1,18 @@
-import {useState, useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 
 import {listaTorneiType} from "@/features/tornei/queries";
 
-import {
-    ToggleGroup,
-    ToggleGroupItem,
-} from "@/components/ui/toggle-group";
+import {ToggleGroup, ToggleGroupItem,} from "@/components/ui/toggle-group";
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
     SelectLabel,
+    SelectSeparator,
     SelectTrigger,
     SelectValue,
-    SelectSeparator,
 } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";

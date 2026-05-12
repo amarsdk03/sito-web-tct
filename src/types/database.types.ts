@@ -110,31 +110,40 @@ export type Database = {
       }
       azione: {
         Row: {
+          assegnamento:
+            | Database["public"]["Enums"]["assegnamento_azione"]
+            | null
           data_creazione: string
           data_ultima_modifica: string | null
           dettagli: string | null
           id: number
-          id_giocatore: number
+          id_giocatore: number | null
           id_partita: number
           minuto: number | null
           tipo: Database["public"]["Enums"]["tipo_azione"]
         }
         Insert: {
+          assegnamento?:
+            | Database["public"]["Enums"]["assegnamento_azione"]
+            | null
           data_creazione?: string
           data_ultima_modifica?: string | null
           dettagli?: string | null
           id?: number
-          id_giocatore: number
+          id_giocatore?: number | null
           id_partita: number
           minuto?: number | null
           tipo: Database["public"]["Enums"]["tipo_azione"]
         }
         Update: {
+          assegnamento?:
+            | Database["public"]["Enums"]["assegnamento_azione"]
+            | null
           data_creazione?: string
           data_ultima_modifica?: string | null
           dettagli?: string | null
           id?: number
-          id_giocatore?: number
+          id_giocatore?: number | null
           id_partita?: number
           minuto?: number | null
           tipo?: Database["public"]["Enums"]["tipo_azione"]
@@ -649,7 +658,7 @@ export type Database = {
       }
       squadra: {
         Row: {
-          acronimo: string | null
+          acronimo: string
           colore_squadra: string | null
           data_creazione: string
           data_ultima_modifica: string
@@ -660,7 +669,7 @@ export type Database = {
           username_ig: string | null
         }
         Insert: {
-          acronimo?: string | null
+          acronimo: string
           colore_squadra?: string | null
           data_creazione?: string
           data_ultima_modifica?: string
@@ -671,7 +680,7 @@ export type Database = {
           username_ig?: string | null
         }
         Update: {
-          acronimo?: string | null
+          acronimo?: string
           colore_squadra?: string | null
           data_creazione?: string
           data_ultima_modifica?: string
@@ -838,6 +847,9 @@ export type Database = {
       }
       azioni_partite: {
         Row: {
+          a_assegnamento:
+            | Database["public"]["Enums"]["assegnamento_azione"]
+            | null
           a_id: number | null
           a_id_giocatore: number | null
           a_tipo: Database["public"]["Enums"]["tipo_azione"] | null
@@ -898,34 +910,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["g_id"]
-          },
-          {
-            foreignKeyName: "iscrizione_id_squadra_fkey"
-            columns: ["id_squadra_azione"]
-            isOneToOne: false
-            referencedRelation: "ricerca_squadre"
-            referencedColumns: ["s_id"]
-          },
-          {
-            foreignKeyName: "iscrizione_id_squadra_fkey"
-            columns: ["id_squadra_azione"]
-            isOneToOne: false
-            referencedRelation: "risultati_partite"
-            referencedColumns: ["squadra_casa_id"]
-          },
-          {
-            foreignKeyName: "iscrizione_id_squadra_fkey"
-            columns: ["id_squadra_azione"]
-            isOneToOne: false
-            referencedRelation: "risultati_partite"
-            referencedColumns: ["squadra_ospite_id"]
-          },
-          {
-            foreignKeyName: "iscrizione_id_squadra_fkey"
-            columns: ["id_squadra_azione"]
-            isOneToOne: false
-            referencedRelation: "squadra"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "partita_campo_svolgimento_fkey"
@@ -1210,6 +1194,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      assegnamento_azione: "Casa" | "Ospiti"
       piede_principale: "Destro" | "Sinistro" | "Entrambi"
       ruolo_giocatore:
         | "Tecnico"
@@ -1356,6 +1341,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      assegnamento_azione: ["Casa", "Ospiti"],
       piede_principale: ["Destro", "Sinistro", "Entrambi"],
       ruolo_giocatore: [
         "Tecnico",

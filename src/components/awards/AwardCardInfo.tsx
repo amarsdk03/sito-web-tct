@@ -1,22 +1,21 @@
 import Image from "next/image"
 
 import {Card} from "@/components/ui/card"
-import AwardData from "@/types/award";
 
-export default function AwardCardInfo({ awardInfo }: { awardInfo: AwardData }) {
+export default function AwardCardInfo({ awardInfo }: { awardInfo: object }) {
     return (
         <Card className="navbar-card relative mx-auto w-full h-32 pt-0 mb-4">
             <div className="absolute bottom-0 left-0 z-30 p-4">
                 <div className="navbar-card-title">
-                    { awardInfo.titolo }
+                    Titolo qui
                 </div>
                 <div className="-mt-1">
-                    { awardInfo.edizione }
+                    Edizione torneo qui
                 </div>
             </div>
             <Image
-                src={ awardInfo.logo ?? "/backgrounds/trophy.webp" }
-                alt={ awardInfo.titolo }
+                src={ "/backgrounds/trophy.webp" }
+                alt={ "Titolo qui" }
                 width={500}
                 height={500}
                 className={`navbar-card-img relative z-20 object-cover`}

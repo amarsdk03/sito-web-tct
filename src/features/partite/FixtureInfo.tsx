@@ -6,10 +6,14 @@ import {motion} from "framer-motion";
 import {useSearchParams} from "next/navigation";
 import {Suspense, useEffect, useMemo, useRef, useState} from "react";
 
-import ErrorInfo from "@/components/data-info/ErrorInfo";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
+import {calcolaStatoPartita, string_to_snake_case} from "@/lib/utils";
 import {azioniPartitaType, datiPartitaType, getAzioniPartita, getDatiPartita} from "@/features/partite/queries";
 import {formazioneSquadraType, getFormazioneSquadra} from "@/features/squadre/queries";
+
+import ErrorInfo from "@/components/data-info/ErrorInfo";
+import LoadingInfo from "@/components/data-info/LoadingInfo";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
+import FixtureActionList from "@/features/partite/components/FixtureActionList";
 import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
 
 import Navbar from "@/components/navbar/Navbar";
@@ -19,11 +23,9 @@ import {Separator} from "@/components/ui/separator";
 import {Badge} from "@/components/ui/badge";
 import {Spinner} from "@/components/ui/spinner";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
-import {RiCheckboxBlankCircleFill} from "@remixicon/react";
+import {RiCheckboxBlankCircleFill, RiFlag2Line, RiStopFill} from "@remixicon/react";
 import {TextIcon, UserIcon} from "lucide-react";
-import FixtureActionList from "@/features/partite/components/FixtureActionList";
-import {string_to_snake_case} from "@/lib/utils";
-import WrongDataContact from "@/components/data-info/WrongDataContact";
+import {DEFAULT_COLORE_SQUADRA_CASA, DEFAULT_COLORE_SQUADRA_OSPITE} from "@/const/defaultConstants";
 
 export default function FixtureInfo() {
     return (
@@ -108,7 +110,7 @@ export function FixtureInfoContent() {
 
             const nomeGiocatore = azione.p_nome && azione.p_cognome
                 ? `${azione.p_nome} ${azione.p_cognome}`
-                : "Sconosciuto";
+                : "";
 
             const isHomeTeam = azione.id_squadra_azione === azione.p_id_squadra_casa;
 
@@ -158,12 +160,12 @@ export function FixtureInfoContent() {
         )
     }
 
-    const inCorso = false;
+    const statoPartita = calcolaStatoPartita(datiPartita.fischio_inizio, datiPartita.durata_partita);
     const aiCalciDiRigore = (datiPartita.rigori_casa && datiPartita.rigori_casa > 0) || (datiPartita.rigori_ospite && datiPartita.rigori_ospite > 0);
     const esitoRigori = (datiPartita.rigori_casa?.toString() || "?") + " - " + (datiPartita.rigori_ospite?.toString() || "?");
 
-    const coloreCasa = datiPartita.squadra_casa_colore || "#dddddd";
-    const coloreOspiti = datiPartita.squadra_ospite_colore || "#aaaaaa";
+    const coloreCasa = datiPartita.squadra_casa_colore || DEFAULT_COLORE_SQUADRA_CASA;
+    const coloreOspiti = datiPartita.squadra_ospite_colore || DEFAULT_COLORE_SQUADRA_OSPITE;
 
     return (
         <div className={"page-container"}>
@@ -177,17 +179,41 @@ export function FixtureInfoContent() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0, }}
                     transition={{ duration: 0.3, delay: 0.1 }}
-                    className={"flex flex-col flex-wrap items-center mt-6 sm:mt-10 mb-6 sm:mb-0"}
+                    className={"flex flex-col flex-wrap items-center mt-9 sm:mt-10 mb-6 sm:mb-0"}
                 >
                     {
-                        inCorso && (
-                            <Badge variant="destructive" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
-                                <RiCheckboxBlankCircleFill className={"live-circle"} />
-                                In corso
-                            </Badge>
-                        )
+                        (() => {
+                            switch (statoPartita) {
+                                case "In arrivo":
+                                    return (
+                                        <Badge variant="outline" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
+                                            <RiFlag2Line />
+                                            Prossimamente
+                                        </Badge>
+                                    );
+
+                                case "In corso":
+                                    return (
+                                        <Badge variant="destructive" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
+                                            <RiCheckboxBlankCircleFill className={"live-circle"} />
+                                            In corso
+                                        </Badge>
+                                    );
+
+                                case "Terminata":
+                                    return (
+                                        <Badge variant="outline" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
+                                            <RiStopFill />
+                                            Terminata
+                                        </Badge>
+                                    );
+
+                                default:
+                                    return <></>;
+                            }
+                        })()
                     }
-                    <div className={"w-full sm:w-1/2 integral-title-hover font-bold text-center flex text-7xl mb-2 sm:mb-2"}>
+                    <div className={"w-full sm:w-1/2 integral-title-hover font-bold text-center flex text-7xl mb-3 sm:mb-4"}>
                         <span className={"flex-1"}>
                             {datiPartita.goal_casa ?? "?"}
                         </span>
@@ -271,8 +297,12 @@ export function FixtureInfoContent() {
                                             })}
                                         </div>
 
-                                        <span className={"truncate text-ellipsis"}>
-                                            {scorer.name}
+                                        <span className={"truncate text-ellipsis pe-0.5"}>
+                                            {
+                                                scorer.name.length > 0 ? scorer.name : (
+                                                    <i>Sconosciuto</i>
+                                                )
+                                            }
                                         </span>
                                     </div>
                                 ))}
@@ -289,8 +319,12 @@ export function FixtureInfoContent() {
                             <div className={"flex items-center justify-end flex-col mt-4 sm:mt-4 gap-2"}>
                                 {marcatoriGoal.away.map((scorer, idx) => (
                                     <div key={idx} className="flex items-center justify-end gap-2 w-full">
-                                        <span className={"truncate text-ellipsis"}>
-                                            {scorer.name}
+                                        <span className={"truncate text-ellipsis ps-0.5"}>
+                                            {
+                                                scorer.name.length > 0 ? scorer.name : (
+                                                    <i>Sconosciuto</i>
+                                                )
+                                            }
                                         </span>
 
                                         <div className="flex items-center justify-end gap-0.5">
@@ -385,7 +419,7 @@ export function FixtureInfoContent() {
                         Azioni principali
                     </div>
                     {
-                        azioniPartita ? (
+                        azioniPartita && azioniPartita.length > 0 ? (
                             <FixtureActionList
                                 azioniPartita={azioniPartita}
                                 coloreSquadraCasa={coloreCasa}

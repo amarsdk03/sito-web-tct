@@ -2,15 +2,15 @@
 
 import {RiNotification2Line} from "@remixicon/react";
 
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {
     Dialog,
     DialogClose,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
     DialogTrigger,
 } from "@/components/ui/dialog"
 

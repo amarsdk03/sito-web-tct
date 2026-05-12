@@ -5,8 +5,8 @@ import {Button} from "@/components/ui/button"
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/ui/sheet"
 import NavbarMenuCard from "@/components/navbar/NavbarMenuCard";
 import {RiMenuLine} from "@remixicon/react";
-import {navbarLinks} from "@/const/page-cards";
-import {NOME_ULTIMA_EDIZIONE} from "@/const/main-constants";
+import {navbarLinks} from "@/const/pageCards";
+import {DEFAULT_NOME_ULTIMA_EDIZIONE} from "@/const/defaultConstants";
 
 export function NavbarMenu({ showCurrentPage = true } : { showCurrentPage?: boolean }) {
     const pathname = usePathname();
@@ -33,7 +33,7 @@ export function NavbarMenu({ showCurrentPage = true } : { showCurrentPage?: bool
                         Torneo della Città di Trento
                     </SheetTitle>
                     <SheetDescription className={"text-lg -translate-y-1"}>
-                        {NOME_ULTIMA_EDIZIONE}
+                        {DEFAULT_NOME_ULTIMA_EDIZIONE}
                     </SheetDescription>
                 </SheetHeader>
                 <div className="no-scrollbar overflow-y-auto px-6 pb-4">

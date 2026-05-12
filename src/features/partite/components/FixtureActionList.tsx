@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo } from "react";
-import { azioniPartitaType } from "@/features/partite/queries";
+import * as React from "react";
+import {useMemo} from "react";
+import {azioniPartitaType} from "@/features/partite/queries";
 
 import {Progress as ProgressPrimitive} from "radix-ui";
-import * as React from "react";
 import {string_to_snake_case} from "@/lib/utils";
 import Image from "next/image";
 
@@ -85,7 +85,7 @@ export default function FixtureActionList(
 
             const playerName = azione.p_nome && azione.p_cognome
                 ? `${azione.p_nome} ${azione.p_cognome}`
-                : "Sconosciuto";
+                : "";
 
             if (isHomeTeam) {
                 grouped[azione.a_tipo].home.players.push({
@@ -151,7 +151,12 @@ export default function FixtureActionList(
                                                 key={`home-${player.playerId}-${idx}`}
                                                 className="text-xs md:text-sm text-mist-400 hover:text-mist-200 transition-colors"
                                             >
-                                                {player.playerName}
+
+                                                {
+                                                    player.playerName.length > 0 ? player.playerName : (
+                                                        <i>Sconosciuto</i>
+                                                    )
+                                                }
                                             </div>
                                         ))
                                     )
@@ -166,7 +171,11 @@ export default function FixtureActionList(
                                                 key={`away-${player.playerId}-${idx}`}
                                                 className="text-xs md:text-sm text-mist-400 hover:text-mist-200 transition-colors"
                                             >
-                                                {player.playerName}
+                                                {
+                                                    player.playerName.length > 0 ? player.playerName : (
+                                                        <i>Sconosciuto</i>
+                                                    )
+                                                }
                                             </div>
                                         ))
                                     )

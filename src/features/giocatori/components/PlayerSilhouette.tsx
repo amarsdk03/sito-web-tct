@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from "react";
+import {useEffect, useRef} from "react";
+import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 
 interface PlayerSilhouetteProps {
     teamColor: string;
@@ -118,7 +119,7 @@ export default function PlayerSilhouette(
 
                     ctx.drawImage(logoTorneo, logoX, logoY, logoWidth, logoHeight);
                 };
-                logoTorneo.src = "/logo_eagle_only.png";
+                logoTorneo.src = DEFAULT_LOGO_PATH;
 
                 // Draw squad logo
                 if (teamBadge) {

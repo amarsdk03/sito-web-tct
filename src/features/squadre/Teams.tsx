@@ -2,7 +2,7 @@
 
 import {Suspense, useEffect, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {motion, AnimatePresence} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 import {getListaSquadre, listaSquadreType} from "@/features/squadre/queries";
 
@@ -13,11 +13,7 @@ import PageTitle from "@/components/text/PageTitle";
 import TeamInfoCard from "@/features/squadre/components/TeamInfoCard";
 import TeamSearchFilters from "@/features/squadre/components/TeamSearchFilters";
 
-import {
-    Empty, EmptyContent, EmptyDescription,
-    EmptyHeader,
-    EmptyTitle,
-} from "@/components/ui/empty"
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty"
 import {Field} from "@/components/ui/field";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -46,8 +42,8 @@ export function TeamsContent() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const searchParamName = 'q';
-    const torneoParamName = 't';
+    const searchParamName = 'ricerca';
+    const torneoParamName = 'edizione';
     const pageParamName = 'p';
 
     const searchQueryFromParams = searchParams?.get(searchParamName) ?? '';

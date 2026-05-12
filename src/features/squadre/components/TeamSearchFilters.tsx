@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 
 import {listaTorneiType} from "@/features/tornei/queries";
@@ -9,14 +9,15 @@ import {
     SelectGroup,
     SelectItem,
     SelectLabel,
+    SelectSeparator,
     SelectTrigger,
     SelectValue,
-    SelectSeparator,
 } from "@/components/ui/select";
 import {
     Dialog,
     DialogClose,
-    DialogContent, DialogDescription,
+    DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,

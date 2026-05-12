@@ -30,23 +30,21 @@ import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 import ShareProfileDialog from "@/features/giocatori/components/ShareProfileDialog";
 import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
 import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
-import AwardCardInfo from "@/components/awards/AwardCardInfo";
 
-import {
-    Calendar1,
-    FlagIcon,
-    FootprintsIcon,
-    PencilRulerIcon,
-    RulerIcon,
-    WeightIcon,
-} from "lucide-react";
+import {Calendar1, FlagIcon, FootprintsIcon, PencilRulerIcon, RulerIcon, WeightIcon,} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {Separator} from "@/components/ui/separator";
 import {RiInstagramLine} from "@remixicon/react";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
-import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_COLORE_SQUADRA_CASA,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH
+} from "@/const/defaultConstants";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 export default function PlayerInfo() {
@@ -132,11 +130,11 @@ export function PlayerInfoContent() {
         finish: { opacity: 1, x: 0, },
     }
 
-    const stemmaSquadra = datiSquadra?.link_stemma ?? "/logo_eagle_only.png";
-    const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
-    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+    const stemmaSquadra = datiSquadra?.link_stemma ?? DEFAULT_LOGO_PATH;
+    const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : DEFAULT_COLORE_SQUADRA_CASA;
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
         ? coloreSquadra
-        : "#bdbdbd";
+        : DEFAULT_FALLBACK_COLOR;
 
     if (loading) {
         return (
@@ -162,9 +160,10 @@ export function PlayerInfoContent() {
                 <PageTitle
                     title={"Dettagli giocatore"}
                     smallerTitle={true}
+                    withGoBackBtn={true}
                 />
 
-                <div className={"sm:flex items-center w-full gap-10 mt-6"}>
+                <div className={"sm:flex items-center w-full gap-10"}>
                     <motion.div
                         variants={slideAnim}
                         initial={"start"}
@@ -222,7 +221,7 @@ export function PlayerInfoContent() {
                                 className={"flex items-center gap-2"}
                             >
                                 <Image
-                                    src={datiSquadra.link_stemma || "/logo_eagle_only.png"}
+                                    src={datiSquadra.link_stemma || DEFAULT_LOGO_PATH}
                                     alt="Stemma squadra"
                                     width={30}
                                     height={30}

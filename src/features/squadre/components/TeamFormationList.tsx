@@ -9,7 +9,7 @@ import {formazioneSquadraType} from "@/features/squadre/queries";
 import PlayerSilhouette from "@/features/giocatori/components/PlayerSilhouette";
 import {Badge} from "@/components/ui/badge";
 import {calcolaRapportoContrasto} from "@/lib/utils";
-import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import {DEFAULT_BACKGROUND_COLOR, DEFAULT_CONTRAST_RATIO, DEFAULT_FALLBACK_COLOR} from "@/const/defaultConstants";
 
 interface TeamComponentsTableProps {
     showAsSilhouette?: boolean,
@@ -46,9 +46,9 @@ export const TeamFormationList = memo(
             null
         ], []);
 
-        const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+        const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
             ? coloreSquadra
-            : "#bdbdbd";
+            : DEFAULT_FALLBACK_COLOR;
 
         return roles.map((role) => {
             const playersWithRole = normalizedFormation.filter(
@@ -78,16 +78,18 @@ export const TeamFormationList = memo(
 
                                         return (
                                         <Link key={f.giocatore.id} href={"/giocatori/dettagli?id=" + f.giocatore.id}>
-                                            <div className={"text-2xl font-medium bg-zinc-800 rounded-lg h-full flex flex-col"}>
+                                            <div className={"text-sm sm:text-lg lg:text-2xl font-medium bg-zinc-800 rounded-lg h-full flex flex-col"}>
                                                 <div className={"relative min-w-32 sm:min-w-54 mx-0 overflow-hidden flex-1"}>
                                                     <div className="integral-title absolute top-0 w-full p-4 z-0">
-                                                        <div className="flex justify-between not-italic text-md tracking-wider">
+                                                        <div className="flex justify-between items-start not-italic tracking-wider">
                                                             <div className={"flex flex-col items-start gap-0.5"}>
-                                                                <span>{f.giocatore.nome_maglia}</span>
+                                                                <span className={"text-xs"}>
+                                                                    {f.giocatore.nome_maglia}
+                                                                </span>
                                                                 {
                                                                     (idCapitano === f.giocatore.id || f.giocatore.is_capitano) && (
                                                                         <span
-                                                                            className={"text-[0.6em]"}
+                                                                            className={"text-[0.5em]"}
                                                                             style={{color: coloreSquadra}}
                                                                         >
                                                                             Capitano
@@ -95,7 +97,9 @@ export const TeamFormationList = memo(
                                                                     )
                                                                 }
                                                             </div>
-                                                            <span>{f.giocatore.numero_maglia && "#" + f.giocatore.numero_maglia}</span>
+                                                            <span className={"-mt-0.75"}>
+                                                                {f.giocatore.numero_maglia && "#" + f.giocatore.numero_maglia}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className={"player-anim-hover flex justify-center"}>

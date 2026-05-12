@@ -4,6 +4,7 @@ import Image from "next/image";
 import {listaGiocatoriType} from "@/features/giocatori/queries";
 
 import {Card} from "@/components/ui/card";
+import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 
 export default function PlayerInfoCard({infoGiocatore}: { infoGiocatore: listaGiocatoriType }) {
     const idGiocatore = infoGiocatore.g_id;
@@ -11,14 +12,14 @@ export default function PlayerInfoCard({infoGiocatore}: { infoGiocatore: listaGi
     const ruolo = infoGiocatore.g_ruolo_principale;
 
     const nomeSquadra = infoGiocatore.s_nome;
-    const linkBadgeSquadra = infoGiocatore.s_link_stemma ?? "/logo_eagle_only.png";
-    const coloreSquadra = infoGiocatore.s_colore_squadra || "#222222";
+    const linkBadgeSquadra = infoGiocatore.s_link_stemma ?? DEFAULT_LOGO_PATH;
+    const coloreSfondoCard = infoGiocatore.s_colore_squadra || "#222222";
 
     return (
         <Link href={`/giocatori/dettagli?id=${idGiocatore}`}>
             <Card className={`h-full flex flex-row p-4 md:px-6`}
                   style={{
-                      background: `linear-gradient(145deg, ${coloreSquadra}70 0%, ${coloreSquadra}e3 100%)`,
+                      background: `linear-gradient(145deg, ${coloreSfondoCard}70 0%, ${coloreSfondoCard}e3 100%)`,
                   }}
             >
                 <div className="flex-shrink-0 squad-result-badge flex items-center justify-center">

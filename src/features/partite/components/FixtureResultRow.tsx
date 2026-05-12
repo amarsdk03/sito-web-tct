@@ -11,7 +11,7 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
 
     return (
         <Link href={`/partite/dettagli?id=${partita.id_partita}`}>
-            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-gray-500/25 p-4 sm:p-6 mb-4 rounded-xl"}>
+            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-stone-600/50 p-4 sm:p-6 mb-4 rounded-xl"}>
                 <div className={"flex flex-row lg:flex-col justify-between text-start w-full lg:w-36"}>
                     <div className={"text-gray-300 sm:text-gray-100 text-xs sm:text-base font-bold"}>
                         { partita.fase || partita.giornata || "?" }

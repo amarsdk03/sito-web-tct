@@ -3,6 +3,7 @@ import Image from "next/image";
 import NavbarNewsDialog from "@/components/navbar/NavbarNewsDialog";
 import {NavbarMenu} from "@/components/navbar/NavbarMenu";
 import Link from "next/link";
+import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 
 interface NavbarProps {
     noButtons?: boolean
@@ -18,8 +19,8 @@ export default function Navbar({noButtons = false}: NavbarProps) {
                 <div className="flex justify-center items-center col-span-3 h-16">
                     <Link href={"/"} className={"navbar-link"}>
                         <Image
-                            src="/logo_eagle_only.png"
-                            alt="Logo torneo"
+                            src={DEFAULT_LOGO_PATH}
+                            alt={"Logo torneo"}
                             width={150}
                             height={150}
                             className={"navbar-logo"}

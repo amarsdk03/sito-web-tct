@@ -4,9 +4,10 @@ import Image from "next/image";
 import {listaSquadreContateType} from "@/features/squadre/Teams";
 
 import {Card} from "@/components/ui/card";
+import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 
 export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreContateType }) {
-    const linkStemma = infoSquadra.s_link_stemma ?? "/logo_eagle_only.png";
+    const linkStemma = infoSquadra.s_link_stemma ?? DEFAULT_LOGO_PATH;
     const coloreSquadra = infoSquadra.s_colore_squadra || "#222222";
 
     return (

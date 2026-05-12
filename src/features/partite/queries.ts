@@ -2,7 +2,6 @@
 
 import {createClient} from '@/lib/supabase/client';
 import {QueryData} from '@supabase/supabase-js';
-import {listaTorneiType} from "@/features/tornei/queries";
 
 const supabase = createClient();
 

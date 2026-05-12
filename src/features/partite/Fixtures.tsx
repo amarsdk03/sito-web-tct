@@ -2,7 +2,7 @@
 
 import {Suspense, useEffect, useMemo, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {motion, AnimatePresence} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 import {getListaPartite, listaPartiteType} from "@/features/partite/queries";
 
@@ -14,11 +14,7 @@ import PageTitle from "@/components/text/PageTitle";
 import FixtureResultRow from "@/features/partite/components/FixtureResultRow";
 import FixtureSearchFilters from "@/features/partite/components/FixtureSearchFilters";
 
-import {
-    Empty, EmptyContent, EmptyDescription,
-    EmptyHeader,
-    EmptyTitle,
-} from "@/components/ui/empty";
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
@@ -41,9 +37,9 @@ export function FixturesContent() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const torneoParamName = 't';
-    const categoriaParamName = 'c';
-    const gironeParamName = 'g';
+    const torneoParamName = 'edizione';
+    const categoriaParamName = 'categoria';
+    const gironeParamName = 'girone';
 
     const torneoParam = Number.parseInt(searchParams?.get(torneoParamName) ?? "-1");
     const categoriaParam = searchParams?.get(categoriaParamName) ?? undefined;

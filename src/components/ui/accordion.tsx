@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { Accordion as AccordionPrimitive } from "radix-ui"
+import {Accordion as AccordionPrimitive} from "radix-ui"
 
-import { cn } from "@/lib/utils"
-import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react"
+import {cn} from "@/lib/utils"
+import {RiArrowDownSLine, RiArrowUpSLine} from "@remixicon/react"
 
 function Accordion({
   className,

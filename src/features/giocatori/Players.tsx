@@ -2,7 +2,7 @@
 
 import {Suspense, useEffect, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {motion, AnimatePresence} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import {getListaGiocatori, listaGiocatoriType} from "@/features/giocatori/queries";
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 
@@ -13,11 +13,7 @@ import PageTitle from "@/components/text/PageTitle";
 import PlayerInfoCard from "@/features/giocatori/components/PlayerInfoCard";
 import {SearchPagination} from "@/components/search/SearchPagination";
 
-import {
-    Empty, EmptyContent, EmptyDescription,
-    EmptyHeader,
-    EmptyTitle,
-} from "@/components/ui/empty"
+import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty"
 import {Field} from "@/components/ui/field";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -45,10 +41,10 @@ export function PlayersContent() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const searchParamName = 'q';
-    const torneoParamName = 't';
+    const searchParamName = 'ricerca';
+    const torneoParamName = 'edizione';
     const pageParamName = 'p';
-    const resultsPerPage = 20;
+    const maxResultsPerPage = 20;
 
     const searchQueryFromParams = searchParams?.get(searchParamName) ?? '';
     const torneoParam = searchParams?.get(torneoParamName) ?? null;
@@ -97,7 +93,7 @@ export function PlayersContent() {
                     searchQueryFromParams,
                     selectedTorneoId,
                     pageParam,
-                    resultsPerPage,
+                    maxResultsPerPage,
                 );
                 setListaGiocatori(giocatori.result);
                 setCount(giocatori.count || 0);
@@ -158,10 +154,10 @@ export function PlayersContent() {
             <div className={"page-content mt-2 lg:mt-8"}>
                 <PageTitle
                     title={"Giocatori"}
-                    description={""/*"Tutti i giocatori iscritti alle varie edizioni del torneo, sia passate che attuali"*/}
+                    description={"Tutti i giocatori iscritti alle varie edizioni del torneo, sia passate che attuali"}
                 />
-                <div className={"w-full font-medium text-base text-amber-200 mt-2"}>
-                    NB: i giocatori iscritti alle edizioni passate saranno aggiunti il prima possibile!
+                <div className={"w-full text-sm text-amber-200 mt-3"}>
+                    <b>NB:</b> alcuni giocatori delle edizioni passate potrebbero <b>non essere disponibili</b>
                 </div>
                 <div className={"w-full mt-6"}>
                     <Field className="w-full min-w-full sm:min-w-96">
@@ -257,7 +253,7 @@ export function PlayersContent() {
                                     searchParams={searchParams}
                                     pageParamName={pageParamName}
                                     totalResults={count}
-                                    resultsPerPage={resultsPerPage}
+                                    resultsPerPage={maxResultsPerPage}
                                     currentPage={pageParam}
                                 />
                                 <div className="text-center text-gray-500 mt-2">

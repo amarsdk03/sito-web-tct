@@ -1,8 +1,9 @@
+import {navbarLinks} from "@/const/pageCards";
+
 import Navbar from "@/components/navbar/Navbar";
-import PageTitle from "@/components/text/PageTitle";
 import Footer from "@/components/footer/Footer";
+import PageTitle from "@/components/text/PageTitle";
 import NavbarMenuCard from "@/components/navbar/NavbarMenuCard";
-import {navbarLinks} from "@/const/page-cards";
 
 export default function Homepage() {
     return (

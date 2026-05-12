@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useRef, useState } from "react";
+import {useRef, useState} from "react";
 
 import {datiSquadraType} from "@/features/squadre/queries";
 import {profiloGiocatoreType, statisticheGiocatoreType} from "@/features/giocatori/queries";
@@ -7,16 +7,23 @@ import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 
 import {
     Dialog,
-    DialogContent, DialogDescription,
+    DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { RiShareFill, RiDownloadCloud2Line, RiInstagramLine, RiGlobalLine, RiLink } from "@remixicon/react";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {RiDownloadCloud2Line, RiGlobalLine, RiInstagramLine, RiLink, RiShareFill} from "@remixicon/react";
 import {calcolaRapportoContrasto} from "@/lib/utils";
-import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH,
+    DEFAULT_PUBLIC_SITE_URL
+} from "@/const/defaultConstants";
 
 interface ShareProfileDialogProps {
     datiGiocatore: profiloGiocatoreType;
@@ -87,9 +94,9 @@ export default function ShareProfileDialog(
         }
     };
 
-    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
         ? coloreSquadra
-        : "#bdbdbd";
+        : DEFAULT_FALLBACK_COLOR;
 
     return (
         <Dialog>
@@ -117,18 +124,29 @@ export default function ShareProfileDialog(
 
                 <div
                     ref={cardRef}
-                    className="relative rounded-2xl p-8 py-6 text-white"
+                    className="relative rounded-2xl p-8 py-6 text-white overflow-hidden"
                     style={{
                         background: `linear-gradient(135deg, ${coloreSquadra}CC 0%, ${coloreSquadra}88 100%)`,
                     }}
                 >
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <Image
+                            src={DEFAULT_LOGO_PATH}
+                            alt="Logo torneo"
+                            width={350}
+                            height={350}
+                            className="opacity-[0.1] scale-[1.75] object-contain"
+                            draggable={false}
+                        />
+                    </div>
+
                     <div className="relative z-10 space-y-6 no-scrollbar max-h-[60vh] pb-1 overflow-x-hidden overflow-y-auto">
 
                         <div className="flex items-start justify-between break-all">
                             <div className="flex-1 text-md font-bold opacity-90 pe-8">
                                 <div className="flex items-center gap-1 mb-2">
                                     <Image
-                                        src={datiSquadra.link_stemma ?? "/logo_eagle_only.png"}
+                                        src={datiSquadra.link_stemma ?? DEFAULT_LOGO_PATH}
                                         alt="Stemma squadra"
                                         width={20}
                                         height={20}
@@ -250,13 +268,13 @@ export default function ShareProfileDialog(
                             </div>
                         )}
 
-                        <div className="pt-5 border-t border-white border-opacity-20">
-                            <div className="flex items-center text-xs uppercase tracking-widest opacity-75 mb-1">
-                                <RiGlobalLine className={"size-5 me-1"} />
-                                www.torneo-citta-di-trento.it
+                        <div className="flex justify-around items-center gap-2 text-[0.9em] pt-5 border-t border-white border-opacity-20">
+                            <div className="flex items-center tracking-wider opacity-75">
+                                <RiGlobalLine className={"size-4 me-1 text-blue-500"} />
+                                { DEFAULT_PUBLIC_SITE_URL.replace("https://", "") }
                             </div>
-                            <div className="flex items-center text-xs uppercase tracking-widest opacity-75">
-                                <RiInstagramLine className={"size-5 me-1"} />
+                            <div className="flex items-center tracking-wider opacity-75">
+                                <RiInstagramLine className={"size-4 me-1 text-pink-400"} />
                                 @torneocittaditrento
                             </div>
                         </div>

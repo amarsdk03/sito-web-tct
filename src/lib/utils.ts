@@ -21,6 +21,34 @@ export function calcolaEta(dataDiNascita: Date) {
     return eta;
 }
 
+type statoPartita = "In arrivo" | "In corso" | "Terminata";
+
+export function calcolaStatoPartita(
+    fischioInizio: string | null,
+    durataPartita: number | null
+): statoPartita | null {
+    if (!fischioInizio || durataPartita == null) {
+        return null;
+    }
+
+    const now = new Date();
+    const inizio = new Date(fischioInizio);
+
+    const fine = new Date(
+        inizio.getTime() + durataPartita * 60 * 1000
+    );
+
+    if (now < inizio) {
+        return "In arrivo";
+    }
+
+    if (now >= inizio && now < fine) {
+        return "In corso";
+    }
+
+    return "Terminata";
+}
+
 export function string_to_snake_case(str: string | null) {
     const matches = str && str.match(
         /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g

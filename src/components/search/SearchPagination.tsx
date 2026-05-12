@@ -65,7 +65,7 @@ export function SearchPagination({
         const params = new URLSearchParams(searchParams);
         params.set(pageParamName, page.toString());
         return `${pathname}?${params.toString()}`;
-    };
+    }
 
     return (
         <Pagination>

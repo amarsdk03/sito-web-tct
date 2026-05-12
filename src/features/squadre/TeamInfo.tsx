@@ -7,8 +7,10 @@ import {Suspense, useEffect, useRef, useState} from "react";
 import {usePathname, useSearchParams} from "next/navigation";
 
 import {
-    datiSquadraType, formazioneSquadraType,
-    getDatiSquadra, getFormazioneSquadra,
+    datiSquadraType,
+    formazioneSquadraType,
+    getDatiSquadra,
+    getFormazioneSquadra,
     getStatisticheSquadra,
     statisticheSquadraType
 } from "@/features/squadre/queries";
@@ -22,12 +24,12 @@ import {TeamFormationList} from "@/features/squadre/components/TeamFormationList
 import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
 
 import {
-    ShieldUserIcon,
-    HistoryIcon,
-    Tally5Icon,
     CalendarCheckIcon,
     CalendarFoldIcon,
     CalendarMinusIcon,
+    HistoryIcon,
+    ShieldUserIcon,
+    Tally5Icon,
 } from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
@@ -36,7 +38,13 @@ import {Spinner} from "@/components/ui/spinner";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
 import {calcolaRapportoContrasto} from "@/lib/utils";
-import {BACKGROUND_COLOR, CONTRAST_RATIO} from "@/const/main-constants";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_COLORE_SQUADRA_CASA,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH
+} from "@/const/defaultConstants";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 interface statisticheTotaliType {
@@ -260,10 +268,10 @@ export function TeamInfoContent() {
         finish: { opacity: 1, x: 0, },
     }
 
-    const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : "#dddddd";
-    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, BACKGROUND_COLOR) > CONTRAST_RATIO
+    const coloreSquadra = datiSquadra?.colore_squadra ? datiSquadra.colore_squadra : DEFAULT_COLORE_SQUADRA_CASA;
+    const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
         ? coloreSquadra
-        : "#bdbdbd";
+        : DEFAULT_FALLBACK_COLOR;
 
     if (loading) {
         return (
@@ -300,7 +308,7 @@ export function TeamInfoContent() {
                         className={"player-info-stemma"}
                     >
                         <Image
-                            src={datiSquadra.link_stemma ?? "/logo_eagle_only.png"}
+                            src={datiSquadra.link_stemma ?? DEFAULT_LOGO_PATH}
                             alt="Stemma squadra"
                             fill={true}
                             className={`bg-none rounded-full object-cover`}
