@@ -179,9 +179,7 @@ export function PlayerInfoContent() {
                                     </span>
                                     {
                                         datiGiocatore.is_capitano && (
-                                            <span className={"text-[0.6em]"}
-                                                  style={{color: coloreLeggibile}}
-                                            >
+                                            <span className={"text-[0.6em]"} style={{color: coloreLeggibile}} >
                                                 Capitano
                                             </span>
                                         )
@@ -198,8 +196,7 @@ export function PlayerInfoContent() {
                             transition={{ duration: 0.5, delay: 0.3 }}
                             className={"flex justify-center"}
                         >
-                            <div
-                                className={`player-anim-hover max-w-64 pt-5 px-4 translate-y-5`}>
+                            <div className={`player-anim-hover max-w-64 pt-5 px-4 translate-y-5`}>
                                 <PlayerSilhouette
                                     teamColor={coloreSquadra}
                                     teamBadge={datiSquadra.link_stemma || undefined}

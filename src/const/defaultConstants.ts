@@ -11,5 +11,5 @@ export const DEFAULT_NOME_ULTIMA_EDIZIONE = "Quarta edizione - 2025/2026";
 export const DEFAULT_COLORE_SQUADRA_CASA = '#dddddd';
 export const DEFAULT_COLORE_SQUADRA_OSPITE = '#aaaaaa';
 export const DEFAULT_BACKGROUND_COLOR = '#262626';
-export const DEFAULT_CONTRAST_RATIO = 0.2;
+export const DEFAULT_CONTRAST_RATIO = 0.15;
 export const DEFAULT_FALLBACK_COLOR = '#bdbdbd';

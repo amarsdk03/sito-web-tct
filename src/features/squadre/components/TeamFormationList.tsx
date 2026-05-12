@@ -90,7 +90,7 @@ export const TeamFormationList = memo(
                                                                     (idCapitano === f.giocatore.id || f.giocatore.is_capitano) && (
                                                                         <span
                                                                             className={"text-[0.5em]"}
-                                                                            style={{color: coloreSquadra}}
+                                                                            style={{color: coloreLeggibile}}
                                                                         >
                                                                             Capitano
                                                                         </span>
