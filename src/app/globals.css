@@ -116,7 +116,7 @@
 }
 
 .dark {
-    --background: hsl(0, 0%, 15%);
+    --background: hsl(0, 0%, 5%);
     --foreground: oklch(0.987 0.002 197.1);
     --card: oklch(0.218 0.008 223.9);
     --card-foreground: oklch(0.987 0.002 197.1);
@@ -155,11 +155,20 @@
     }
     body {
         background-color: var(--background);
+        position: relative;
+    }
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
 
         /*noinspection CssUnknownTarget*/
         background-image: url("/other/grass_texture.jpg");
-        background-blend-mode: soft-light;
-        background-size: 300px;
+        background-size: 400px;
+        opacity: 0.1;
+
+        pointer-events: none;
+        z-index: -1;
     }
     html {
         @apply font-sans;
@@ -171,7 +180,7 @@
 }
 
 .navbar-div {
-    background-color: #6e9843;
+    background-color: #738e50;
     border-bottom: 2px solid var(--primary);
 
     /*noinspection CssUnknownTarget*/
@@ -186,16 +195,15 @@
 
 .navbar-logo {
     filter: grayscale(25%) brightness(1.1) drop-shadow(0 0 10px #00000050);
-    transform: translateY(6px);
+    transform: translateY(6px) scale(1);
     flex-shrink: 0;
     user-select: none;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.5s ease-in-out;
 }
 
 .navbar-logo:hover {
-    scale: 1.03;
-    translate: 0 1px;
-    filter: grayscale(25%) brightness(1.2) drop-shadow(0 0 10px #00000080);
+    transform: translateY(8px) scale(1.05);
+    filter: grayscale(25%) brightness(1.2) drop-shadow(0 0 12px #000000);
 }
 
 .navbar-menu {
@@ -316,7 +324,7 @@
 
 .squad-result-card > .squad-result-badge {
     transform: scale(1);
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s ease-in-out, translate 0.5s ease-in-out;
 }
 
 .squad-result-card > .squad-result-info {
@@ -325,7 +333,8 @@
 }
 
 .squad-result-card:hover > .squad-result-badge {
-    transform: scale(1.1);
+    transform: scale(1.05);
+    translate: 3px 0;
 }
 
 .squad-result-card:hover > .squad-result-info {

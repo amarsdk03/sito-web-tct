@@ -4,28 +4,35 @@ import Link from "next/link";
 import Image from "next/image";
 import {motion} from "framer-motion";
 import {useSearchParams} from "next/navigation";
-import {Suspense, useEffect, useMemo, useRef, useState} from "react";
+import {Suspense, useEffect, useMemo, useState} from "react";
 
 import {calcolaStatoPartita, string_to_snake_case} from "@/lib/utils";
-import {azioniPartitaType, datiPartitaType, getAzioniPartita, getDatiPartita} from "@/features/partite/queries";
+import {
+    azioniPartitaType,
+    datiCampoType,
+    datiPartitaType,
+    getAzioniPartita, getDatiCampo,
+    getDatiPartita
+} from "@/features/partite/queries";
 import {formazioneSquadraType, getFormazioneSquadra} from "@/features/squadre/queries";
 
 import ErrorInfo from "@/components/data-info/ErrorInfo";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 import FixtureActionList from "@/features/partite/components/FixtureActionList";
-import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
+import {FormationList} from "@/components/formation/FormationList";
+import {DEFAULT_COLORE_SQUADRA_CASA, DEFAULT_COLORE_SQUADRA_OSPITE} from "@/const/defaultConstants";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import PageTitle from "@/components/text/PageTitle";
-import {Separator} from "@/components/ui/separator";
 import {Badge} from "@/components/ui/badge";
 import {Spinner} from "@/components/ui/spinner";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
+import {Tabs, TabsList, TabsTrigger , TabsContent} from "@/components/ui/tabs";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
 import {RiCheckboxBlankCircleFill, RiFlag2Line, RiStopFill} from "@remixicon/react";
 import {TextIcon, UserIcon} from "lucide-react";
-import {DEFAULT_COLORE_SQUADRA_CASA, DEFAULT_COLORE_SQUADRA_OSPITE} from "@/const/defaultConstants";
 
 export default function FixtureInfo() {
     return (
@@ -48,13 +55,12 @@ export function FixtureInfoContent() {
     const [azioniPartita, setAzioniPartita] = useState<azioniPartitaType | null>(null);
     const [formazioneCasa, setFormazioneCasa] = useState<formazioneSquadraType | null>(null);
     const [formazioneOspite, setFormazioneOspite] = useState<formazioneSquadraType | null>(null);
+    const [datiCampo, setDatiCampo] = useState<datiCampoType | null>(null);
 
     const [switchFormationTeam, setSwitchFormationTeam] = useState(true);
     const [switchFormationView, setSwitchFormationView] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -68,24 +74,19 @@ export function FixtureInfoContent() {
                 const idTorneo = datiPartita.torneo_id || -1;
                 const idSquadraCasa = datiPartita.squadra_casa_id || -1;
                 const idSquadraOspite = datiPartita.squadra_ospite_id || -1;
+                const idCampo = datiPartita.campo_svolgimento || -1;
 
-                const [resultAzioniPartita, resultFormazioneCasa, resultFormazioneOspite] = await Promise.all([
+                const [resultAzioniPartita, resultFormazioneCasa, resultFormazioneOspite, resultDatiCampo] = await Promise.all([
                     getAzioniPartita(idPartita),
                     getFormazioneSquadra(idSquadraCasa, idTorneo),
-                    getFormazioneSquadra(idSquadraOspite, idTorneo)
+                    getFormazioneSquadra(idSquadraOspite, idTorneo),
+                    getDatiCampo(idCampo)
                 ]);
 
                 setAzioniPartita(resultAzioniPartita);
-
-                // Aspetto 1 secondo per lasciare che le animazioni dei motion.div siano eseguite senza lag
-                if (timeoutRef.current) {
-                    clearTimeout(timeoutRef.current);
-                }
-
-                timeoutRef.current = setTimeout(() => {
-                    setFormazioneCasa(resultFormazioneCasa);
-                    setFormazioneOspite(resultFormazioneOspite);
-                }, 500);
+                setFormazioneCasa(resultFormazioneCasa);
+                setFormazioneOspite(resultFormazioneOspite);
+                setDatiCampo(resultDatiCampo);
             }
             // eslint-disable-next-line
             catch (error: any) {
@@ -106,7 +107,7 @@ export function FixtureInfoContent() {
 
         azioniPartita.forEach((azione) => {
             // Conto solo azioni correlate a goal segnati
-            if (!azione.a_tipo || !["Goal", "Calcio di rigore segnato", "Autogoal"].includes(azione.a_tipo)) return;
+            if (!azione.a_tipo || !["Goal", "Goal su rigore", "Autogoal"].includes(azione.a_tipo)) return;
 
             const nomeGiocatore = azione.p_nome && azione.p_cognome
                 ? `${azione.p_nome} ${azione.p_cognome}`
@@ -179,7 +180,7 @@ export function FixtureInfoContent() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0, }}
                     transition={{ duration: 0.3, delay: 0.1 }}
-                    className={"flex flex-col flex-wrap items-center mt-9 sm:mt-10 mb-6 sm:mb-0"}
+                    className={"flex flex-col flex-wrap items-center mt-2 sm:mt-4 mb-2 sm:mb-0"}
                 >
                     {
                         (() => {
@@ -213,7 +214,7 @@ export function FixtureInfoContent() {
                             }
                         })()
                     }
-                    <div className={"w-full sm:w-1/2 integral-title-hover font-bold text-center flex text-7xl mb-3 sm:mb-4"}>
+                    <div className={"w-full sm:w-1/2 integral-title-hover font-bold text-center flex text-6xl sm:text-7xl mb-3 sm:mb-4"}>
                         <span className={"flex-1"}>
                             {datiPartita.goal_casa ?? "?"}
                         </span>
@@ -237,12 +238,12 @@ export function FixtureInfoContent() {
                     }
                 </motion.div>
 
-                <div className={"grid grid-cols-5 items-center gap-6 w-full mt-4 sm:mt-8"}>
+                <div className={"grid grid-cols-5 items-center gap-6 w-full sm:mt-4"}>
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0, }}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className={"text-hover-color col-span-2 text-start text-lg sm:text-2xl md:text-4xl text-mist-200 font-extrabold overflow-hidden text-ellipsis"}
+                        className={"text-hover-color col-span-2 text-start text-lg sm:text-2xl md:text-4xl text-mist-300 truncate font-extrabold overflow-hidden text-ellipsis"}
                     >
                         <Link
                             href={"/squadre/dettagli?id=" + datiPartita.squadra_casa_id}
@@ -259,7 +260,7 @@ export function FixtureInfoContent() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0, }}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className={"text-hover-color col-span-2 text-end text-lg sm:text-2xl md:text-4xl text-mist-200 font-extrabold overflow-hidden text-ellipsis"}
+                        className={"text-hover-color col-span-2 text-end text-lg sm:text-2xl md:text-4xl text-mist-300 truncate font-extrabold overflow-hidden text-ellipsis"}
                     >
                         <Link
                             href={"/squadre/dettagli?id=" + datiPartita.squadra_ospite_id}
@@ -269,7 +270,7 @@ export function FixtureInfoContent() {
                     </motion.div>
                 </div>
 
-                <div className={"grid grid-cols-2 gap-4 w-full"}>
+                <div className={"grid grid-cols-2 gap-4 w-full mb-8 sm:mb-12"}>
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -350,170 +351,239 @@ export function FixtureInfoContent() {
                     </motion.div>
                 </div>
 
-                <Separator className={"mt-8 sm:mt-8 mb-8"} />
+                <Tabs defaultValue="info">
+                    <ScrollArea className="w-full overflow-y-clip mb-4">
+                        <TabsList variant="line" className={"py-1"}>
+                            <TabsTrigger value="info" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Info partita
+                            </TabsTrigger>
+                            <TabsTrigger value="formazioni" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Formazioni
+                            </TabsTrigger>
+                            <TabsTrigger value="statistiche" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Statistiche
+                            </TabsTrigger>
+                            <TabsTrigger value="classifica" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Classifica
+                            </TabsTrigger>
+                            <TabsTrigger value="h2h" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Confronto H2H
+                            </TabsTrigger>
+                        </TabsList>
+                        <ScrollBar orientation="horizontal" className={"hidden"} />
+                    </ScrollArea>
 
-                <div className={"space-y-6 w-full"}>
-                    <div className={"grid grid-cols-2 gap-4"}>
-                        <div className={"text-mist-400 text-sm md:text-base"}>
-                            Edizione torneo
-                        </div>
-                        <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                            {datiPartita.torneo_nome}
-                        </div>
-                    </div>
-
-                    <div className={"grid grid-cols-2 gap-4"}>
-                        <div className={"text-mist-400 text-sm md:text-base"}>
-                            Categoria
-                        </div>
-                        <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                            {datiPartita.categoria_nome}
-                        </div>
-                    </div>
-
-                    <div className={"grid grid-cols-2 gap-4"}>
-                        <div className={"text-mist-400 text-sm md:text-base"}>
-                            Fase e giornata
-                        </div>
-                        <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                            {datiPartita.fase || "???"} {datiPartita.giornata && "- " + datiPartita.giornata + "° giornata"}
-                        </div>
-                    </div>
-
-                    <div className={"grid grid-cols-2 gap-4"}>
-                        <div className={"text-mist-400 text-sm md:text-base"}>
-                            Data e ora partita
-                        </div>
-                        <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                            {datiPartita.fischio_inizio ? (
-                                <>
-                                    {new Date(datiPartita.fischio_inizio).toLocaleDateString('it-IT', {
-                                        day: 'numeric',
-                                        month: 'long',
-                                        year: 'numeric'
-                                    })}
-                                    {" - "}
-                                    {new Date(datiPartita.fischio_inizio).toLocaleTimeString('it-IT', {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
-                                </>
-                            ) : "TBD"}
-                        </div>
-                    </div>
-
-                    <div className={"grid grid-cols-2 gap-4"} hidden>
-                        <div className={"text-mist-400 text-sm md:text-base"}>
-                            Luogo partita
-                        </div>
-                        <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                            {datiPartita.campo_svolgimento || "???"}
-                        </div>
-                    </div>
-                </div>
-
-                <Separator className={"mt-8 mb-8 sm:mb-14"} />
-
-                <div>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-6 sm:mb-6"}>
-                        Azioni principali
-                    </div>
-                    {
-                        azioniPartita && azioniPartita.length > 0 ? (
-                            <FixtureActionList
-                                azioniPartita={azioniPartita}
-                                coloreSquadraCasa={coloreCasa}
-                                coloreSquadraOspite={coloreOspiti}
-                            />
-                        ) : (
-                            <div className={"w-full"}>
-                                <div className={"text-zinc-400 font-semibold text-sm md:text-xl"}>
-                                    Nessuna azione registrata per questa partita.
+                    <TabsContent value="info" className={"space-y-4"}>
+                        <div className={"space-y-6 w-full bg-mist-800/50 p-6 rounded-lg"}>
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Edizione torneo
+                                </div>
+                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                    {datiPartita.torneo_nome}
                                 </div>
                             </div>
-                        )
-                    }
-                </div>
 
-                <Separator className={"my-8 sm:my-14"} />
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Fase e giornata
+                                </div>
+                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                    {datiPartita.fase || "???"}{datiPartita.giornata && " - " + datiPartita.giornata + "° giornata"}
+                                </div>
+                            </div>
 
-                <div>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Formazioni squadre
-                    </div>
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Categoria
+                                </div>
+                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                    {datiPartita.categoria_nome}
+                                </div>
+                            </div>
+                        </div>
 
-                    <div className={"w-full flex justify-center gap-4 mt-6 mb-10"}>
-                        <ToggleGroup
-                            variant="outline"
-                            type="single"
-                            defaultValue={switchFormationTeam ? "home" : "away"}
-                            onValueChange={(v) => {
-                                setSwitchFormationTeam(v === "home");
-                            }}
-                            className={"w-full"}
-                        >
-                            <ToggleGroupItem value="home" aria-label="Squadra casa" className={"w-1/2"}>
-                                { datiPartita.squadra_casa_nome }
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="away" aria-label="Squadra ospite" className={"w-1/2"}>
-                                { datiPartita.squadra_ospite_nome }
-                            </ToggleGroupItem>
-                        </ToggleGroup>
-                        <ToggleGroup
-                            variant="outline"
-                            type="single"
-                            defaultValue={switchFormationView ? "viewSilhouette" : "viewText"}
-                            onValueChange={(v) => {
-                                setSwitchFormationView(v === "viewSilhouette");
-                            }}
-                        >
-                            <ToggleGroupItem value="viewText" aria-label="Come testo">
-                                <TextIcon/>
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="viewSilhouette" aria-label="Come immagini">
-                                <UserIcon/>
-                            </ToggleGroupItem>
-                        </ToggleGroup>
-                    </div>
-                    <div hidden={!switchFormationTeam}>
+                        <div className={"space-y-6 w-full bg-mist-800/50 p-6 rounded-lg"}>
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Data e ora partita
+                                </div>
+                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                    {datiPartita.fischio_inizio ? (
+                                        <>
+                                            {new Date(datiPartita.fischio_inizio).toLocaleDateString('it-IT', {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            })}
+                                            {" - "}
+                                            {new Date(datiPartita.fischio_inizio).toLocaleTimeString('it-IT', {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </>
+                                    ) : "TBD"}
+                                </div>
+                            </div>
+
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Arbitrato da
+                                </div>
+                                <div className={"text-mist-500 font-semibold text-sm md:text-base text-end"}>
+                                    { "Nessun arbitro specificato" }
+                                </div>
+                            </div>
+                        </div>
+
+                        {datiCampo && (
+                            <div className={"w-full grid md:grid-cols-7 bg-mist-800/50 p-6 rounded-lg"}>
+                                <div className={"space-y-2 col-span-3 mb-8 sm:me-6"}>
+                                    <div className={"text-mist-400 text-sm md:text-base"}>
+                                        Luogo partita
+                                    </div>
+                                    <div className={"text-mist-200 font-bold text-xl md:text-2xl"}>
+                                        {datiCampo[0].nome || "Non disponibile"}
+                                    </div>
+                                    <div className={"text-mist-300 font-medium text-sm md:text-base"}>
+                                        {datiCampo[0].indirizzo || "Non disponibile"}
+                                    </div>
+                                </div>
+
+                                {
+                                    datiCampo[0].link_google_maps && (
+                                        <div className={"w-full col-span-4 rounded"}>
+                                            <iframe
+                                                src={datiCampo[0].link_google_maps}
+                                                width="100%"
+                                                height="250"
+                                                loading="lazy"
+                                                referrerPolicy="no-referrer-when-downgrade"
+                                            />
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        )}
+                    </TabsContent>
+
+                    <TabsContent value="formazioni" className={"px-2 sm:px-0"}>
+                        <div className={"w-full flex justify-center gap-4 mb-6 sm:mb-10"}>
+                            <ToggleGroup
+                                variant="outline"
+                                type="single"
+                                defaultValue={switchFormationTeam ? "home" : "away"}
+                                onValueChange={(v) => {
+                                    if (v) setSwitchFormationTeam(v === "home");
+                                }}
+                                className="w-full min-w-0"
+                            >
+                                <ToggleGroupItem
+                                    value="home"
+                                    aria-label="Squadra casa"
+                                    className="w-1/2 min-w-0 px-2"
+                                >
+                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.5 sm:translate-y-0">
+                                        {datiPartita.squadra_casa_nome}
+                                    </span>
+                                </ToggleGroupItem>
+
+                                <ToggleGroupItem
+                                    value="away"
+                                    aria-label="Squadra ospite"
+                                    className="w-1/2 min-w-0 px-2"
+                                >
+                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.5 sm:translate-y-0">
+                                        {datiPartita.squadra_ospite_nome}
+                                    </span>
+                                </ToggleGroupItem>
+                            </ToggleGroup>
+                            <ToggleGroup
+                                variant="outline"
+                                type="single"
+                                defaultValue={switchFormationView ? "viewSilhouette" : "viewText"}
+                                onValueChange={(v) => {
+                                    setSwitchFormationView(v === "viewSilhouette");
+                                }}
+                            >
+                                <ToggleGroupItem value="viewText" aria-label="Come testo">
+                                    <TextIcon/>
+                                </ToggleGroupItem>
+                                <ToggleGroupItem value="viewSilhouette" aria-label="Come immagini">
+                                    <UserIcon/>
+                                </ToggleGroupItem>
+                            </ToggleGroup>
+                        </div>
+                        <div hidden={!switchFormationTeam}>
+                            {
+                                formazioneCasa && formazioneCasa.length > 0 ? (
+                                    <FormationList
+                                        showAsSilhouette={switchFormationView}
+                                        showBadgeCapitani={true}
+                                        stemmaSquadra={datiPartita.squadra_casa_stemma}
+                                        coloreSquadra={coloreCasa}
+                                        formazioneSquadra={formazioneCasa}
+                                    />
+                                ) : (
+                                    <div className={"w-full"}>
+                                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                            Nessuna formazione trovata.
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </div>
+                        <div hidden={switchFormationTeam}>
+                            {
+                                formazioneOspite && formazioneOspite.length > 0 ? (
+                                    <FormationList
+                                        showAsSilhouette={switchFormationView}
+                                        showBadgeCapitani={true}
+                                        stemmaSquadra={datiPartita.squadra_ospite_stemma}
+                                        coloreSquadra={coloreOspiti}
+                                        formazioneSquadra={formazioneOspite}
+                                    />
+                                ) : (
+                                    <div className={"w-full"}>
+                                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                            Nessuna formazione trovata.
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="statistiche" className={"px-2 sm:px-0"}>
                         {
-                            formazioneCasa && formazioneCasa.length > 0 ? (
-                                <TeamFormationList
-                                    showAsSilhouette={switchFormationView}
-                                    showBadgeCapitani={true}
-                                    stemmaSquadra={datiPartita.squadra_casa_stemma}
-                                    coloreSquadra={coloreCasa}
-                                    formazioneSquadra={formazioneCasa}
+                            azioniPartita && azioniPartita.length > 0 ? (
+                                <FixtureActionList
+                                    azioniPartita={azioniPartita}
+                                    coloreSquadraCasa={coloreCasa}
+                                    coloreSquadraOspite={coloreOspiti}
                                 />
                             ) : (
                                 <div className={"w-full"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Nessuna formazione trovata.
+                                    <div className={"text-zinc-400 font-semibold text-sm md:text-xl"}>
+                                        Nessuna azione registrata per questa partita.
                                     </div>
                                 </div>
                             )
                         }
-                    </div>
-                    <div hidden={switchFormationTeam}>
-                        {
-                            formazioneOspite && formazioneOspite.length > 0 ? (
-                                <TeamFormationList
-                                    showAsSilhouette={switchFormationView}
-                                    showBadgeCapitani={true}
-                                    stemmaSquadra={datiPartita.squadra_ospite_stemma}
-                                    coloreSquadra={coloreOspiti}
-                                    formazioneSquadra={formazioneOspite}
-                                />
-                            ) : (
-                                <div className={"w-full"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Nessuna formazione trovata.
-                                    </div>
-                                </div>
-                            )
-                        }
-                    </div>
-                </div>
+                    </TabsContent>
+
+                    <TabsContent value="classifica">
+                        <div className={"text-zinc-400 font-semibold italic text-xl mt-4"}>
+                            Presto in arrivo...
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="h2h">
+                        <div className={"text-zinc-400 font-semibold italic text-xl mt-4"}>
+                            Presto in arrivo...
+                        </div>
+                    </TabsContent>
+                </Tabs>
 
                 <WrongDataContact />
 

@@ -1,6 +1,7 @@
 'use client';
 
 import {Suspense, useEffect, useState} from "react";
+import type { KeyboardEvent } from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AnimatePresence, motion} from 'framer-motion';
 import {getListaGiocatori, listaGiocatoriType} from "@/features/giocatori/queries";
@@ -8,9 +9,11 @@ import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
+import LoadingInfo from "@/components/data-info/LoadingInfo";
 
 import PageTitle from "@/components/text/PageTitle";
 import PlayerInfoCard from "@/features/giocatori/components/PlayerInfoCard";
+import PlayerSearchFilters from "@/features/giocatori/components/PlayerSearchFilters";
 import {SearchPagination} from "@/components/search/SearchPagination";
 
 import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty"
@@ -21,8 +24,6 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
 import {SearchIcon, XIcon} from "lucide-react";
-import PlayerSearchFilters from "@/features/giocatori/components/PlayerSearchFilters";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
 
 export default function Players() {
     return (
@@ -154,10 +155,10 @@ export function PlayersContent() {
             <div className={"page-content mt-2 lg:mt-8"}>
                 <PageTitle
                     title={"Giocatori"}
-                    description={"Tutti i giocatori iscritti alle varie edizioni del torneo, sia passate che attuali"}
+                    description={"Tutti i giocatori iscritti alle varie edizioni del torneo, sia passate che attuali."}
                 />
                 <div className={"w-full text-sm text-amber-200 mt-3"}>
-                    <b>NB:</b> alcuni giocatori delle edizioni passate potrebbero <b>non essere disponibili</b>
+                    <b>NB:</b> alcuni giocatori delle edizioni prima del 2025/2026 potrebbero <b>non essere disponibili</b>
                 </div>
                 <div className={"w-full mt-6"}>
                     <Field className="w-full min-w-full sm:min-w-96">
@@ -168,6 +169,11 @@ export function PlayersContent() {
                                 placeholder="Cerca per nome, cognome..."
                                 aria-label="Cerca giocatore"
                                 onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        handleSearch();
+                                    }
+                                }}
                                 value={searchInput}
                             />
                             <PlayerSearchFilters
@@ -256,7 +262,7 @@ export function PlayersContent() {
                                     resultsPerPage={maxResultsPerPage}
                                     currentPage={pageParam}
                                 />
-                                <div className="text-center text-gray-500 mt-2">
+                                <div className="text-center text-zinc-500 mt-4">
                                     Risultati totali: <b>{count}</b>
                                 </div>
                             </div>

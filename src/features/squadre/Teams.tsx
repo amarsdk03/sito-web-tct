@@ -170,11 +170,8 @@ export function TeamsContent() {
             <div className={"page-content mt-2 lg:mt-8"}>
                 <PageTitle
                     title={"Squadre"}
-                    description={""/*"Tutte le squadre iscritte alle varie edizioni del torneo, sia passate che attuali"*/}
+                    description={"Tutte le squadre iscritte alle varie edizioni del torneo, sia passate che attuali."}
                 />
-                <div className={"w-full font-medium text-base text-amber-200 mt-2"}>
-                    NB: le squadre iscritte alle edizioni passate saranno aggiunte il prima possibile!
-                </div>
                 <div className={"w-full mt-6"}>
                     <Field className="w-full min-w-full sm:min-w-96">
                         <ButtonGroup>
@@ -263,7 +260,7 @@ export function TeamsContent() {
                                 </EmptyHeader>
                             </Empty>
                         ) : (
-                            <div className="text-center text-gray-500 mt-12">
+                            <div className="text-center text-zinc-500 mt-12">
                                 Risultati totali: <b>{listaSquadre.length}</b>
                             </div>
                         )}

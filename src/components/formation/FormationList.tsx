@@ -1,15 +1,21 @@
 'use client';
 
 import Link from "next/link";
-import {memo, useMemo} from 'react';
+import {useState, useEffect, memo, useMemo} from 'react';
 
 import {Constants} from "@/types/database.types";
 import {formazioneSquadraType} from "@/features/squadre/queries";
 
-import PlayerSilhouette from "@/features/giocatori/components/PlayerSilhouette";
+import {PlayerSilhouette} from "@/features/giocatori/components/PlayerSilhouette";
 import {Badge} from "@/components/ui/badge";
 import {calcolaRapportoContrasto} from "@/lib/utils";
-import {DEFAULT_BACKGROUND_COLOR, DEFAULT_CONTRAST_RATIO, DEFAULT_FALLBACK_COLOR} from "@/const/defaultConstants";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH
+} from "@/const/defaultConstants";
+import {generatePlayerSilhouette} from "@/components/formation/formationRendering";
 
 interface TeamComponentsTableProps {
     showAsSilhouette?: boolean,
@@ -20,7 +26,7 @@ interface TeamComponentsTableProps {
     formazioneSquadra: formazioneSquadraType;
 }
 
-export const TeamFormationList = memo(
+export const FormationList = memo(
     function TeamFormationList(
         {
             showAsSilhouette = false,
@@ -31,6 +37,14 @@ export const TeamFormationList = memo(
             formazioneSquadra
         }: TeamComponentsTableProps
     ) {
+        const [silhouetteTemplate, setSilhouetteTemplate] = useState<HTMLCanvasElement | null>(null);
+
+        useEffect(() => {
+            generatePlayerSilhouette(coloreSquadra, stemmaSquadra || undefined, DEFAULT_LOGO_PATH)
+                .then(setSilhouetteTemplate)
+                .catch(err => console.error("Errore in generatePlayerSilhouette(): ", err));
+        }, [coloreSquadra, stemmaSquadra]);
+
         // MEMOIZED: only recalculates when formazioneSquadra changes
         const normalizedFormation = useMemo(() =>
                 formazioneSquadra.map(f => ({
@@ -70,7 +84,7 @@ export const TeamFormationList = memo(
                         playersWithRole.length > 0 ? (
                             <>
                                 <div
-                                    className="grid grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-4 sm:gap-x-6 auto-rows-fr"
+                                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-x-6 auto-rows-fr"
                                     hidden={!showAsSilhouette}
                                 >
                                     {playersWithRole.map((f) => {
@@ -105,8 +119,7 @@ export const TeamFormationList = memo(
                                                     <div className={"player-anim-hover flex justify-center"}>
                                                         <div className={`max-w-32 sm:max-w-54 pt-5 px-4 translate-y-5`}>
                                                             <PlayerSilhouette
-                                                                teamColor={coloreSquadra}
-                                                                teamBadge={stemmaSquadra || undefined}
+                                                                silhouetteTemplate={silhouetteTemplate}
                                                                 playerImage={f.giocatore.link_foto}
                                                             />
                                                         </div>

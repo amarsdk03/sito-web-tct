@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {Suspense, useEffect, useRef, useState} from "react";
+import {Suspense, useEffect, useState} from "react";
 import {useSearchParams} from "next/navigation";
 import {motion} from "framer-motion";
 
@@ -21,15 +21,24 @@ import {
     getIdSquadraGiocatore
 } from "@/features/squadre/queries";
 import {getListaTornei} from "@/features/tornei/queries";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_COLORE_SQUADRA_CASA,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH
+} from "@/const/defaultConstants";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import PageTitle from "@/components/text/PageTitle";
-import PlayerSilhouette from "@/features/giocatori/components/PlayerSilhouette";
 import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 import ShareProfileDialog from "@/features/giocatori/components/ShareProfileDialog";
-import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
-import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
+import FormationFilters from "@/components/formation/FormationFilters";
+
+import {generatePlayerSilhouette} from "@/components/formation/formationRendering";
+import {PlayerSilhouette} from "@/features/giocatori/components/PlayerSilhouette";
+import {FormationList} from "@/components/formation/FormationList";
 
 import {Calendar1, FlagIcon, FootprintsIcon, PencilRulerIcon, RulerIcon, WeightIcon,} from "lucide-react";
 import {Button} from "@/components/ui/button";
@@ -38,14 +47,8 @@ import {Separator} from "@/components/ui/separator";
 import {RiInstagramLine} from "@remixicon/react";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
-import {
-    DEFAULT_BACKGROUND_COLOR,
-    DEFAULT_COLORE_SQUADRA_CASA,
-    DEFAULT_CONTRAST_RATIO,
-    DEFAULT_FALLBACK_COLOR,
-    DEFAULT_LOGO_PATH
-} from "@/const/defaultConstants";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
+import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
 
 export default function PlayerInfo() {
     return (
@@ -72,8 +75,6 @@ export function PlayerInfoContent() {
     const [showAsSilhouette, setShowAsSilhouette] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -105,15 +106,7 @@ export function PlayerInfoContent() {
                 const filteredFormazioneSquadra = resultFormazioneSquadra.filter(
                     p => p.giocatore.id !== idGiocatore
                 );
-
-                // Aspetto 1 secondo per lasciare che le animazioni dei motion.div siano eseguite senza lag
-                if (timeoutRef.current) {
-                    clearTimeout(timeoutRef.current);
-                }
-
-                timeoutRef.current = setTimeout(() => {
-                    setFormazioneSquadra(filteredFormazioneSquadra);
-                }, 500);
+                setFormazioneSquadra(filteredFormazioneSquadra);
             }
             // eslint-disable-next-line
             catch (error: any) {
@@ -135,6 +128,14 @@ export function PlayerInfoContent() {
     const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
         ? coloreSquadra
         : DEFAULT_FALLBACK_COLOR;
+
+    const [playerSilhouette, setPlayerSilhouette] = useState<HTMLCanvasElement | null>(null);
+
+    useEffect(() => {
+        generatePlayerSilhouette(coloreSquadra, stemmaSquadra || undefined, DEFAULT_LOGO_PATH)
+            .then(setPlayerSilhouette)
+            .catch(err => console.error("Errore in generatePlayerSilhouette(): ", err));
+    }, [coloreSquadra, stemmaSquadra]);
 
     if (loading) {
         return (
@@ -160,7 +161,6 @@ export function PlayerInfoContent() {
                 <PageTitle
                     title={"Dettagli giocatore"}
                     smallerTitle={true}
-                    withGoBackBtn={true}
                 />
 
                 <div className={"sm:flex items-center w-full gap-10"}>
@@ -198,8 +198,7 @@ export function PlayerInfoContent() {
                         >
                             <div className={`player-anim-hover max-w-64 pt-5 px-4 translate-y-5`}>
                                 <PlayerSilhouette
-                                    teamColor={coloreSquadra}
-                                    teamBadge={datiSquadra.link_stemma || undefined}
+                                    silhouetteTemplate={playerSilhouette}
                                     playerImage={datiGiocatore.link_foto}
                                 />
                             </div>
@@ -353,53 +352,65 @@ export function PlayerInfoContent() {
                         Statistiche all-time
                     </div>
 
-                    <div className={"grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Partite giocate
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore[0]?.n_partite || 0}
-                            </div>
+                    <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
+                        <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
+                            <PlayerStatisticRadar
+                                coloreSquadra={coloreSquadra}
+                                mvp={statisticheGiocatore[0]?.num_mvp || 0}
+                                goal={statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                assist={statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                gialli={statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                rossi={statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                            />
                         </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Goal segnati
+                        <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Partite giocate
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore[0]?.n_partite || 0}
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Goal segnati
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                </div>
                             </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Assist
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Assist
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Cartellini gialli
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                </div>
                             </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Cartellini gialli
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Cartellini rossi
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
-                            </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Cartellini rossi
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
-                            </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                MVP totali
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                {statisticheGiocatore[0]?.num_mvp || 0}
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    MVP totali
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                    {statisticheGiocatore[0]?.num_mvp || 0}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -444,7 +455,7 @@ export function PlayerInfoContent() {
                         <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
                             Compagni di squadra
                         </div>
-                        <TeamFormationFilters
+                        <FormationFilters
                             loading={loading}
                             showAsSilhouette={showAsSilhouette}
                             setShowAsSilhouette={setShowAsSilhouette}
@@ -452,7 +463,7 @@ export function PlayerInfoContent() {
                     </div>
                     {
                         formazioneSquadra && formazioneSquadra.length > 0 ? (
-                            <TeamFormationList
+                            <FormationList
                                 showAsSilhouette={showAsSilhouette}
                                 showBadgeCapitani={true}
                                 stemmaSquadra={stemmaSquadra}
@@ -462,7 +473,7 @@ export function PlayerInfoContent() {
                         ) : (
                             <div className={"w-full"}>
                                 <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Nessuna formazione trovata.
+                                    Nessuna formazione trovata dall&#39;ultima edizione.
                                 </div>
                             </div>
                         )

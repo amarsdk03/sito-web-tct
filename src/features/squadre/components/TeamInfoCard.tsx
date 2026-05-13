@@ -13,9 +13,9 @@ export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreC
     return (
         <Link href={`/squadre/dettagli?id=${infoSquadra.s_id}`}>
             <Card
-                className={`h-full flex flex-row p-4 md:p-6`}
+                className={`squad-result-card h-full flex flex-row p-4 md:p-6`}
                 style={{
-                    background: `linear-gradient(145deg, ${coloreSquadra}70 0%, ${coloreSquadra}e3 100%)`,
+                    background: `linear-gradient(145deg, ${coloreSquadra}e3 -100%, ${coloreSquadra}80 100%)`,
                 }}
             >
                 <div className="flex-shrink-0 squad-result-badge flex items-center justify-center">
@@ -24,7 +24,7 @@ export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreC
                         alt="Stemma Squadra"
                         width={80}
                         height={80}
-                        className={`squad-result-card-img bg-none rounded-full object-cover`}
+                        className={`bg-none rounded-full object-cover`}
                         draggable={false}
                         loading={"lazy"}
                     />

@@ -57,9 +57,9 @@ const listaPartiteQuery = supabase
 export type listaPartiteType = QueryData<typeof listaPartiteQuery>;
 
 export async function getListaPartite(
-    idTorneo: number,
-    idCategoria?: string,
-    valGirone?: string
+    idTorneo: number | null,
+    idCategoria: string | null,
+    valGirone: string | null
 ) {
     let query = supabase
         .from('risultati_partite')
@@ -127,5 +127,27 @@ export async function getAzioniPartita(idPartita: number) {
     if (error) throw error;
 
     const result: azioniPartitaType = data;
+    return result;
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const datiCampoQuery = supabase
+    .from('campo')
+    .select(`*`)
+    .eq('id', 0);
+
+export type datiCampoType = QueryData<typeof datiCampoQuery>;
+
+export async function getDatiCampo(idCampo: number) {
+    const query = supabase
+        .from('campo')
+        .select(`*`)
+        .eq('id', idCampo);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const result: datiCampoType = data;
     return result;
 }

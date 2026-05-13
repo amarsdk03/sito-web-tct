@@ -79,7 +79,7 @@ export function SearchPagination({
                 }
                 {
                     pageItems[0] > 1 && (
-                        <PaginationItem>
+                        <PaginationItem className={"hidden sm:block"}>
                             <PaginationEllipsis />
                         </PaginationItem>
                     )
@@ -95,7 +95,7 @@ export function SearchPagination({
                 }
                 {
                     pageItems[pageItems.length - 1] < maxPage && (
-                        <PaginationItem>
+                        <PaginationItem className={"hidden sm:block"}>
                             <PaginationEllipsis />
                         </PaginationItem>
                     )

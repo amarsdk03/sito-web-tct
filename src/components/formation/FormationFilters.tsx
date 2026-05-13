@@ -29,7 +29,7 @@ interface FormationYearFilterProps {
     listaTornei?: listaTorneiType
 }
 
-export default function TeamFormationFilters(
+export default function FormationFilters(
     {
         loading = false,
         showAsSilhouette,
@@ -92,7 +92,7 @@ export default function TeamFormationFilters(
                         params.set(squadraParamName, idSquadra.toString());
                         params.set(torneoParamName, val);
 
-                        router.push(`${pathname}?${params.toString()}`);
+                        router.push(`${pathname}?${params.toString()}`, { scroll: false });
                     }}>
                         <SelectTrigger size="sm" className="w-fit">
                             <SelectValue placeholder="Edizione torneo"/>

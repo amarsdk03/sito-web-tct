@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
 import {XIcon} from "lucide-react";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 export default function Fixtures() {
     return (
@@ -41,9 +42,9 @@ export function FixturesContent() {
     const categoriaParamName = 'categoria';
     const gironeParamName = 'girone';
 
-    const torneoParam = Number.parseInt(searchParams?.get(torneoParamName) ?? "-1");
-    const categoriaParam = searchParams?.get(categoriaParamName) ?? undefined;
-    const gironeParam = searchParams?.get(gironeParamName) ?? undefined;
+    const torneoParam = searchParams?.get(torneoParamName) ?? null;
+    const categoriaParam = searchParams?.get(categoriaParamName) ?? null;
+    const gironeParam = searchParams?.get(gironeParamName) ?? null;
 
     const [listaTornei, setListaTornei] = useState<listaTorneiType>([]);
     const [listaPartite, setListaPartite] = useState<listaPartiteType>([]);
@@ -75,7 +76,7 @@ export function FixturesContent() {
             setLoading(true);
 
             try {
-                const selectedTorneoId = torneoParam || listaTornei[0]?.id;
+                const selectedTorneoId = torneoParam ? Number.parseInt(torneoParam) : listaTornei[0]?.id;
 
                 if (!selectedTorneoId) {
                     setLoading(false);
@@ -84,7 +85,7 @@ export function FixturesContent() {
 
                 const [partiteCompleta, partite] = await Promise.all([
                     // Recupero i dati dei filtri direttamente da tutte le partite (non proprio il top)
-                    getListaPartite(selectedTorneoId, undefined, undefined),
+                    getListaPartite(null, null, null),
                     getListaPartite(selectedTorneoId, categoriaParam, gironeParam)
                 ]);
 
@@ -96,7 +97,7 @@ export function FixturesContent() {
                 if (error.code === 'PGRST103') {
                     const params = new URLSearchParams();
 
-                    params.set(torneoParamName, torneoParam.toString() ?? listaTornei[0]?.id.toString() ?? '1');
+                    params.set(torneoParamName, torneoParam?.toString() ?? listaTornei[0]?.id.toString() ?? '1');
                     params.set(categoriaParamName, categoriaParam ?? '');
                     params.set(gironeParamName, gironeParam ?? '');
 
@@ -165,11 +166,8 @@ export function FixturesContent() {
             <div className={"page-content mt-2 lg:mt-8"}>
                 <PageTitle
                     title={"Partite"}
-                    description={""/*"Tutti i risultati e gli incontri in live e in arrivo, filtrabili in base all'edizione, alla categoria e al girone."*/}
+                    description={"Tutti i risultati e gli incontri in live e in arrivo, filtrabili in base all'edizione, alla categoria e al girone."}
                 />
-                <div className={"w-full font-medium text-base text-amber-200 mt-2"}>
-                    NB: le partite delle edizioni passate saranno aggiunte il prima possibile!
-                </div>
                 <div className={"mt-8"}>
                     <FixtureSearchFilters
                         loading={loading}
@@ -243,8 +241,11 @@ export function FixturesContent() {
                                 </Empty>
                             )
                         }
+
+                        <WrongDataContact />
                     </>
                 )}
+
             </div>
         </div>
     );

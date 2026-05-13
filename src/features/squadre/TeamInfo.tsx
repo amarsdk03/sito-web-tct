@@ -20,8 +20,8 @@ import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import PageTitle from "@/components/text/PageTitle";
-import {TeamFormationList} from "@/features/squadre/components/TeamFormationList";
-import TeamFormationFilters from "@/features/squadre/components/TeamFormationFilters";
+import {FormationList} from "@/components/formation/FormationList";
+import FormationFilters from "@/components/formation/FormationFilters";
 
 import {
     CalendarCheckIcon,
@@ -46,6 +46,8 @@ import {
     DEFAULT_LOGO_PATH
 } from "@/const/defaultConstants";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
+import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
+import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
 
 interface statisticheTotaliType {
     totalePartite: number;
@@ -190,7 +192,7 @@ export function TeamInfoContent() {
     const searchParams = useSearchParams();
 
     const squadraParamName = 'id';
-    const torneoParamName = 't';
+    const torneoParamName = 'edizione';
     const idSquadra = Number.parseInt(searchParams?.get(squadraParamName) ?? "-1");
     const [idTorneo, setIdTorneo] = useState(-1);
 
@@ -203,9 +205,8 @@ export function TeamInfoContent() {
 
     const [showAsSilhouette, setShowAsSilhouette] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [loadingFormazione, setLoadingFormazione] = useState(true);
     const [error, setError] = useState(false);
-
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -227,11 +228,10 @@ export function TeamInfoContent() {
             setLoading(true);
 
             try {
-                const [resultDatiSquadra, resultPartiteSquadra, resultStatisticheSquadra, resultFormazioneSquadra] = await Promise.all([
+                const [resultDatiSquadra, resultPartiteSquadra, resultStatisticheSquadra] = await Promise.all([
                     getDatiSquadra(idSquadra),
                     getPartiteSquadra(idSquadra),
                     getStatisticheSquadra(idSquadra),
-                    getFormazioneSquadra(idSquadra, idTorneo)
                 ]);
 
                 const objectStatisticheSquadra = aggregateStatisticheSquadra(
@@ -243,15 +243,6 @@ export function TeamInfoContent() {
                 setDatiSquadra(resultDatiSquadra);
                 setPartiteSquadra(resultPartiteSquadra);
                 setStatisticheSquadra(objectStatisticheSquadra);
-
-                // Aspetto 1 secondo per lasciare che le animazioni dei motion.div siano eseguite senza lag
-                if (timeoutRef.current) {
-                    clearTimeout(timeoutRef.current);
-                }
-
-                timeoutRef.current = setTimeout(() => {
-                    setFormazioneSquadra(resultFormazioneSquadra);
-                }, 500);
             }
             // eslint-disable-next-line
             catch (error: any) {
@@ -259,6 +250,25 @@ export function TeamInfoContent() {
             }
             finally {
                 setLoading(false);
+            }
+        })();
+    }, [idSquadra]);
+
+    useEffect(() => {
+        (async () => {
+            setError(false);
+            setLoadingFormazione(true);
+
+            try {
+                const resultFormazioneSquadra = await getFormazioneSquadra(idSquadra, idTorneo);
+                setFormazioneSquadra(resultFormazioneSquadra);
+            }
+            // eslint-disable-next-line
+            catch (error: any) {
+                setError(true);
+            }
+            finally {
+                setLoadingFormazione(false);
             }
         })();
     }, [idSquadra, idTorneo]);
@@ -444,53 +454,65 @@ export function TeamInfoContent() {
                         Statistiche all-time
                     </div>
 
-                    <div className={"grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 sm:gap-y-8"}>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Goal segnati
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { statisticheSquadra?.totaleGoalSegnati || 0 }
-                            </div>
+                    <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
+                        <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
+                            <TeamStatisticRadar
+                                coloreSquadra={coloreSquadra}
+                                goalSegnati={statisticheSquadra?.totaleGoalSegnati || 0}
+                                goalSubiti={statisticheSquadra?.totaleGoalSubiti || 0}
+                                assist={statisticheSquadra?.totaleAssistCompiuti || 0}
+                                gialli={statisticheSquadra?.totaleCartelliniGialli || 0}
+                                rossi={statisticheSquadra?.totaleCartelliniRossi || 0}
+                            />
                         </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Goal subiti
+                        <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Goal segnati
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { statisticheSquadra?.totaleGoalSegnati || 0 }
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { statisticheSquadra?.totaleGoalSubiti || 0 }
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Goal subiti
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { statisticheSquadra?.totaleGoalSubiti || 0 }
+                                </div>
                             </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Differenza reti
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Differenza reti
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { (statisticheSquadra?.totaleGoalSegnati || 0) - (statisticheSquadra?.totaleGoalSubiti || 0) }
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { (statisticheSquadra?.totaleGoalSegnati || 0) - (statisticheSquadra?.totaleGoalSubiti || 0) }
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Assist totali
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { statisticheSquadra?.totaleAssistCompiuti || 0 }
+                                </div>
                             </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Assist totali
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Cartellini gialli
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { statisticheSquadra?.totaleCartelliniGialli || 0 }
+                                </div>
                             </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { statisticheSquadra?.totaleAssistCompiuti || 0 }
-                            </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Cartellini gialli
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { statisticheSquadra?.totaleCartelliniGialli || 0 }
-                            </div>
-                        </div>
-                        <div className={"grid grid-rows-2"}>
-                            <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                Cartellini rossi
-                            </div>
-                            <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                { statisticheSquadra?.totaleCartelliniRossi || 0 }
+                            <div className={"grid grid-rows-2"}>
+                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                    Cartellini rossi
+                                </div>
+                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                    { statisticheSquadra?.totaleCartelliniRossi || 0 }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -503,7 +525,7 @@ export function TeamInfoContent() {
                         <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
                             Rosa della squadra
                         </div>
-                        <TeamFormationFilters
+                        <FormationFilters
                             loading={loading}
                             showAsSilhouette={showAsSilhouette}
                             setShowAsSilhouette={setShowAsSilhouette}
@@ -516,7 +538,7 @@ export function TeamInfoContent() {
                     </div>
                     {
                         formazioneSquadra && formazioneSquadra.length > 0 ? (
-                            <TeamFormationList
+                            <FormationList
                                 showAsSilhouette={showAsSilhouette}
                                 showBadgeCapitani={true}
                                 idCapitano={datiSquadra.giocatore?.id || -1}
@@ -527,7 +549,9 @@ export function TeamInfoContent() {
                         ) : (
                             <div className={"w-full"}>
                                 <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Nessuna formazione trovata.
+                                    {
+                                        loadingFormazione ? "Caricamento..." : "Nessuna formazione trovata."
+                                    }
                                 </div>
                             </div>
                         )
