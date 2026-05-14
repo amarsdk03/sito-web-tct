@@ -4,7 +4,7 @@ import {Metadata} from "next";
 import {dynamicMetadata} from "@/lib/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
-    "Homepage"
+    "Home"
 );
 
 export default function Page() {

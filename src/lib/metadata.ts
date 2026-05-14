@@ -32,13 +32,14 @@ export function dynamicMetadata(title?: string | null, description?: string | nu
                     url: '/logo_eagle_only.png',
                     width: 320,
                     height: 320,
-                    alt: 'Torneo CdT Logo',
+                    alt: 'Logo torneo CdT',
                 },
             ],
         },
         appleWebApp: {
             capable: true,
             title: 'Torneo CdT',
+            statusBarStyle: 'default',
         },
         robots: {
             index: true,
