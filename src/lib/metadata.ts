@@ -7,11 +7,18 @@ export function dynamicMetadata(title?: string | null, description?: string | nu
         ),
         title: title ? `Torneo CdT - ${title}` : 'Torneo CdT',
         description: description || "Sito web ufficiale del torneo di calcio della Città di Trento",
-        icons: {
-            icon: "/logo.png",
-            shortcut: "/logo.png",
-            apple: "/logo.png",
-        },
+        icons: [
+            {
+                url: "/logo_eagle_only.png",
+                sizes: "192x192",
+                type: "image/png"
+            },
+            {
+                url: "/logo_eagle_only.png",
+                sizes: "320x320",
+                type: "image/png"
+            }
+        ],
         manifest: "/manifest.json",
         openGraph: {
             title: title ? `Torneo CdT - ${title}` : 'Torneo CdT',
@@ -20,11 +27,10 @@ export function dynamicMetadata(title?: string | null, description?: string | nu
             siteName: 'Torneo CdT',
             locale: 'it_IT',
             type: 'website',
-            images: ['/logo.png'],
+            images: ['/logo_eagle_only.png'],
         },
         appleWebApp: {
             capable: true,
-            statusBarStyle: 'black-translucent',
             title: 'Torneo CdT',
         },
         robots: {

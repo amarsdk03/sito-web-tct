@@ -49,6 +49,10 @@ import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
+import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
+import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
 
 export default function PlayerInfo() {
     return (
@@ -150,6 +154,11 @@ export function PlayerInfoContent() {
             <div className={"page-container"}>
                 <div className={"page-content my-48"}>
                     <ErrorInfo infoMessage={"Errore durante il recupero del giocatore"} />
+                    <Link href="/" className={"w-full flex justify-center"}>
+                        <Button variant="outline" size="lg" className="text-sm sm:text-lg font-medium sm:p-5">
+                            Torna alla Home
+                        </Button>
+                    </Link>
                 </div>
             </div>
         )
@@ -157,10 +166,9 @@ export function PlayerInfoContent() {
 
     return (
         <div className={"page-container"}>
-            <div className={"page-content mt-2 lg:mt-12"}>
-                <PageTitle
-                    title={"Dettagli giocatore"}
-                    smallerTitle={true}
+            <div className={"page-content mt-6 lg:mt-12"}>
+                <DetailsPageMenu
+                    pageTitle={"Dettagli giocatore"}
                 />
 
                 <div className={"sm:flex items-center w-full gap-10"}>
@@ -209,7 +217,7 @@ export function PlayerInfoContent() {
                         initial={"start"}
                         animate={"finish"}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className={"w-full my-8"}
+                        className={"w-full mt-6 sm:mt-0"}
                     >
                         <div className={"integral-title tracking-wide flex flex-col min-w-0"}>
                             <Link
@@ -276,7 +284,7 @@ export function PlayerInfoContent() {
                             </motion.div>
                         </div>
 
-                        <Separator className={"my-6 sm:my-8"} />
+                        <Separator className={"my-3 sm:my-8 opacity-0 sm:opacity-100"} />
 
                         <div className={"grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 sm:gap-y-8"}>
                             <div className={"grid grid-rows-2 gap-1"}>
@@ -345,153 +353,144 @@ export function PlayerInfoContent() {
                     </motion.div>
                 </div>
 
-                <Separator className={"my-8 sm:my-10"} />
+                <Tabs defaultValue="statistiche" className={"mt-8 sm:mt-16"}>
+                    <ScrollArea className="w-full overflow-y-clip mb-2">
+                        <TabsList variant="line" className={"py-1"}>
+                            <TabsTrigger value="statistiche" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Statistiche
+                            </TabsTrigger>
+                            <TabsTrigger value="compagni" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Compagni
+                            </TabsTrigger>
+                            <TabsTrigger value="trofei" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Trofei
+                            </TabsTrigger>
+                            <TabsTrigger value="carriera" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Carriera
+                            </TabsTrigger>
+                        </TabsList>
+                        <ScrollBar orientation="horizontal" className={"hidden"} />
+                    </ScrollArea>
 
-                <div className={"w-full mt-10"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-6 sm:mb-10"}>
-                        Statistiche all-time
-                    </div>
+                    <Separator className={"mb-4 sm:mb-10"} />
 
-                    <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
-                        <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
-                            <PlayerStatisticRadar
-                                coloreSquadra={coloreSquadra}
-                                mvp={statisticheGiocatore[0]?.num_mvp || 0}
-                                goal={statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
-                                assist={statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
-                                gialli={statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
-                                rossi={statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
-                            />
+                    <TabsContent value="statistiche" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold mb-6 sm:mb-10"}>
+                            Statistiche all-time
                         </div>
-                        <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Partite giocate
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore[0]?.n_partite || 0}
-                                </div>
+
+                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
+                            <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
+                                <PlayerStatisticRadar
+                                    coloreSquadra={coloreLeggibile}
+                                    mvp={statisticheGiocatore[0]?.num_mvp || 0}
+                                    goal={statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                    assist={statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                    gialli={statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                    rossi={statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                                />
                             </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Goal segnati
+                            <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Partite giocate
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore[0]?.n_partite || 0}
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Goal segnati
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Assist
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Assist
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Cartellini gialli
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Cartellini gialli
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Cartellini rossi
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
-                                </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Cartellini rossi
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
-                                </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    MVP totali
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
-                                    {statisticheGiocatore[0]?.num_mvp || 0}
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        MVP totali
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                        {statisticheGiocatore[0]?.num_mvp || 0}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </TabsContent>
 
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Trofei ottenuti
-                    </div>
-                    <div className={"w-full italic"}>
-                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                            Sezione presto in arrivo...
-                        </div>
-                    </div>
-                    {
-                        /**
-                        datiGiocatore.trofeiOttenuti ? (
-                            <div className={"grid sm:grid-cols-2 lg:grid-cols-3 gap-1 sm:gap-4"}>
-                                {
-                                    datiGiocatore.trofeiOttenuti.map((trofeo, index) => (
-                                        <AwardCardInfo key={index} awardInfo={trofeo} />
-                                    ))
-                                }
+                    <TabsContent value="compagni" className={"sm:pt-2"}>
+                        <div className={"flex flex-row sm:items-center justify-between gap-2 mb-8"}>
+                            <div className={"text-hover-color text-2xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
+                                Compagni di squadra
                             </div>
-                        ) : (
-                            <div className={"w-full h-20 flex items-center justify-center"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Nessun trofeo ancora ottenuto dal giocatore
-                                </div>
-                            </div>
-                        )
-                        */
-                    }
-                </div>
-
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"flex flex-row sm:items-center justify-between gap-2 mb-8"}>
-                        <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
-                            Compagni di squadra
-                        </div>
-                        <FormationFilters
-                            loading={loading}
-                            showAsSilhouette={showAsSilhouette}
-                            setShowAsSilhouette={setShowAsSilhouette}
-                        />
-                    </div>
-                    {
-                        formazioneSquadra && formazioneSquadra.length > 0 ? (
-                            <FormationList
+                            <FormationFilters
+                                loading={loading}
                                 showAsSilhouette={showAsSilhouette}
-                                showBadgeCapitani={true}
-                                stemmaSquadra={stemmaSquadra}
-                                coloreSquadra={coloreSquadra}
-                                formazioneSquadra={formazioneSquadra}
+                                setShowAsSilhouette={setShowAsSilhouette}
                             />
-                        ) : (
-                            <div className={"w-full"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Nessuna formazione trovata dall&#39;ultima edizione.
-                                </div>
-                            </div>
-                        )
-                    }
-                </div>
-
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Storico carriera
-                    </div>
-                    <div className={"w-full italic"}>
-                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                            Sezione presto in arrivo...
                         </div>
-                    </div>
-                </div>
+                        {
+                            formazioneSquadra && formazioneSquadra.length > 0 ? (
+                                <FormationList
+                                    showAsSilhouette={showAsSilhouette}
+                                    showBadgeCapitani={true}
+                                    stemmaSquadra={stemmaSquadra}
+                                    coloreSquadra={coloreSquadra}
+                                    formazioneSquadra={formazioneSquadra}
+                                />
+                            ) : (
+                                <div className={"w-full"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
+                                        Nessuna formazione trovata dall&#39;ultima edizione.
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </TabsContent>
+
+                    <TabsContent value="trofei" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold"}>
+                            Trofei ottenuti
+                        </div>
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl mt-2 sm:mt-4"}>
+                            Presto in arrivo...
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="carriera" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold"}>
+                            Storico carriera
+                        </div>
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl mt-2 sm:mt-4"}>
+                            Presto in arrivo...
+                        </div>
+                    </TabsContent>
+                </Tabs>
 
                 <WrongDataContact />
 

@@ -25,14 +25,15 @@ import {DEFAULT_COLORE_SQUADRA_CASA, DEFAULT_COLORE_SQUADRA_OSPITE} from "@/cons
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import PageTitle from "@/components/text/PageTitle";
 import {Badge} from "@/components/ui/badge";
 import {Spinner} from "@/components/ui/spinner";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 import {Tabs, TabsList, TabsTrigger , TabsContent} from "@/components/ui/tabs";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
-import {RiCheckboxBlankCircleFill, RiFlag2Line, RiStopFill} from "@remixicon/react";
-import {TextIcon, UserIcon} from "lucide-react";
+import {RiCheckboxBlankCircleFill} from "@remixicon/react";
+import {HourglassIcon, TextIcon, UserIcon} from "lucide-react";
+import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
+import {Button} from "@/components/ui/button";
 
 export default function FixtureInfo() {
     return (
@@ -156,6 +157,11 @@ export function FixtureInfoContent() {
             <div className={"page-container"}>
                 <div className={"page-content my-48"}>
                     <ErrorInfo infoMessage={"Errore durante il recupero della partita"} />
+                    <Link href="/" className={"w-full flex justify-center"}>
+                        <Button variant="outline" size="lg" className="text-sm sm:text-lg font-medium sm:p-5">
+                            Torna alla Home
+                        </Button>
+                    </Link>
                 </div>
             </div>
         )
@@ -170,10 +176,9 @@ export function FixtureInfoContent() {
 
     return (
         <div className={"page-container"}>
-            <div className={"page-content mt-2 lg:mt-12"}>
-                <PageTitle
-                    title={"Dettagli partita"}
-                    smallerTitle={true}
+            <div className={"page-content mt-6 lg:mt-12"}>
+                <DetailsPageMenu
+                    pageTitle={"Dettagli partita"}
                 />
 
                 <motion.div
@@ -188,7 +193,7 @@ export function FixtureInfoContent() {
                                 case "In arrivo":
                                     return (
                                         <Badge variant="outline" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
-                                            <RiFlag2Line />
+                                            <HourglassIcon className={"me-0.5"} />
                                             Prossimamente
                                         </Badge>
                                     );
@@ -196,7 +201,7 @@ export function FixtureInfoContent() {
                                 case "In corso":
                                     return (
                                         <Badge variant="destructive" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
-                                            <RiCheckboxBlankCircleFill className={"live-circle"} />
+                                            <RiCheckboxBlankCircleFill className={"live-circle me-0.5"} />
                                             In corso
                                         </Badge>
                                     );
@@ -204,7 +209,6 @@ export function FixtureInfoContent() {
                                 case "Terminata":
                                     return (
                                         <Badge variant="outline" className={"font-bold text-sm sm:text-md py-2.5 ms-2"}>
-                                            <RiStopFill />
                                             Terminata
                                         </Badge>
                                     );
@@ -270,88 +274,91 @@ export function FixtureInfoContent() {
                     </motion.div>
                 </div>
 
-                <div className={"grid grid-cols-2 gap-4 w-full mb-8 sm:mb-12"}>
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.25 }}
-                        className={"text-xs sm:text-base text-mist-400 font-bold"}
-                    >
-                        {marcatoriGoal.home.length > 0 && (
-                            <div className={"flex items-center justify-start flex-col mt-4 sm:mt-4 gap-2"}>
-                                {marcatoriGoal.home.map((scorer, idx) => (
-                                    <div key={idx} className="flex items-center justify-start gap-2 w-full">
-                                        <div className="flex items-center justify-end gap-0.5">
-                                            {Array.from({ length: scorer.count }).map((_, i) => {
-                                                const iconPath = string_to_snake_case(scorer.types[i]) || "goal";
+                {
+                    (marcatoriGoal.home.length > 0 || marcatoriGoal.away.length > 0) &&
+                    <div className={"grid grid-cols-2 gap-4 w-full mb-4 sm:mb-12"}>
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.25 }}
+                            className={"text-xs sm:text-base text-mist-400 font-bold"}
+                        >
+                            {marcatoriGoal.home.length > 0 && (
+                                <div className={"flex items-center justify-start flex-col mt-4 sm:mt-4 gap-2"}>
+                                    {marcatoriGoal.home.map((scorer, idx) => (
+                                        <div key={idx} className="flex items-center justify-start gap-2 w-full">
+                                            <div className="flex items-center justify-end gap-0.5">
+                                                {Array.from({ length: scorer.count }).map((_, i) => {
+                                                    const iconPath = string_to_snake_case(scorer.types[i]) || "goal";
 
-                                                return (
-                                                    <Image
-                                                        key={i}
-                                                        src={`/icons/${iconPath}.png`}
-                                                        alt={"Goal"}
-                                                        width={15}
-                                                        height={15}
-                                                        className={"action-icon"}
-                                                    />
-                                                );
-                                            })}
+                                                    return (
+                                                        <Image
+                                                            key={i}
+                                                            src={`/icons/${iconPath}.png`}
+                                                            alt={"Goal"}
+                                                            width={15}
+                                                            height={15}
+                                                            className={"action-icon"}
+                                                        />
+                                                    );
+                                                })}
+                                            </div>
+
+                                            <span className={"truncate text-ellipsis pe-0.5"}>
+                                                {
+                                                    scorer.name.length > 0 ? scorer.name : (
+                                                        <i>Sconosciuto</i>
+                                                    )
+                                                }
+                                            </span>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.25 }}
+                            className={"text-xs sm:text-base text-mist-400 font-bold"}
+                        >
+                            {marcatoriGoal.away.length > 0 && (
+                                <div className={"flex items-center justify-end flex-col mt-4 sm:mt-4 gap-2"}>
+                                    {marcatoriGoal.away.map((scorer, idx) => (
+                                        <div key={idx} className="flex items-center justify-end gap-2 w-full">
+                                            <span className={"truncate text-ellipsis ps-0.5"}>
+                                                {
+                                                    scorer.name.length > 0 ? scorer.name : (
+                                                        <i>Sconosciuto</i>
+                                                    )
+                                                }
+                                            </span>
 
-                                        <span className={"truncate text-ellipsis pe-0.5"}>
-                                            {
-                                                scorer.name.length > 0 ? scorer.name : (
-                                                    <i>Sconosciuto</i>
-                                                )
-                                            }
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.25 }}
-                        className={"text-xs sm:text-base text-mist-400 font-bold"}
-                    >
-                        {marcatoriGoal.away.length > 0 && (
-                            <div className={"flex items-center justify-end flex-col mt-4 sm:mt-4 gap-2"}>
-                                {marcatoriGoal.away.map((scorer, idx) => (
-                                    <div key={idx} className="flex items-center justify-end gap-2 w-full">
-                                        <span className={"truncate text-ellipsis ps-0.5"}>
-                                            {
-                                                scorer.name.length > 0 ? scorer.name : (
-                                                    <i>Sconosciuto</i>
-                                                )
-                                            }
-                                        </span>
+                                            <div className="flex items-center justify-end gap-0.5">
+                                                {Array.from({ length: scorer.count }).map((_, i) => {
+                                                    const iconPath = string_to_snake_case(scorer.types[i]) || "goal";
 
-                                        <div className="flex items-center justify-end gap-0.5">
-                                            {Array.from({ length: scorer.count }).map((_, i) => {
-                                                const iconPath = string_to_snake_case(scorer.types[i]) || "goal";
-
-                                                return (
-                                                    <Image
-                                                        key={i}
-                                                        src={`/icons/${iconPath}.png`}
-                                                        alt={"Goal"}
-                                                        width={15}
-                                                        height={15}
-                                                        className={"action-icon"}
-                                                    />
-                                                );
-                                            })}
+                                                    return (
+                                                        <Image
+                                                            key={i}
+                                                            src={`/icons/${iconPath}.png`}
+                                                            alt={"Goal"}
+                                                            width={15}
+                                                            height={15}
+                                                            className={"action-icon"}
+                                                        />
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </motion.div>
-                </div>
+                                    ))}
+                                </div>
+                            )}
+                        </motion.div>
+                    </div>
+                }
 
-                <Tabs defaultValue="info">
+                <Tabs defaultValue="info" className={"mt-4"}>
                     <ScrollArea className="w-full overflow-y-clip mb-4">
                         <TabsList variant="line" className={"py-1"}>
                             <TabsTrigger value="info" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
@@ -483,7 +490,7 @@ export function FixtureInfoContent() {
                                     aria-label="Squadra casa"
                                     className="w-1/2 min-w-0 px-2"
                                 >
-                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.5 sm:translate-y-0">
+                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.25 sm:translate-y-0">
                                         {datiPartita.squadra_casa_nome}
                                     </span>
                                 </ToggleGroupItem>
@@ -493,7 +500,7 @@ export function FixtureInfoContent() {
                                     aria-label="Squadra ospite"
                                     className="w-1/2 min-w-0 px-2"
                                 >
-                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.5 sm:translate-y-0">
+                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.25 sm:translate-y-0">
                                         {datiPartita.squadra_ospite_nome}
                                     </span>
                                 </ToggleGroupItem>
@@ -573,13 +580,13 @@ export function FixtureInfoContent() {
                     </TabsContent>
 
                     <TabsContent value="classifica">
-                        <div className={"text-zinc-400 font-semibold italic text-xl mt-4"}>
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl"}>
                             Presto in arrivo...
                         </div>
                     </TabsContent>
 
                     <TabsContent value="h2h">
-                        <div className={"text-zinc-400 font-semibold italic text-xl mt-4"}>
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl"}>
                             Presto in arrivo...
                         </div>
                     </TabsContent>

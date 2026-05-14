@@ -10,7 +10,7 @@ export default function Homepage() {
         <>
             <Navbar />
             <div className={"page-container"}>
-                <div className={"page-content mt-2 lg:mt-12"}>
+                <div className={"page-content mt-6 lg:mt-12"}>
                     <PageTitle
                         title={"Homepage"}
                         description={"Presto in arrivo..."}

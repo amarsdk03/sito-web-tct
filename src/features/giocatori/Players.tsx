@@ -152,7 +152,7 @@ export function PlayersContent() {
 
     return (
         <div className={"page-container"}>
-            <div className={"page-content mt-2 lg:mt-8"}>
+            <div className={"page-content mt-6 lg:mt-12"}>
                 <PageTitle
                     title={"Giocatori"}
                     description={"Tutti i giocatori iscritti alle varie edizioni del torneo, sia passate che attuali."}

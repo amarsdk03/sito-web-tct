@@ -163,7 +163,7 @@ export function FixturesContent() {
 
     return (
         <div className={"page-container"}>
-            <div className={"page-content mt-2 lg:mt-8"}>
+            <div className={"page-content mt-6 lg:mt-12"}>
                 <PageTitle
                     title={"Partite"}
                     description={"Tutti i risultati e gli incontri in live e in arrivo, filtrabili in base all'edizione, alla categoria e al girone."}

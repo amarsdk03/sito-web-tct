@@ -180,7 +180,7 @@
 }
 
 .navbar-div {
-    background-color: #738e50;
+    background-color: #738E50;
     border-bottom: 2px solid var(--primary);
 
     /*noinspection CssUnknownTarget*/
@@ -250,7 +250,6 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     line-height: 1.1;
-    margin: 25px 0 15px;
     transition: color 0.3s ease-in-out;
 }
 
@@ -384,7 +383,16 @@
 .player-anim-hover:hover {
     transform: scale(1.03);
     filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.75));
-    animation: shine-hover 1.5s ease-out;
+    animation: shine-hover 5s ease-in-out;
+}
+
+.stats-card {
+    transition: all 0.3s ease-in-out;
+}
+
+.stats-card:hover {
+    transform: scale(1.03);
+    filter: brightness(0.8);
 }
 
 

@@ -28,13 +28,17 @@ export default function PageTitle({ title, description, smallerTitle } : PageMai
             >
                 <h1
                     className={"page-title shine-anim-hover pe-2"}
-                    style={{ fontSize: smallerTitle ? "min(5vw, 1.8em)" : "min(12vw, 3.75em)" }}
+                    style={{ fontSize: smallerTitle ? "min(4.5vw, 1.6em)" : "min(12vw, 3.75em)" }}
                 >
                     { title }
                 </h1>
             </motion.div>
             {
-                description && <p>{ description }</p>
+                description && (
+                    <p className={"mt-2 sm:mt-3"}>
+                        { description }
+                    </p>
+                )
             }
         </>
     )

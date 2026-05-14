@@ -93,6 +93,19 @@ export default function ShareProfileDialog(
             setIsExporting(false);
         }
     };
+    
+    const [copiaLinkText, setCopiaLinkText] = useState("Copia link");
+
+    function condividiLink() {
+        const textValue = copiaLinkText;
+
+        navigator.clipboard.writeText(window.location.href).then(
+            () => {
+                setCopiaLinkText("Link copiato!");
+                setTimeout(() => setCopiaLinkText(textValue), 2000);
+            }
+        );
+    }
 
     const coloreLeggibile = calcolaRapportoContrasto(coloreSquadra, DEFAULT_BACKGROUND_COLOR) > DEFAULT_CONTRAST_RATIO
         ? coloreSquadra
@@ -284,12 +297,10 @@ export default function ShareProfileDialog(
                 <div className="flex justify-end gap-3">
                     <Button
                         variant="outline"
-                        onClick={() => {
-                            navigator.clipboard.writeText(window.location.href).then()
-                        }}
+                        onClick={condividiLink}
                     >
                         <RiLink />
-                        Copia link
+                        { copiaLinkText }
                     </Button>
                     <Button
                         onClick={downloadCard}

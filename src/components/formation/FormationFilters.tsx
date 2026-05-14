@@ -67,22 +67,6 @@ export default function FormationFilters(
 
     return (
         <div className={"flex justify-start sm:justify-end gap-2"}>
-            <ToggleGroup
-                variant="outline"
-                type="single"
-                size="sm"
-                defaultValue={showAsSilhouette ? "viewSilhouette" : "viewText"}
-                onValueChange={(v) => {
-                    setShowAsSilhouette(v === "viewSilhouette");
-                }}
-            >
-                <ToggleGroupItem value="viewText" aria-label="Come testo">
-                    <TextIcon/>
-                </ToggleGroupItem>
-                <ToggleGroupItem value="viewSilhouette" aria-label="Come immagini">
-                    <UserIcon/>
-                </ToggleGroupItem>
-            </ToggleGroup>
             {
                 listaTornei && torneoParamName && squadraParamName && idSquadra && (
                     <Select value={filtroTorneo} onValueChange={(val) => {
@@ -94,7 +78,7 @@ export default function FormationFilters(
 
                         router.push(`${pathname}?${params.toString()}`, { scroll: false });
                     }}>
-                        <SelectTrigger size="sm" className="w-fit">
+                        <SelectTrigger size="sm" className="w-full sm:w-fit">
                             <SelectValue placeholder="Edizione torneo"/>
                         </SelectTrigger>
                         <SelectContent>
@@ -128,6 +112,22 @@ export default function FormationFilters(
                     </Select>
                 )
             }
+            <ToggleGroup
+                variant="outline"
+                type="single"
+                size="sm"
+                defaultValue={showAsSilhouette ? "viewSilhouette" : "viewText"}
+                onValueChange={(v) => {
+                    setShowAsSilhouette(v === "viewSilhouette");
+                }}
+            >
+                <ToggleGroupItem value="viewText" aria-label="Come testo">
+                    <TextIcon/>
+                </ToggleGroupItem>
+                <ToggleGroupItem value="viewSilhouette" aria-label="Come immagini">
+                    <UserIcon/>
+                </ToggleGroupItem>
+            </ToggleGroup>
         </div>
     )
 }

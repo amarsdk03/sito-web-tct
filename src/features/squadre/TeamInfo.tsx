@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import {motion} from "framer-motion";
-import {Suspense, useEffect, useRef, useState} from "react";
+import {Suspense, useEffect, useState} from "react";
 import {usePathname, useSearchParams} from "next/navigation";
 
 import {
@@ -16,11 +16,23 @@ import {
 } from "@/features/squadre/queries";
 import {getPartiteSquadra, partiteSquadraType} from "@/features/partite/queries";
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
+import {FormationList} from "@/components/formation/FormationList";
+import {
+    DEFAULT_BACKGROUND_COLOR,
+    DEFAULT_COLORE_SQUADRA_CASA,
+    DEFAULT_CONTRAST_RATIO,
+    DEFAULT_FALLBACK_COLOR,
+    DEFAULT_LOGO_PATH
+} from "@/const/defaultConstants";
+import {calcolaRapportoContrasto} from "@/lib/utils";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import PageTitle from "@/components/text/PageTitle";
-import {FormationList} from "@/components/formation/FormationList";
+import ErrorInfo from "@/components/data-info/ErrorInfo";
+import LoadingInfo from "@/components/data-info/LoadingInfo";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
+import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
+import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
 import FormationFilters from "@/components/formation/FormationFilters";
 
 import {
@@ -31,23 +43,12 @@ import {
     ShieldUserIcon,
     Tally5Icon,
 } from "lucide-react";
+import {RiInstagramLine} from "@remixicon/react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
-import {RiInstagramLine} from "@remixicon/react";
 import {Spinner} from "@/components/ui/spinner";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
-import ErrorInfo from "@/components/data-info/ErrorInfo";
-import {calcolaRapportoContrasto} from "@/lib/utils";
-import {
-    DEFAULT_BACKGROUND_COLOR,
-    DEFAULT_COLORE_SQUADRA_CASA,
-    DEFAULT_CONTRAST_RATIO,
-    DEFAULT_FALLBACK_COLOR,
-    DEFAULT_LOGO_PATH
-} from "@/const/defaultConstants";
-import WrongDataContact from "@/components/data-info/WrongDataContact";
-import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
-import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
+import {Tabs, TabsList, TabsTrigger , TabsContent} from "@/components/ui/tabs";
 
 interface statisticheTotaliType {
     totalePartite: number;
@@ -296,6 +297,11 @@ export function TeamInfoContent() {
             <div className={"page-container"}>
                 <div className={"page-content my-48"}>
                     <ErrorInfo infoMessage={"Errore durante il recupero della squadra"} />
+                    <Link href="/" className={"w-full flex justify-center"}>
+                        <Button variant="outline" size="lg" className="text-sm sm:text-lg font-medium sm:p-5">
+                            Torna alla Home
+                        </Button>
+                    </Link>
                 </div>
             </div>
         )
@@ -303,13 +309,12 @@ export function TeamInfoContent() {
 
     return (
         <div className={"page-container"}>
-            <div className={"page-content mt-2 lg:mt-12"}>
-                <PageTitle
-                    title={"Dettagli squadra"}
-                    smallerTitle={true}
+            <div className={"page-content mt-6 lg:mt-12"}>
+                <DetailsPageMenu
+                    pageTitle={"Dettagli squadra"}
                 />
 
-                <div className={"integral-title flex flex-row items-center gap-6 mt-8 sm:mt-6"}>
+                <div className={"integral-title flex flex-row items-center ssm:items-start gap-4 sm:gap-6 mb-2 sm:mb-0 sm:mt-2"}>
                     <motion.div
                         variants={slideAnim}
                         initial={"start"}
@@ -331,9 +336,9 @@ export function TeamInfoContent() {
                         initial={"start"}
                         animate={"finish"}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className={"flex flex-col justify-center gap-1 sm:gap-0 -translate-y-2 min-w-0"}
+                        className={"flex flex-col justify-center sm:-translate-y-2 min-w-0"}
                     >
-                        <div className={"font-semibold text-sm sm:text-lg lg:text-xl"}>
+                        <div className={"font-semibold text-sm sm:text-lg lg:text-xl translate-x-0.5 sm:translate-x-2"}>
                                 <span
                                     className={`player-info-title w-full overflow-hidden text-ellipsis`}
                                     style={{color: coloreLeggibile}}
@@ -341,56 +346,53 @@ export function TeamInfoContent() {
                                     {datiSquadra.acronimo || ""}
                                 </span>
                         </div>
-                        <div className={"font-bold text-3xl sm:text-4xl lg:text-6xl -translate-x-1 min-w-0"}>
-                            <span className={`player-info-title shine-anim-hover block overflow-hidden text-ellipsis pe-2`}>
+                        <div className="font-bold text-3xl sm:text-4xl lg:text-6xl min-w-0 sm:translate-x-0.5">
+                            <span className="player-info-title shine-anim-hover block wrap-anywhere pe-1">
                                 {datiSquadra.nome}
                             </span>
                         </div>
+
+                        {
+                            datiSquadra.username_ig && (
+                                <motion.div
+                                    variants={slideAnim}
+                                    initial={"start"}
+                                    animate={"finish"}
+                                    transition={{ duration: 0.3, delay: 0.3 }}
+                                    className={"flex gap-2 integral-title mt-2 sm:mt-4"}
+                                >
+                                    <Link
+                                        href={`https://www.instagram.com/${datiSquadra.username_ig}`}
+                                        target={"_blank"}
+                                    >
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className={"cursor-pointer"}
+                                            style={{color: coloreLeggibile}}
+                                        >
+                                            <RiInstagramLine />
+                                            <span className={"not-italic -translate-y-0.5"}>
+                                        Profilo IG
+                                    </span>
+                                        </Button>
+                                    </Link>
+                                </motion.div>
+                            )
+                        }
                     </motion.div>
                 </div>
 
-                {
-                    datiSquadra.username_ig && (
-                        <motion.div
-                            variants={slideAnim}
-                            initial={"start"}
-                            animate={"finish"}
-                            transition={{ duration: 0.3, delay: 0.3 }}
-                            className={"flex gap-2 integral-title mt-4 sm:mb-6"}
+                <div className={"w-full mt-6 sm:mt-8"}>
+                    <div className={"grid grid-cols-2 lg:grid-cols-3 gap-3"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
                         >
-                            <Link
-                                href={`https://www.instagram.com/${datiSquadra.username_ig}`}
-                                target={"_blank"}
-                            >
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className={"cursor-pointer"}
-                                    style={{color: coloreLeggibile}}
-                                >
-                                    <RiInstagramLine />
-                                    <span className={"not-italic -translate-y-0.5"}>
-                                        Profilo IG
-                                    </span>
-                                </Button>
-                            </Link>
-                        </motion.div>
-                    )
-                }
-
-                <Separator className={"mt-4 mb-8 sm:mb-14"} />
-
-                <div className={"w-full"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-8 sm:mb-10"}>
-                        Info principali
-                    </div>
-
-                    <div className={"grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 sm:gap-y-10"}>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <ShieldUserIcon className={"size-5"} /> Capitano
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-xl md:text-3xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl truncate"}>
                                 {
                                     datiSquadra.giocatore ? (
                                         <Link href={`/giocatori/dettagli?id=${datiSquadra.giocatore.id}`}>
@@ -400,11 +402,14 @@ export function TeamInfoContent() {
                                 }
                             </div>
                         </div>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
+                        >
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <HistoryIcon className={"size-5"} /> Iscritti nel
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-xl md:text-3xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
                                 {
                                     partiteSquadra?.[0]?.fischio_inizio
                                         ? new Date(partiteSquadra[0].fischio_inizio).getFullYear()
@@ -412,177 +417,199 @@ export function TeamInfoContent() {
                                 }
                             </div>
                         </div>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
+                        >
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <Tally5Icon className={"size-5"} /> Partite giocate
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-xl md:text-3xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
                                 { (statisticheSquadra?.totalePartite) || 0 }
                             </div>
                         </div>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
+                        >
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <CalendarCheckIcon className={"size-5"} /> Vittorie
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-xl md:text-3xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
                                 { statisticheSquadra?.totaleVittorie || 0 }
                             </div>
                         </div>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
+                        >
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <CalendarFoldIcon className={"size-5"} /> Pareggi
                             </div>
-                            <div className={"text-hover-color flex gap-1.5 items-center text-zinc-100 font-bold text-xl md:text-3xl translate-y-0.25"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
                                 { statisticheSquadra?.totalePareggi || 0 }
                             </div>
                         </div>
-                        <div className={"grid grid-rows-2 gap-1.5"}>
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-sm md:text-xl"}>
+                        <div
+                            className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
+                            style={{ backgroundColor: coloreSquadra + "40" }}
+                        >
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
                                 <CalendarMinusIcon className={"size-5"} /> Sconfitte
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-xl md:text-3xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
                                 { statisticheSquadra?.totaleSconfitte || 0 }
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <Separator className={"my-8 sm:my-16"} />
+                <Tabs defaultValue="statistiche" className={"mt-6 sm:mt-12"}>
+                    <ScrollArea className="w-full overflow-y-clip mb-2">
+                        <TabsList variant="line" className={"py-1"}>
+                            <TabsTrigger value="statistiche" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Statistiche
+                            </TabsTrigger>
+                            <TabsTrigger value="rosa" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Rosa della squadra
+                            </TabsTrigger>
+                            <TabsTrigger value="classifiche" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Classifiche
+                            </TabsTrigger>
+                            <TabsTrigger value="storico" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
+                                Storico partite
+                            </TabsTrigger>
+                        </TabsList>
+                        <ScrollBar orientation="horizontal" className={"hidden"} />
+                    </ScrollArea>
 
-                <div className={"w-full mt-10"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-10"}>
-                        Statistiche all-time
-                    </div>
+                    <Separator className={"mb-4 sm:mb-10"} />
 
-                    <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
-                        <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
-                            <TeamStatisticRadar
-                                coloreSquadra={coloreSquadra}
-                                goalSegnati={statisticheSquadra?.totaleGoalSegnati || 0}
-                                goalSubiti={statisticheSquadra?.totaleGoalSubiti || 0}
-                                assist={statisticheSquadra?.totaleAssistCompiuti || 0}
-                                gialli={statisticheSquadra?.totaleCartelliniGialli || 0}
-                                rossi={statisticheSquadra?.totaleCartelliniRossi || 0}
-                            />
+                    <TabsContent value="statistiche" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold mb-10"}>
+                            Statistiche all-time
                         </div>
-                        <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Goal segnati
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { statisticheSquadra?.totaleGoalSegnati || 0 }
-                                </div>
+
+                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
+                            <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
+                                <TeamStatisticRadar
+                                    coloreSquadra={coloreLeggibile}
+                                    goalSegnati={statisticheSquadra?.totaleGoalSegnati || 0}
+                                    goalSubiti={statisticheSquadra?.totaleGoalSubiti || 0}
+                                    assist={statisticheSquadra?.totaleAssistCompiuti || 0}
+                                    gialli={statisticheSquadra?.totaleCartelliniGialli || 0}
+                                    rossi={statisticheSquadra?.totaleCartelliniRossi || 0}
+                                />
                             </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Goal subiti
+                            <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Goal segnati
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { statisticheSquadra?.totaleGoalSegnati || 0 }
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { statisticheSquadra?.totaleGoalSubiti || 0 }
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Goal subiti
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { statisticheSquadra?.totaleGoalSubiti || 0 }
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Differenza reti
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Diff. reti
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { (statisticheSquadra?.totaleGoalSegnati || 0) - (statisticheSquadra?.totaleGoalSubiti || 0) }
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { (statisticheSquadra?.totaleGoalSegnati || 0) - (statisticheSquadra?.totaleGoalSubiti || 0) }
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Assist totali
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { statisticheSquadra?.totaleAssistCompiuti || 0 }
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Assist totali
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Cartellini gialli
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { statisticheSquadra?.totaleCartelliniGialli || 0 }
+                                    </div>
                                 </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { statisticheSquadra?.totaleAssistCompiuti || 0 }
-                                </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Cartellini gialli
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { statisticheSquadra?.totaleCartelliniGialli || 0 }
-                                </div>
-                            </div>
-                            <div className={"grid grid-rows-2"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    Cartellini rossi
-                                </div>
-                                <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
-                                    { statisticheSquadra?.totaleCartelliniRossi || 0 }
+                                <div className={"grid grid-rows-2"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        Cartellini rossi
+                                    </div>
+                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-2.5"}>
+                                        { statisticheSquadra?.totaleCartelliniRossi || 0 }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </TabsContent>
 
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8"}>
-                        <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
-                            Rosa della squadra
-                        </div>
-                        <FormationFilters
-                            loading={loading}
-                            showAsSilhouette={showAsSilhouette}
-                            setShowAsSilhouette={setShowAsSilhouette}
-                            pathname={pathname}
-                            idSquadra={idSquadra}
-                            squadraParamName={squadraParamName}
-                            torneoParamName={torneoParamName}
-                            listaTornei={listaTornei}
-                        />
-                    </div>
-                    {
-                        formazioneSquadra && formazioneSquadra.length > 0 ? (
-                            <FormationList
+                    <TabsContent value="rosa" className={"sm:pt-2"}>
+                        <div className={"flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-8"}>
+                            <div className={"text-hover-color text-2xl md:text-4xl font-extrabold mb-2 sm:mb-0"}>
+                                Rosa della squadra
+                            </div>
+                            <FormationFilters
+                                loading={loading}
                                 showAsSilhouette={showAsSilhouette}
-                                showBadgeCapitani={true}
-                                idCapitano={datiSquadra.giocatore?.id || -1}
-                                stemmaSquadra={datiSquadra.link_stemma}
-                                coloreSquadra={coloreSquadra}
-                                formazioneSquadra={formazioneSquadra}
+                                setShowAsSilhouette={setShowAsSilhouette}
+                                pathname={pathname}
+                                idSquadra={idSquadra}
+                                squadraParamName={squadraParamName}
+                                torneoParamName={torneoParamName}
+                                listaTornei={listaTornei}
                             />
-                        ) : (
-                            <div className={"w-full"}>
-                                <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                    {
-                                        loadingFormazione ? "Caricamento..." : "Nessuna formazione trovata."
-                                    }
+                        </div>
+                        {
+                            formazioneSquadra && formazioneSquadra.length > 0 ? (
+                                <FormationList
+                                    showAsSilhouette={showAsSilhouette}
+                                    showBadgeCapitani={true}
+                                    idCapitano={datiSquadra.giocatore?.id || -1}
+                                    stemmaSquadra={datiSquadra.link_stemma}
+                                    coloreSquadra={coloreSquadra}
+                                    formazioneSquadra={formazioneSquadra}
+                                />
+                            ) : (
+                                <div className={"w-full"}>
+                                    <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
+                                        {
+                                            loadingFormazione ? "Caricamento..." : "Nessuna formazione trovata."
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        )
-                    }
-                </div>
+                            )
+                        }
+                    </TabsContent>
 
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Classifiche all-time
-                    </div>
-                    <div className={"w-full italic"}>
-                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                            Sezione presto in arrivo...
+                    <TabsContent value="classifiche" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold"}>
+                            Classifiche all-time
                         </div>
-                    </div>
-                </div>
-
-                <Separator className={"my-8 sm:my-16"} />
-
-                <div className={"w-full mt-10"}>
-                    <div className={"text-hover-color text-3xl md:text-4xl font-extrabold mb-4 sm:mb-6"}>
-                        Storico partite
-                    </div>
-                    <div className={"w-full italic"}>
-                        <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                            Sezione presto in arrivo...
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl mt-2 sm:mt-4"}>
+                            Presto in arrivo...
                         </div>
-                    </div>
-                </div>
+                    </TabsContent>
+
+                    <TabsContent value="storico" className={"sm:pt-2"}>
+                        <div className={"text-hover-color text-2xl md:text-4xl font-extrabold"}>
+                            Storico partite
+                        </div>
+                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl mt-2 sm:mt-4"}>
+                            Presto in arrivo...
+                        </div>
+                    </TabsContent>
+                </Tabs>
 
                 <WrongDataContact />
 

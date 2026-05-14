@@ -23,7 +23,7 @@ export default function LoadingInfo({defaultSpinner = false, contentOpacity = 1,
                                 alt="Loading"
                                 width={24}
                                 height={24}
-                                className="me-2 animate-spin"
+                                className="me-2 animate-spin -translate-y-0.25"
                             />
                         )
                     }
