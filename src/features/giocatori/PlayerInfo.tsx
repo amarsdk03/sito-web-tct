@@ -380,7 +380,7 @@ export function PlayerInfoContent() {
                         </div>
 
                         <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
-                            <div className={"min-w-[200px] max-w-[250px] sm:min-w-[300px] sm:mx-12"}>
+                            <div className={"min-w-[300px] sm:mx-12"}>
                                 <PlayerStatisticRadar
                                     coloreSquadra={coloreLeggibile}
                                     mvp={statisticheGiocatore[0]?.num_mvp || 0}
@@ -390,53 +390,71 @@ export function PlayerInfoContent() {
                                     rossi={statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
                                 />
                             </div>
-                            <div className={"w-full grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-12"}>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Partite giocate
-                                    </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                            <div className={"w-full grid grid-cols-2 md:grid-cols-3 justify-items-center gap-x-4 gap-y-6 sm:gap-y-8"}>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore[0]?.n_partite || 0}
                                     </div>
-                                </div>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Goal segnati
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        Partite giocate
                                     </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                </div>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
                                     </div>
-                                </div>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Assist
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        Goal segnati
                                     </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                </div>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
                                     </div>
-                                </div>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Cartellini gialli
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        Assist
                                     </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                </div>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
                                     </div>
-                                </div>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        Cartellini rossi
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        Cartellini gialli
                                     </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                </div>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
                                     </div>
-                                </div>
-                                <div className={"grid grid-rows-2"}>
-                                    <div className={"text-zinc-400 font-semibold text-md md:text-xl"}>
-                                        MVP totali
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        Cartellini rossi
                                     </div>
-                                    <div className={"integral-title-hover text-zinc-100 font-bold text-5xl -translate-y-5 sm:-translate-y-2.5"}>
+                                </div>
+                                <div className={"grid grid-rows-2 text-center"}>
+                                    <div
+                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        style={{ color: coloreLeggibile }}
+                                    >
                                         {statisticheGiocatore[0]?.num_mvp || 0}
+                                    </div>
+                                    <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
+                                        MVP totali
                                     </div>
                                 </div>
                             </div>

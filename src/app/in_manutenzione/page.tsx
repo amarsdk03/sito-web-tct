@@ -5,7 +5,7 @@ import {dynamicMetadata} from "@/lib/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
     "In manutenzione",
-    "Sito web temporaneamente in manutenzione. Riprova tra qualche minuto."
+    "Sito web temporaneamente in manutenzione. Riprova tra qualche minuto"
 );
 
 export default function Page() {

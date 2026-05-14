@@ -5,7 +5,7 @@ import {dynamicMetadata} from "@/lib/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
     "Cerca squadra",
-    "Cerca tra le squadra iscritte nelle varie edizioni del torneo."
+    "Lista tutte le squadre iscritte nelle varie edizioni"
 );
 
 export default function Page() {

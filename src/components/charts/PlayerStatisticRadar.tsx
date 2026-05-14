@@ -39,12 +39,12 @@ export default function PlayerStatisticRadar({coloreSquadra, mvp = 0, goal = 0, 
     return (
         <ChartContainer
             config={chartConfig}
-            className="mx-auto w-full aspect-square"
+            className="mx-auto w-full aspect-square max-h-[250px] sm:max-h-[350px]"
         >
             <RadarChart data={chartData}>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                <PolarGrid className="fill-(--color-desktop) opacity-20" />
                 <PolarAngleAxis dataKey="azione" />
-                <PolarGrid />
                 <Radar
                     dataKey="valore"
                     fill={chartColor}

@@ -1,6 +1,6 @@
 'use client';
 
-import {Suspense, useEffect, useState} from "react";
+import {type KeyboardEvent, Suspense, useEffect, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AnimatePresence, motion} from 'framer-motion';
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
@@ -181,6 +181,11 @@ export function TeamsContent() {
                                 placeholder="Cerca per nome squadra"
                                 aria-label="Cerca giocatore"
                                 onChange={(e) => setSearchInput(e.target.value)}
+                                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                                    if (e.key === "Enter") {
+                                        handleSearch();
+                                    }
+                                }}
                                 value={searchInput}
                             />
                             <TeamSearchFilters

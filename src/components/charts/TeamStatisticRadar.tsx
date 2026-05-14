@@ -43,8 +43,8 @@ export default function TeamStatisticRadar({coloreSquadra, goalSegnati = 0, goal
         >
             <RadarChart data={chartData}>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                <PolarGrid className="fill-(--color-desktop) opacity-20" />
                 <PolarAngleAxis dataKey="azione" />
-                <PolarGrid />
                 <Radar
                     dataKey="valore"
                     fill={chartColor}

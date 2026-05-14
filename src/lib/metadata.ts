@@ -5,7 +5,8 @@ export function dynamicMetadata(title?: string | null, description?: string | nu
         metadataBase: new URL(
             process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
         ),
-        title: title ? `Torneo CdT - ${title}` : 'Torneo CdT',
+        title: title ? `Torneo Città di Trento - ${title}` : 'Torneo Città di Trento',
+        applicationName: 'Torneo CdT',
         description: description || "Sito web ufficiale del torneo di calcio della Città di Trento",
         icons: [
             {
@@ -21,13 +22,19 @@ export function dynamicMetadata(title?: string | null, description?: string | nu
         ],
         manifest: "/manifest.json",
         openGraph: {
-            title: title ? `Torneo CdT - ${title}` : 'Torneo CdT',
+            title: title ? `Torneo Città di Trento - ${title}` : 'Torneo Città di Trento',
             description: description || 'Sito ufficiale del torneo',
-            url: '/',
             siteName: 'Torneo CdT',
             locale: 'it_IT',
             type: 'website',
-            images: ['/logo_eagle_only.png'],
+            images: [
+                {
+                    url: '/logo_eagle_only.png',
+                    width: 320,
+                    height: 320,
+                    alt: 'Torneo CdT Logo',
+                },
+            ],
         },
         appleWebApp: {
             capable: true,

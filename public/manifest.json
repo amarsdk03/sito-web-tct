@@ -2,6 +2,8 @@
   "name": "Torneo Città di Trento",
   "short_name": "Torneo CDT",
   "description": "Sito web ufficiale del torneo della Città di Trento",
+  "lang": "it",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "theme_color": "#738E50",

@@ -23,6 +23,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {Field, FieldDescription, FieldLabel} from "@/components/ui/field";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {FilterIcon} from "lucide-react";
@@ -90,39 +91,47 @@ export default function TeamSearchFilters(
                     <DialogDescription className="sr-only">Filtra ricerca</DialogDescription>
                 </DialogHeader>
 
-                <Select value={filtroTorneo} onValueChange={setFiltroTorneo}>
-                    <SelectTrigger className="w-full rounded-lg">
-                        <SelectValue placeholder="Edizione torneo"/>
-                    </SelectTrigger>
-                    <SelectContent className={"bg-background"}>
-                        <SelectGroup>
-                            <SelectLabel>
-                                Ultima edizione:
-                            </SelectLabel>
-                            {listaTornei.length > 0 && (
-                                <SelectItem value={listaTornei[0].id.toString()}>
-                                    {listaTornei[0].nome}
-                                </SelectItem>
-                            )}
-                        </SelectGroup>
-                        <SelectSeparator/>
-                        <SelectGroup>
-                            <SelectLabel>
-                                Edizioni passate:
-                            </SelectLabel>
-                            {
-                                listaTornei.slice(1).map((torneo) => (
-                                    <SelectItem
-                                        key={torneo.id}
-                                        value={torneo.id.toString()}
-                                    >
-                                        {torneo.nome}
+                <Field className="w-full">
+                    <FieldLabel>
+                        Edizione torneo:
+                    </FieldLabel>
+                    <Select value={filtroTorneo} onValueChange={setFiltroTorneo}>
+                        <SelectTrigger className="w-full rounded-lg">
+                            <SelectValue placeholder="Edizione torneo"/>
+                        </SelectTrigger>
+                        <SelectContent className={"bg-background"}>
+                            <SelectGroup>
+                                <SelectLabel>
+                                    Ultima edizione:
+                                </SelectLabel>
+                                {listaTornei.length > 0 && (
+                                    <SelectItem value={listaTornei[0].id.toString()}>
+                                        {listaTornei[0].nome}
                                     </SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                                )}
+                            </SelectGroup>
+                            <SelectSeparator/>
+                            <SelectGroup>
+                                <SelectLabel>
+                                    Edizioni passate:
+                                </SelectLabel>
+                                {
+                                    listaTornei.slice(1).map((torneo) => (
+                                        <SelectItem
+                                            key={torneo.id}
+                                            value={torneo.id.toString()}
+                                        >
+                                            {torneo.nome}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <FieldDescription>
+                        NB: alcuni giocatori delle edizioni prima del 2025/2026 potrebbero non essere disponibili
+                    </FieldDescription>
+                </Field>
 
                 <DialogFooter>
                     <DialogClose asChild>
