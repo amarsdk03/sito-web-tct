@@ -129,7 +129,7 @@ export default function TeamSearchFilters(
                         </SelectContent>
                     </Select>
                     <FieldDescription>
-                        NB: alcuni giocatori delle edizioni prima del 2025/2026 potrebbero non essere disponibili
+                        NB: alcune squadre delle edizioni prima del 2025/2026 potrebbero non essere disponibili
                     </FieldDescription>
                 </Field>
 

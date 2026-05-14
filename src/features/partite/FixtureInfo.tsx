@@ -222,7 +222,7 @@ export function FixtureInfoContent() {
                         <span className={"flex-1"}>
                             {datiPartita.goal_casa ?? "?"}
                         </span>
-                        <span className={"flex-shrink-0 px-4 -translate-x-0.5"}>
+                        <span className={"shrink-0 px-4 -translate-x-0.5"}>
                             {" - "}
                         </span>
                         <span className={"flex-1"}>

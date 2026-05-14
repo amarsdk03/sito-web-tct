@@ -4,7 +4,8 @@ import {Metadata} from "next";
 import {dynamicMetadata} from "@/lib/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
-    "Visualizza dettagli giocatore"
+    "Dettagli giocatore",
+    "Visualizza i dati, le statistiche e molto altro"
 );
 
 export default function Page() {
