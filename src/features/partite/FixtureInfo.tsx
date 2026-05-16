@@ -8,10 +8,10 @@ import {Suspense, useEffect, useMemo, useState} from "react";
 
 import {calcolaStatoPartita, string_to_snake_case} from "@/lib/utils";
 import {
-    azioniPartitaType,
+    azioniPartitaType, contentPartitaType,
     datiCampoType,
     datiPartitaType,
-    getAzioniPartita, getDatiCampo,
+    getAzioniPartita, getContentPartita, getDatiCampo,
     getDatiPartita
 } from "@/features/partite/queries";
 import {formazioneSquadraType, getFormazioneSquadra} from "@/features/squadre/queries";
@@ -34,6 +34,7 @@ import {RiCheckboxBlankCircleFill} from "@remixicon/react";
 import {HourglassIcon, TextIcon, UserIcon} from "lucide-react";
 import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
 import {Button} from "@/components/ui/button";
+import {Separator} from "@/components/ui/separator";
 
 export default function FixtureInfo() {
     return (
@@ -56,6 +57,7 @@ export function FixtureInfoContent() {
     const [azioniPartita, setAzioniPartita] = useState<azioniPartitaType | null>(null);
     const [formazioneCasa, setFormazioneCasa] = useState<formazioneSquadraType | null>(null);
     const [formazioneOspite, setFormazioneOspite] = useState<formazioneSquadraType | null>(null);
+    const [contentPartita, setContentPartita] = useState<contentPartitaType | null>(null);
     const [datiCampo, setDatiCampo] = useState<datiCampoType | null>(null);
 
     const [switchFormationTeam, setSwitchFormationTeam] = useState(true);
@@ -77,17 +79,25 @@ export function FixtureInfoContent() {
                 const idSquadraOspite = datiPartita.squadra_ospite_id || -1;
                 const idCampo = datiPartita.campo_svolgimento || -1;
 
-                const [resultAzioniPartita, resultFormazioneCasa, resultFormazioneOspite, resultDatiCampo] = await Promise.all([
+                const [
+                    resultAzioniPartita,
+                    resultFormazioneCasa,
+                    resultFormazioneOspite,
+                    resultDatiCampo,
+                    resultContentPartita,
+                ] = await Promise.all([
                     getAzioniPartita(idPartita),
                     getFormazioneSquadra(idSquadraCasa, idTorneo),
                     getFormazioneSquadra(idSquadraOspite, idTorneo),
-                    getDatiCampo(idCampo)
+                    getDatiCampo(idCampo),
+                    getContentPartita(idPartita),
                 ]);
 
                 setAzioniPartita(resultAzioniPartita);
                 setFormazioneCasa(resultFormazioneCasa);
                 setFormazioneOspite(resultFormazioneOspite);
                 setDatiCampo(resultDatiCampo);
+                setContentPartita(resultContentPartita);
             }
             // eslint-disable-next-line
             catch (error: any) {
@@ -276,7 +286,7 @@ export function FixtureInfoContent() {
 
                 {
                     (marcatoriGoal.home.length > 0 || marcatoriGoal.away.length > 0) &&
-                    <div className={"grid grid-cols-2 gap-4 w-full mb-4 sm:mb-12"}>
+                    <div className={"grid grid-cols-2 gap-4 w-full"}>
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -358,7 +368,9 @@ export function FixtureInfoContent() {
                     </div>
                 }
 
-                <Tabs defaultValue="info" className={"mt-4"}>
+                <Separator className={"my-4 sm:my-8"} />
+
+                <Tabs defaultValue="info">
                     <ScrollArea className="w-full overflow-y-clip mb-4">
                         <TabsList variant="line" className={"py-1"}>
                             <TabsTrigger value="info" className={"sm:text-lg pb-2 sm:pb-5 after:bg-chart-1"}>
@@ -381,6 +393,30 @@ export function FixtureInfoContent() {
                     </ScrollArea>
 
                     <TabsContent value="info" className={"space-y-4"}>
+                        {contentPartita?.[0]?.highlights_yt && (
+                            <div className={"w-full bg-mist-800/50 p-6 rounded-lg"}>
+                                <div className={"space-y-1 col-span-3 mb-4 md:mb-5"}>
+                                    <div className={"text-mist-400 text-xs md:text-sm"}>
+                                        Da YouTube
+                                    </div>
+                                    <div className={"text-mist-200 font-bold text-xl md:text-2xl"}>
+                                        Highlights partita
+                                    </div>
+                                </div>
+
+                                <div className="w-full aspect-video rounded overflow-hidden">
+                                    <iframe
+                                        className="w-full h-full"
+                                        src={`https://www.youtube.com/embed/${contentPartita[0].highlights_yt}`}
+                                        title="YouTube video player"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerPolicy="strict-origin-when-cross-origin"
+                                        allowFullScreen
+                                    />
+                                </div>
+                            </div>
+                        )}
+
                         <div className={"space-y-6 w-full bg-mist-800/50 p-6 rounded-lg"}>
                             <div className={"grid grid-cols-2 gap-4"}>
                                 <div className={"text-mist-400 text-sm md:text-base"}>

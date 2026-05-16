@@ -31,7 +31,7 @@ export default function DetailsPageMenu({ pageTitle }: { pageTitle: string}) {
         navigator.clipboard.writeText(window.location.href).then(
             () => {
                 setCondividiLinkText("Link copiato!");
-                setTimeout(() => setCondividiLinkText(textValue), 2000);
+                setTimeout(() => setCondividiLinkText(textValue), 5000);
             }
         );
     }
@@ -73,7 +73,7 @@ export default function DetailsPageMenu({ pageTitle }: { pageTitle: string}) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => router.refresh()}>
+                        <DropdownMenuItem onClick={() => window.location.reload()}>
                             <RefreshCwIcon />
                             Aggiorna
                         </DropdownMenuItem>

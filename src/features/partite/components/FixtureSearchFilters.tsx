@@ -58,7 +58,7 @@ export default function FixtureSearchFilters(
 
     return (
         <div className={"flex flex-wrap items-end justify-start sm:justify-between mt-3 gap-2 md:gap-4"}>
-            <div className={"flex flex-wrap items-center w-full sm:w-fit gap-4 sm:gap-3 md:gap-4 mb-4 sm:mb-0"}>
+            <div className={"flex flex-wrap items-center w-full sm:w-fit gap-4 sm:gap-3 md:gap-4 mb-3 sm:mb-0"}>
                 {/* Edizione */}
                 <div className={"w-full sm:w-40 md:w-48 lg:w-52"}>
                     <label className="text-sm font-medium mb-2 block">

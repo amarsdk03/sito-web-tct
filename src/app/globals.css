@@ -181,7 +181,7 @@
 
 .navbar-div {
     background-color: #738E50;
-    border-bottom: 2px solid var(--primary);
+    border-bottom: 3px solid var(--primary);
 
     /*noinspection CssUnknownTarget*/
     background-image: url("/other/bg_texture.png");

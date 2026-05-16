@@ -2,13 +2,13 @@ import {ReactNode} from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { cn } from "@/lib/utils";
-import { Figtree, Roboto } from "next/font/google";
+import {cn} from "@/lib/utils";
+import {Figtree, Roboto} from "next/font/google";
 
-import { Toaster } from "sonner";
+import {Toaster} from "sonner";
 import {ThemeWrapper} from "@/components/theme/theme-wrapper";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import {Analytics} from "@vercel/analytics/next";
+import {SpeedInsights} from "@vercel/speed-insights/next";
 import {dynamicMetadata} from "@/lib/metadata";
 
 const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading'});
@@ -27,7 +27,10 @@ export default function RootLayout({
             className={cn("font-sans", figtree.variable, robotoHeading.variable)}
             suppressHydrationWarning
         >
-            <body suppressHydrationWarning>
+            <body
+                className="min-h-screen flex flex-col"
+                suppressHydrationWarning
+            >
                 <ThemeWrapper>
                     {children}
                 </ThemeWrapper>

@@ -14,7 +14,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-const dialogTitle = "Ultime novità";
+const dialogTitle = "Ultime notizie";
 
 export default function NavbarNewsDialog() {
     return (

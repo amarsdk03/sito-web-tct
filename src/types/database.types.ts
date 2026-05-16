@@ -494,11 +494,13 @@ export type Database = {
           fischio_inizio: string | null
           giornata: number | null
           girone: string
+          highlights_yt: string | null
           id: number
           id_arbitro: number | null
           id_categoria: number
           id_squadra_casa: number
           id_squadra_ospite: number
+          link_post_ig: string | null
           mvp_partita: number | null
           vinta_a_tavolino: Database["public"]["Enums"]["vittoria_tavolino"]
         }
@@ -510,11 +512,13 @@ export type Database = {
           fischio_inizio?: string | null
           giornata?: number | null
           girone?: string
+          highlights_yt?: string | null
           id?: number
           id_arbitro?: number | null
           id_categoria: number
           id_squadra_casa: number
           id_squadra_ospite: number
+          link_post_ig?: string | null
           mvp_partita?: number | null
           vinta_a_tavolino?: Database["public"]["Enums"]["vittoria_tavolino"]
         }
@@ -526,11 +530,13 @@ export type Database = {
           fischio_inizio?: string | null
           giornata?: number | null
           girone?: string
+          highlights_yt?: string | null
           id?: number
           id_arbitro?: number | null
           id_categoria?: number
           id_squadra_casa?: number
           id_squadra_ospite?: number
+          link_post_ig?: string | null
           mvp_partita?: number | null
           vinta_a_tavolino?: Database["public"]["Enums"]["vittoria_tavolino"]
         }

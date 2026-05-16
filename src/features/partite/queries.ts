@@ -151,3 +151,25 @@ export async function getDatiCampo(idCampo: number) {
     const result: datiCampoType = data;
     return result;
 }
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const contentPartitaQuery = supabase
+    .from('partita')
+    .select('highlights_yt, link_post_ig')
+    .eq('id', 0);
+
+export type contentPartitaType = QueryData<typeof contentPartitaQuery>;
+
+export async function getContentPartita(idPartita: number) {
+    const query = supabase
+        .from('partita')
+        .select('highlights_yt, link_post_ig')
+        .eq('id', idPartita);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const result: contentPartitaType = data;
+    return result;
+}
