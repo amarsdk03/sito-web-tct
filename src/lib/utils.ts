@@ -1,5 +1,7 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import {type ClassValue, clsx} from "clsx"
+import {twMerge} from "tailwind-merge"
+import {SquadraClassifica} from "@/features/tornei/components/RankingTable";
+import {listaPartiteType} from "@/features/partite/queries";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -47,6 +49,97 @@ export function calcolaStatoPartita(
     }
 
     return "Terminata";
+}
+
+// Struttura dati raggruppata: Categoria -> Girone -> Array di Squadre
+export interface ClassificheRaggruppate {
+    [categoria: string]: {
+        [girone: string]: SquadraClassifica[];
+    };
+}
+
+export function calcolaClassifiche(listaPartite: listaPartiteType) {
+    const mappaClassifiche: ClassificheRaggruppate = {};
+
+    listaPartite.forEach((partita) => {
+        const catNome = partita.categoria_nome ?? "???";
+        const girNome = partita.girone ?? "???";
+
+        // Consideriamo solo le partite giocate con un risultato valido
+        if (partita.goal_casa === null || partita.goal_ospite === null) return;
+        if (!partita.squadra_casa_id || !partita.squadra_ospite_id) return;
+
+        if (!mappaClassifiche[catNome]) mappaClassifiche[catNome] = {};
+        if (!mappaClassifiche[catNome][girNome]) mappaClassifiche[catNome][girNome] = [];
+
+        const rigaGirone = mappaClassifiche[catNome][girNome];
+
+        // Inizializza la squadra di casa se non esiste nel girone
+        let casa = rigaGirone.find(s => s.id === partita.squadra_casa_id);
+        if (!casa) {
+            casa = {
+                id: partita.squadra_casa_id,
+                nome: partita.squadra_casa_nome ?? "Home",
+                acronimo: partita.squadra_casa_acronimo ?? "HOM",
+                stemma: partita.squadra_casa_stemma ?? "",
+                giocate: 0, vinte: 0, pareggi: 0, perse: 0, golFatti: 0, golSubiti: 0, diffReti: 0, punti: 0
+            };
+            rigaGirone.push(casa);
+        }
+
+        // Inizializza la squadra ospite se non esiste nel girone
+        let ospite = rigaGirone.find(s => s.id === partita.squadra_ospite_id);
+        if (!ospite) {
+            ospite = {
+                id: partita.squadra_ospite_id,
+                nome: partita.squadra_ospite_nome ?? "Away",
+                acronimo: partita.squadra_ospite_acronimo ?? "AWA",
+                stemma: partita.squadra_ospite_stemma ?? "",
+                giocate: 0, vinte: 0, pareggi: 0, perse: 0, golFatti: 0, golSubiti: 0, diffReti: 0, punti: 0
+            };
+            rigaGirone.push(ospite);
+        }
+
+        // Aggiornamento statistiche gol e partite giocate
+        casa.giocate += 1;
+        ospite.giocate += 1;
+        casa.golFatti += partita.goal_casa;
+        casa.golSubiti += partita.goal_ospite;
+        ospite.golFatti += partita.goal_ospite;
+        ospite.golSubiti += partita.goal_casa;
+
+        // Calcolo esito partita (Punti: 3 per vittoria, 1 per pareggio, 0 per sconfitta)
+        if (partita.goal_casa > partita.goal_ospite) {
+            casa.vinte += 1;
+            casa.punti += 3;
+            ospite.perse += 1;
+        } else if (partita.goal_casa < partita.goal_ospite) {
+            ospite.vinte += 1;
+            ospite.punti += 3;
+            casa.perse += 1;
+        } else {
+            casa.pareggi += 1;
+            casa.punti += 1;
+            ospite.pareggi += 1;
+            ospite.punti += 1;
+        }
+
+        casa.diffReti = casa.golFatti - casa.golSubiti;
+        ospite.diffReti = ospite.golFatti - ospite.golSubiti;
+    });
+
+    // Ordinamento delle classifiche (Punti -> Differenza Reti -> Gol Fatti)
+    Object.keys(mappaClassifiche).forEach(cat => {
+        Object.keys(mappaClassifiche[cat]).forEach(gir => {
+            mappaClassifiche[cat][gir].sort((a, b) => {
+                if (b.punti !== a.punti) return b.punti - a.punti;
+                if (b.diffReti !== a.diffReti) return b.diffReti - a.diffReti;
+                return b.golFatti - a.golFatti;
+            });
+        });
+    });
+
+    return mappaClassifiche;
 }
 
 export function string_to_snake_case(str: string | null) {

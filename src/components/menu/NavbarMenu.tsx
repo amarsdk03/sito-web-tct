@@ -3,7 +3,7 @@ import {usePathname} from "next/navigation";
 
 import {Button} from "@/components/ui/button"
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger,} from "@/components/ui/sheet"
-import NavbarMenuCard from "@/components/navbar/NavbarMenuCard";
+import NavbarMenuCard from "@/components/menu/NavbarMenuCard";
 import {RiMenuLine} from "@remixicon/react";
 import {navbarLinks} from "@/const/pageCards";
 import {DEFAULT_NOME_ULTIMA_EDIZIONE} from "@/const/defaultConstants";
@@ -36,7 +36,7 @@ export function NavbarMenu({ showCurrentPage = true } : { showCurrentPage?: bool
                         {DEFAULT_NOME_ULTIMA_EDIZIONE}
                     </SheetDescription>
                 </SheetHeader>
-                <div className="no-scrollbar overflow-y-auto px-6 pb-4">
+                <div className="no-scrollbar overflow-y-auto grid gap-4 px-6 pb-4">
                     {
                         shownNavbarLinks.map((link, index) => (
                             <NavbarMenuCard key={index} link={link} />

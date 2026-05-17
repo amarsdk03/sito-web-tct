@@ -1,7 +1,7 @@
 'use client';
 
+import type {KeyboardEvent} from "react";
 import {Suspense, useEffect, useState} from "react";
-import type { KeyboardEvent } from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AnimatePresence, motion} from 'framer-motion';
 import {getListaGiocatori, listaGiocatoriType} from "@/features/giocatori/queries";
@@ -219,7 +219,7 @@ export function PlayersContent() {
                     </Empty>
                 ) : loading ? (
                     <div className={"mt-12"}>
-                        <LoadingInfo infoMessage={"Ricerca in corso..."} contentOpacity={0.75} />
+                        <LoadingInfo infoMessage={"Ricerca in corso..."} />
                     </div>
                 ) : (
                     <>

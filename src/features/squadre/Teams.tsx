@@ -231,7 +231,7 @@ export function TeamsContent() {
                     </Empty>
                 ) : loading ? (
                     <div className={"mt-12"}>
-                        <LoadingInfo infoMessage={"Ricerca in corso..."} contentOpacity={0.75} />
+                        <LoadingInfo infoMessage={"Ricerca in corso..."} />
                     </div>
                 ) : (
                     <>

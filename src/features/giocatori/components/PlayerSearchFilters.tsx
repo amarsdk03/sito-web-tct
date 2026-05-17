@@ -3,11 +3,7 @@ import {useRouter} from "next/navigation";
 
 import {listaTorneiType} from "@/features/tornei/queries";
 
-import {
-    Field,
-    FieldDescription,
-    FieldLabel,
-} from "@/components/ui/field";
+import {Field, FieldDescription, FieldLabel,} from "@/components/ui/field";
 import {
     Select,
     SelectContent,

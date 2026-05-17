@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import {useState, useEffect, memo, useMemo} from 'react';
+import {memo, useEffect, useMemo, useState} from 'react';
 
 import {Constants} from "@/types/database.types";
 import {formazioneSquadraType} from "@/features/squadre/queries";

@@ -48,6 +48,26 @@ export async function getPartiteSquadra(idSquadra: number) {
 }
 
 
+const listaCategorieQuery = supabase
+    .from('lista_categorie')
+    .select(`*`)
+    .order('torneo_id', { ascending: false });
+
+export type listaCategorieType = QueryData<typeof listaCategorieQuery>;
+
+let cacheCategorie: (listaCategorieType | null) = null;
+
+export async function getListaCategorie() {
+    if (cacheCategorie) return cacheCategorie;
+
+    const { data, error } = await listaCategorieQuery;
+    if (error) throw error;
+
+    cacheCategorie = data;
+    return (data || []) as listaCategorieType;
+}
+
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const listaPartiteQuery = supabase
     .from('risultati_partite')

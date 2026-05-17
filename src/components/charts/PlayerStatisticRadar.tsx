@@ -1,13 +1,8 @@
 "use client"
 
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
+import {PolarAngleAxis, PolarGrid, Radar, RadarChart} from "recharts"
 
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-    type ChartConfig,
-} from "@/components/ui/chart"
+import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
 
 export default function PlayerStatisticRadar({coloreSquadra, mvp = 0, goal = 0, assist = 0, gialli = 0, rossi = 0}: {
     coloreSquadra: string,

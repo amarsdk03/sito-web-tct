@@ -4,7 +4,7 @@ import {Suspense, useEffect, useMemo, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AnimatePresence, motion} from 'framer-motion';
 import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
-import {getListaPartite, listaPartiteType} from "@/features/partite/queries";
+import {getListaCategorie, getListaPartite, listaCategorieType, listaPartiteType} from "@/features/partite/queries";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -48,7 +48,7 @@ export function FixturesContent() {
 
     const [listaTornei, setListaTornei] = useState<listaTorneiType>([]);
     const [listaPartite, setListaPartite] = useState<listaPartiteType>([]);
-    const [listaPartiteCompleta, setListaPartiteCompleta] = useState<listaPartiteType>([]);
+    const [listaCategorie, setListaCategorie] = useState<listaCategorieType>([]);
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -83,13 +83,12 @@ export function FixturesContent() {
                     return;
                 }
 
-                const [partiteCompleta, partite] = await Promise.all([
-                    // Recupero i dati dei filtri direttamente da tutte le partite (non proprio il top)
-                    getListaPartite(null, null, null),
+                const [categorie, partite] = await Promise.all([
+                    getListaCategorie(),
                     getListaPartite(selectedTorneoId, categoriaParam, gironeParam)
                 ]);
 
-                setListaPartiteCompleta(partiteCompleta);
+                setListaCategorie(categorie)
                 setListaPartite(partite);
             }
             // eslint-disable-next-line
@@ -114,32 +113,32 @@ export function FixturesContent() {
     const edizioni = useMemo(() =>
             Array.from(
                 new Map(
-                    listaPartiteCompleta
+                    listaCategorie
                         .filter(p => p.torneo_id && p.torneo_nome)
                         .map(p => [p.torneo_id, { id: p.torneo_id!, nome: p.torneo_nome! }])
                 ).values()
             ),
-        [listaPartiteCompleta]
+        [listaCategorie]
     );
 
     const categorie = useMemo(() =>
             Array.from(
                 new Map(
-                    listaPartiteCompleta
+                    listaCategorie
                         .filter(p => p.categoria_id && p.categoria_nome)
                         .map(p => [p.categoria_id, { id: p.categoria_id!.toString(), nome: p.categoria_nome! }])
                 ).values()
             ),
-        [listaPartiteCompleta]
+        [listaCategorie]
     );
 
     const gironi = useMemo(() =>
             Array.from(
-                new Set(listaPartiteCompleta.filter(p => p.girone).map(p => p.girone!))
+                new Set(listaCategorie.filter(p => p.girone).map(p => p.girone!))
             )
                 .map(g => ({ girone: g }))
                 .sort((a, b) => a.girone.localeCompare(b.girone)),
-        [listaPartiteCompleta]
+        [listaCategorie]
     );
 
     const containerAnim = {
@@ -204,7 +203,7 @@ export function FixturesContent() {
                     </Empty>
                 ) : loading ? (
                     <div className={"mt-12"}>
-                        <LoadingInfo infoMessage={"Ricerca in corso..."} contentOpacity={0.75} />
+                        <LoadingInfo infoMessage={"Ricerca in corso..."} />
                     </div>
                 ) : (
                     <>

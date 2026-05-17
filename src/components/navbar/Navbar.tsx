@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import NavbarNewsDialog from "@/components/navbar/NavbarNewsDialog";
-import {NavbarMenu} from "@/components/navbar/NavbarMenu";
+import {NavbarMenu} from "@/components/menu/NavbarMenu";
 import Link from "next/link";
 import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 

@@ -28,7 +28,7 @@ export default function PageTitle({ title, description, smallerTitle } : PageMai
             >
                 <h1
                     className={"page-title shine-anim-hover pe-2"}
-                    style={{ fontSize: smallerTitle ? "min(4.5vw, 1.6em)" : "min(12vw, 3.75em)" }}
+                    style={{ fontSize: smallerTitle ? "min(4.5vw, 1.6em)" : "min(11vw, 3.75em)" }}
                 >
                     { title }
                 </h1>

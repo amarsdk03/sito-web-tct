@@ -6,13 +6,18 @@ import {motion} from "framer-motion";
 import {useSearchParams} from "next/navigation";
 import {Suspense, useEffect, useMemo, useState} from "react";
 
-import {calcolaStatoPartita, string_to_snake_case} from "@/lib/utils";
+import {calcolaClassifiche, calcolaStatoPartita, string_to_snake_case} from "@/lib/utils";
 import {
-    azioniPartitaType, contentPartitaType,
+    azioniPartitaType,
+    contentPartitaType,
     datiCampoType,
     datiPartitaType,
-    getAzioniPartita, getContentPartita, getDatiCampo,
-    getDatiPartita
+    getAzioniPartita,
+    getContentPartita,
+    getDatiCampo,
+    getDatiPartita,
+    getListaPartite,
+    listaPartiteType
 } from "@/features/partite/queries";
 import {formazioneSquadraType, getFormazioneSquadra} from "@/features/squadre/queries";
 
@@ -28,13 +33,16 @@ import Footer from "@/components/footer/Footer";
 import {Badge} from "@/components/ui/badge";
 import {Spinner} from "@/components/ui/spinner";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
-import {Tabs, TabsList, TabsTrigger , TabsContent} from "@/components/ui/tabs";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
 import {RiCheckboxBlankCircleFill} from "@remixicon/react";
 import {HourglassIcon, TextIcon, UserIcon} from "lucide-react";
 import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
 import {Button} from "@/components/ui/button";
 import {Separator} from "@/components/ui/separator";
+import YoutubeEmbed from "@/components/social/YoutubeEmbed";
+import RankingTable from "@/features/tornei/components/RankingTable";
+import {categorieClassificaType, getCategorieClassifica} from "@/features/tornei/queries";
 
 export default function FixtureInfo() {
     return (
@@ -57,6 +65,9 @@ export function FixtureInfoContent() {
     const [azioniPartita, setAzioniPartita] = useState<azioniPartitaType | null>(null);
     const [formazioneCasa, setFormazioneCasa] = useState<formazioneSquadraType | null>(null);
     const [formazioneOspite, setFormazioneOspite] = useState<formazioneSquadraType | null>(null);
+
+    const [listaPartite, setListaPartite] = useState<listaPartiteType>([]);
+    const [categorieClassifica, setCategorieClassifica] = useState<categorieClassificaType>();
     const [contentPartita, setContentPartita] = useState<contentPartitaType | null>(null);
     const [datiCampo, setDatiCampo] = useState<datiCampoType | null>(null);
 
@@ -74,7 +85,15 @@ export function FixtureInfoContent() {
                 const datiPartita = await getDatiPartita(idPartita);
                 setDatiPartita(datiPartita);
 
+                if (!datiPartita.id_partita) {
+                    setError(true);
+                    setLoading(false);
+                    return;
+                }
+
                 const idTorneo = datiPartita.torneo_id || -1;
+                const idCategoria = datiPartita.categoria_id || -1;
+                const valGirone = datiPartita.girone || "?";
                 const idSquadraCasa = datiPartita.squadra_casa_id || -1;
                 const idSquadraOspite = datiPartita.squadra_ospite_id || -1;
                 const idCampo = datiPartita.campo_svolgimento || -1;
@@ -83,25 +102,34 @@ export function FixtureInfoContent() {
                     resultAzioniPartita,
                     resultFormazioneCasa,
                     resultFormazioneOspite,
-                    resultDatiCampo,
+                    resultListaPartite,
+                    resultCategorieClassifica,
                     resultContentPartita,
+                    resultDatiCampo,
                 ] = await Promise.all([
                     getAzioniPartita(idPartita),
                     getFormazioneSquadra(idSquadraCasa, idTorneo),
                     getFormazioneSquadra(idSquadraOspite, idTorneo),
-                    getDatiCampo(idCampo),
+
+                    getListaPartite(idTorneo, idCategoria.toString(), valGirone),
+                    getCategorieClassifica(idCategoria, idTorneo),
                     getContentPartita(idPartita),
+                    getDatiCampo(idCampo),
                 ]);
 
                 setAzioniPartita(resultAzioniPartita);
                 setFormazioneCasa(resultFormazioneCasa);
                 setFormazioneOspite(resultFormazioneOspite);
-                setDatiCampo(resultDatiCampo);
+
+                setListaPartite(resultListaPartite);
+                setCategorieClassifica(resultCategorieClassifica);
                 setContentPartita(resultContentPartita);
+                setDatiCampo(resultDatiCampo);
             }
             // eslint-disable-next-line
             catch (error: any) {
                 setError(true);
+                setLoading(false);
             } finally {
                 setLoading(false);
             }
@@ -154,6 +182,11 @@ export function FixtureInfoContent() {
         };
     }, [azioniPartita]);
 
+    const classifiche = useMemo(() => calcolaClassifiche(listaPartite), [listaPartite]);
+    const datiSquadre = (datiPartita?.categoria_nome && datiPartita?.girone)
+        ? classifiche[datiPartita.categoria_nome]?.[datiPartita.girone] ?? []
+        : [];
+
     if (loading) {
         return (
             <div className={"page-container"}>
@@ -183,6 +216,8 @@ export function FixtureInfoContent() {
 
     const coloreCasa = datiPartita.squadra_casa_colore || DEFAULT_COLORE_SQUADRA_CASA;
     const coloreOspiti = datiPartita.squadra_ospite_colore || DEFAULT_COLORE_SQUADRA_OSPITE;
+
+    const linkHighlights = contentPartita?.[0]?.highlights_yt || null;
 
     return (
         <div className={"page-container"}>
@@ -314,7 +349,7 @@ export function FixtureInfoContent() {
                                                 })}
                                             </div>
 
-                                            <span className={"truncate text-ellipsis pe-0.5"}>
+                                            <span className={"text-hover-color truncate text-ellipsis pe-0.5"}>
                                                 {
                                                     scorer.name.length > 0 ? scorer.name : (
                                                         <i>Sconosciuto</i>
@@ -336,7 +371,7 @@ export function FixtureInfoContent() {
                                 <div className={"flex items-center justify-end flex-col mt-4 sm:mt-4 gap-2"}>
                                     {marcatoriGoal.away.map((scorer, idx) => (
                                         <div key={idx} className="flex items-center justify-end gap-2 w-full">
-                                            <span className={"truncate text-ellipsis ps-0.5"}>
+                                            <span className={"text-hover-color truncate text-ellipsis ps-0.5"}>
                                                 {
                                                     scorer.name.length > 0 ? scorer.name : (
                                                         <i>Sconosciuto</i>
@@ -393,55 +428,68 @@ export function FixtureInfoContent() {
                     </ScrollArea>
 
                     <TabsContent value="info" className={"space-y-4"}>
-                        {contentPartita?.[0]?.highlights_yt && (
-                            <div className={"w-full bg-mist-800/50 p-6 rounded-lg"}>
-                                <div className={"space-y-1 col-span-3 mb-4 md:mb-5"}>
-                                    <div className={"text-mist-400 text-xs md:text-sm"}>
-                                        Da YouTube
+                        {
+                            linkHighlights && (
+                                <div className={"w-full bg-mist-800/50 p-4 sm:p-8 rounded-lg"}>
+                                    <div className={"space-y-1 col-span-3 mb-4 md:mb-5"}>
+                                        <div className={"text-mist-400 text-xs md:text-sm"}>
+                                            Da YouTube
+                                        </div>
+                                        <div className={"text-mist-200 font-bold text-xl md:text-2xl"}>
+                                            Highlights / intervista partita
+                                        </div>
                                     </div>
-                                    <div className={"text-mist-200 font-bold text-xl md:text-2xl"}>
-                                        Highlights partita
-                                    </div>
-                                </div>
 
-                                <div className="w-full aspect-video rounded overflow-hidden">
-                                    <iframe
-                                        className="w-full h-full"
-                                        src={`https://www.youtube.com/embed/${contentPartita[0].highlights_yt}`}
-                                        title="YouTube video player"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        referrerPolicy="strict-origin-when-cross-origin"
-                                        allowFullScreen
-                                    />
+                                    <div className="w-full aspect-video rounded overflow-hidden">
+                                        <YoutubeEmbed link={linkHighlights} />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )
+                        }
 
                         <div className={"space-y-6 w-full bg-mist-800/50 p-6 rounded-lg"}>
                             <div className={"grid grid-cols-2 gap-4"}>
                                 <div className={"text-mist-400 text-sm md:text-base"}>
                                     Edizione torneo
                                 </div>
-                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                <Link
+                                    href={`/classifiche?edizione=${datiPartita.torneo_id}`}
+                                    className={"text-hover-color text-mist-300 font-semibold text-sm md:text-base text-end"}
+                                >
                                     {datiPartita.torneo_nome}
-                                </div>
-                            </div>
-
-                            <div className={"grid grid-cols-2 gap-4"}>
-                                <div className={"text-mist-400 text-sm md:text-base"}>
-                                    Fase e giornata
-                                </div>
-                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
-                                    {datiPartita.fase || "???"}{datiPartita.giornata && " - " + datiPartita.giornata + "° giornata"}
-                                </div>
+                                </Link>
                             </div>
 
                             <div className={"grid grid-cols-2 gap-4"}>
                                 <div className={"text-mist-400 text-sm md:text-base"}>
                                     Categoria
                                 </div>
-                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                <Link
+                                    href={`/classifiche?edizione=${datiPartita.torneo_id}&categoria=${datiPartita.categoria_id}`}
+                                    className={"text-hover-color text-mist-300 font-semibold text-sm md:text-base text-end"}
+                                >
                                     {datiPartita.categoria_nome}
+                                </Link>
+                            </div>
+
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Fase e girone
+                                </div>
+                                <Link
+                                    href={`/classifiche?edizione=${datiPartita.torneo_id}&categoria=${datiPartita.categoria_id}&girone=${datiPartita.girone}`}
+                                    className={"text-hover-color text-mist-300 font-semibold text-sm md:text-base text-end"}
+                                >
+                                    {datiPartita.fase || "???"}{datiPartita.giornata && " - Girone " + datiPartita.girone}
+                                </Link>
+                            </div>
+
+                            <div className={"grid grid-cols-2 gap-4"}>
+                                <div className={"text-mist-400 text-sm md:text-base"}>
+                                    Giornata
+                                </div>
+                                <div className={"text-hover-color text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                    {datiPartita.giornata + "° giornata"}
                                 </div>
                             </div>
                         </div>
@@ -451,7 +499,7 @@ export function FixtureInfoContent() {
                                 <div className={"text-mist-400 text-sm md:text-base"}>
                                     Data e ora partita
                                 </div>
-                                <div className={"text-mist-300 font-semibold text-sm md:text-base text-end"}>
+                                <div className={"text-hover-color text-mist-300 font-semibold text-sm md:text-base text-end"}>
                                     {datiPartita.fischio_inizio ? (
                                         <>
                                             {new Date(datiPartita.fischio_inizio).toLocaleDateString('it-IT', {
@@ -473,19 +521,19 @@ export function FixtureInfoContent() {
                                 <div className={"text-mist-400 text-sm md:text-base"}>
                                     Arbitrato da
                                 </div>
-                                <div className={"text-mist-500 font-semibold text-sm md:text-base text-end"}>
-                                    { "Nessun arbitro specificato" }
+                                <div className={"text-hover-color text-mist-500 font-semibold text-sm md:text-base text-end"}>
+                                    {"Nessun arbitro specificato"}
                                 </div>
                             </div>
                         </div>
 
-                        {datiCampo && (
+                        {datiCampo?.[0] && (
                             <div className={"w-full grid md:grid-cols-7 bg-mist-800/50 p-6 rounded-lg"}>
                                 <div className={"space-y-2 col-span-3 mb-8 sm:me-6"}>
                                     <div className={"text-mist-400 text-sm md:text-base"}>
                                         Luogo partita
                                     </div>
-                                    <div className={"text-mist-200 font-bold text-xl md:text-2xl"}>
+                                    <div className={"text-hover-color text-mist-200 font-bold text-xl md:text-2xl"}>
                                         {datiCampo[0].nome || "Non disponibile"}
                                     </div>
                                     <div className={"text-mist-300 font-medium text-sm md:text-base"}>
@@ -526,7 +574,8 @@ export function FixtureInfoContent() {
                                     aria-label="Squadra casa"
                                     className="w-1/2 min-w-0 px-2"
                                 >
-                                    <span className="block truncate w-full text-xs sm:text-sm translate-y-0.25 sm:translate-y-0">
+                                    <span
+                                        className="block truncate w-full text-xs sm:text-sm translate-y-0.25 sm:translate-y-0">
                                         {datiPartita.squadra_casa_nome}
                                     </span>
                                 </ToggleGroupItem>
@@ -616,9 +665,14 @@ export function FixtureInfoContent() {
                     </TabsContent>
 
                     <TabsContent value="classifica">
-                        <div className={"text-zinc-400 font-semibold italic text-lg sm:text-xl"}>
-                            Presto in arrivo...
-                        </div>
+                        <RankingTable
+                            datiSquadre={datiSquadre}
+                            mostraClassifiche={datiPartita.girone !== "Unico"}
+                            mostraLeggenda={true}
+                            numQualificate={categorieClassifica?.[0]?.num_qualificate}
+                            numPlayoff={categorieClassifica?.[0]?.num_playoff}
+                            numEliminate={categorieClassifica?.[0]?.num_eliminate}
+                        />
                     </TabsContent>
 
                     <TabsContent value="h2h">

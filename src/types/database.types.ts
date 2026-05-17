@@ -82,6 +82,13 @@ export type Database = {
             foreignKeyName: "assegnazione_trofeo_id_torneo_fkey"
             columns: ["id_torneo"]
             isOneToOne: false
+            referencedRelation: "lista_categorie"
+            referencedColumns: ["torneo_id"]
+          },
+          {
+            foreignKeyName: "assegnazione_trofeo_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["t_id"]
           },
@@ -282,6 +289,13 @@ export type Database = {
             foreignKeyName: "categoria_id_torneo_fkey"
             columns: ["id_torneo"]
             isOneToOne: false
+            referencedRelation: "lista_categorie"
+            referencedColumns: ["torneo_id"]
+          },
+          {
+            foreignKeyName: "categoria_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["t_id"]
           },
@@ -466,6 +480,13 @@ export type Database = {
             foreignKeyName: "iscrizione_id_torneo_fkey"
             columns: ["id_torneo"]
             isOneToOne: false
+            referencedRelation: "lista_categorie"
+            referencedColumns: ["torneo_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
             referencedRelation: "ricerca_squadre"
             referencedColumns: ["t_id"]
           },
@@ -568,6 +589,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "categoria"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partita_id_categoria_fkey"
+            columns: ["id_categoria"]
+            isOneToOne: false
+            referencedRelation: "lista_categorie"
+            referencedColumns: ["categoria_id"]
           },
           {
             foreignKeyName: "partita_id_categoria_fkey"
@@ -1024,6 +1052,16 @@ export type Database = {
           },
         ]
       }
+      lista_categorie: {
+        Row: {
+          categoria_id: number | null
+          categoria_nome: string | null
+          girone: string | null
+          torneo_id: number | null
+          torneo_nome: string | null
+        }
+        Relationships: []
+      }
       ricerca_giocatori: {
         Row: {
           g_cognome: string | null
@@ -1048,6 +1086,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "azioni_partite"
             referencedColumns: ["t_id"]
+          },
+          {
+            foreignKeyName: "iscrizione_id_torneo_fkey"
+            columns: ["id_torneo"]
+            isOneToOne: false
+            referencedRelation: "lista_categorie"
+            referencedColumns: ["torneo_id"]
           },
           {
             foreignKeyName: "iscrizione_id_torneo_fkey"

@@ -48,7 +48,7 @@ import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import {Spinner} from "@/components/ui/spinner";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
-import {Tabs, TabsList, TabsTrigger , TabsContent} from "@/components/ui/tabs";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 interface statisticheTotaliType {
     totalePartite: number;
@@ -235,6 +235,12 @@ export function TeamInfoContent() {
                     getStatisticheSquadra(idSquadra),
                 ]);
 
+                if (!resultDatiSquadra || !resultDatiSquadra.id) {
+                    setError(true);
+                    setLoading(false);
+                    return;
+                }
+
                 const objectStatisticheSquadra = aggregateStatisticheSquadra(
                     resultStatisticheSquadra,
                     resultPartiteSquadra,
@@ -248,6 +254,7 @@ export function TeamInfoContent() {
             // eslint-disable-next-line
             catch (error: any) {
                 setError(true);
+                setLoading(false);
             }
             finally {
                 setLoading(false);
@@ -389,10 +396,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <ShieldUserIcon className={"size-5"} /> Capitano
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl truncate"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl truncate"}>
                                 {
                                     datiSquadra.giocatore ? (
                                         <Link href={`/giocatori/dettagli?id=${datiSquadra.giocatore.id}`}>
@@ -406,10 +413,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <HistoryIcon className={"size-5"} /> Iscritti nel
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl"}>
                                 {
                                     partiteSquadra?.[0]?.fischio_inizio
                                         ? new Date(partiteSquadra[0].fischio_inizio).getFullYear()
@@ -421,10 +428,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <Tally5Icon className={"size-5"} /> Partite giocate
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl"}>
                                 { (statisticheSquadra?.totalePartite) || 0 }
                             </div>
                         </div>
@@ -432,10 +439,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <CalendarCheckIcon className={"size-5"} /> Vittorie
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl"}>
                                 { statisticheSquadra?.totaleVittorie || 0 }
                             </div>
                         </div>
@@ -443,10 +450,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <CalendarFoldIcon className={"size-5"} /> Pareggi
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl"}>
                                 { statisticheSquadra?.totalePareggi || 0 }
                             </div>
                         </div>
@@ -454,10 +461,10 @@ export function TeamInfoContent() {
                             className={"stats-card grid grid-rows-2 gap-1 px-4 py-2 sm:p-5 rounded-lg"}
                             style={{ backgroundColor: coloreSquadra + "1a" }}
                         >
-                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs md:text-lg"}>
+                            <div className={"flex gap-1.5 items-center text-zinc-400 font-semibold text-xs sm:text-lg"}>
                                 <CalendarMinusIcon className={"size-5"} /> Sconfitte
                             </div>
-                            <div className={"text-hover-color text-zinc-100 font-bold text-lg md:text-2xl"}>
+                            <div className={"text-hover-color text-zinc-100 font-bold text-lg sm:text-2xl"}>
                                 { statisticheSquadra?.totaleSconfitte || 0 }
                             </div>
                         </div>

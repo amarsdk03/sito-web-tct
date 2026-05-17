@@ -26,10 +26,10 @@ const listaTorneiQuery = supabase
 
 export type listaTorneiType = QueryData<typeof listaTorneiQuery>;
 
-let torneiCache: (listaTorneiType | null) = null;
+let cacheTornei: (listaTorneiType | null) = null;
 
 export async function getListaTornei() {
-    if (torneiCache) return torneiCache;
+    if (cacheTornei) return cacheTornei;
 
     const query = supabase
         .from('torneo')
@@ -55,6 +55,38 @@ export async function getListaTornei() {
     if (error) throw error;
 
     const result: listaTorneiType = data;
-    torneiCache = data;
+    cacheTornei = data;
+    return result;
+}
+
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const categorieClassificaQuery = supabase
+    .from('categoria')
+    .select("num_qualificate, num_playoff, num_eliminate")
+    .eq('id', 0);
+
+export type categorieClassificaType = QueryData<typeof categorieClassificaQuery>;
+
+export async function getCategorieClassifica(idCategoria: number | null, idTorneo?: number) {
+    let query = supabase
+        .from('categoria')
+        .select("num_qualificate, num_playoff, num_eliminate");
+
+    if (idCategoria) {
+        query = query.eq('id', idCategoria);
+    } else if (idTorneo) {
+        query = query.eq('id_torneo', idTorneo);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const result: categorieClassificaType = data || [{
+        num_qualificate: 0,
+        num_playoff: 0,
+        num_eliminate: 0
+    }];
     return result;
 }

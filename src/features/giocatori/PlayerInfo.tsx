@@ -31,7 +31,6 @@ import {
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import PageTitle from "@/components/text/PageTitle";
 import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 import ShareProfileDialog from "@/features/giocatori/components/ShareProfileDialog";
 import FormationFilters from "@/components/formation/FormationFilters";
@@ -52,7 +51,6 @@ import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
 import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
-import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
 
 export default function PlayerInfo() {
     return (
@@ -93,6 +91,12 @@ export function PlayerInfoContent() {
                     getListaTornei()
                 ]);
 
+                if (!resultDatiGiocatore || !resultDatiGiocatore.id) {
+                    setError(true);
+                    setLoading(false);
+                    return;
+                }
+
                 setDatiGiocatore(resultDatiGiocatore);
                 setStatisticheGiocatore(resultStatisticheGiocatore);
 
@@ -115,6 +119,7 @@ export function PlayerInfoContent() {
             // eslint-disable-next-line
             catch (error: any) {
                 setError(true);
+                setLoading(false);
             }
             finally {
                 setLoading(false);

@@ -222,7 +222,7 @@
 }
 
 .navbar-card-title {
-    font-size: 2.2em;
+    font-size: min(6vw, 2.2em);
     font-weight: 800;
     color: white;
     text-shadow: 0 0 20px #000000;
@@ -242,6 +242,10 @@
 .page-content {
     width: min(1000px, 100%);
     padding: 0 20px;
+}
+
+.homepage-content {
+    width: min(1000px, 100%);
 }
 
 .page-title {
@@ -393,6 +397,15 @@
 .stats-card:hover {
     transform: scale(1.03);
     filter: brightness(0.8);
+}
+
+.ranking-row-hover {
+    transition: all 0.3s ease-in-out;
+}
+
+.ranking-row-hover:hover {
+    color: var(--chart-1);
+    translate: 3px 0;
 }
 
 
