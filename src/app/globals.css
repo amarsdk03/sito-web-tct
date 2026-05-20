@@ -211,18 +211,26 @@
     max-width: 450px;
 }
 
+.navbar-menu-link {
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-menu-link:hover {
+    color: var(--chart-1);
+    transform: translateX(3px);
+}
+
 .navbar-card-img {
-    filter: grayscale(80%) brightness(0.5) saturate(2) blur(1px);
+    filter: brightness(0.5) saturate(0.5);
     transition: all 0.3s ease-in-out;
 }
 
 .navbar-card:hover > .navbar-card-img {
     scale: 1.02;
-    filter: grayscale(50%) brightness(0.7) saturate(1.5) blur(0px);
+    filter: brightness(0.7) saturate(1);
 }
 
 .navbar-card-title {
-    font-size: min(6vw, 2.2em);
     font-weight: 800;
     color: white;
     text-shadow: 0 0 20px #000000;
@@ -230,7 +238,8 @@
 }
 
 .navbar-card:hover > .navbar-card-title {
-    transform: translateX(5px);
+    transform: translateX(5px) translateY(-2px);
+    scale: 105%;
 }
 
 .page-container {

@@ -20,7 +20,7 @@ export default function NavbarNewsDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="default" aria-label={dialogTitle}>
+                <Button variant="default" className="rounded-md" aria-label={dialogTitle}>
                     <RiNotification2Line />
                     <span className="hidden sm:block">
                         {dialogTitle}
