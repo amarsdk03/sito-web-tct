@@ -211,6 +211,7 @@ export function FixturesContent() {
                             variants={containerAnim}
                             initial={"start"}
                             animate={"finish"}
+                            className={"space-y-4"}
                         >
                             <AnimatePresence>
                                 {

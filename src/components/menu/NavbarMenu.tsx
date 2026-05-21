@@ -50,9 +50,9 @@ export function NavbarMenu() {
                                     Home
                                 </Link>
                             </SheetClose>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Notizie</span>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Social e contatti</span>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Ultime novità</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Notizie</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Social e contatti</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Ultime novità</span>
                         </div>
                     </div>
 
@@ -89,10 +89,10 @@ export function NavbarMenu() {
                             Altro
                         </h3>
                         <div className="flex flex-col gap-4">
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Albo d&#39;oro</span>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">FAQ</span>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Staff</span>
-                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 cursor-not-allowed">Galleria</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Albo d&#39;oro</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">FAQ</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Staff</span>
+                            <span className="integral-title navbar-menu-link text-base font-medium text-mist-400/50 pointer-events-none">Galleria</span>
                         </div>
                     </div>
 

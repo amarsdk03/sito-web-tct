@@ -1,7 +1,17 @@
 import Link from "next/link";
 import {listaPartiteType} from "@/features/partite/queries";
 
-export default function FixtureResultRow({partita}: { partita: listaPartiteType[number] }) {
+interface FixtureResultRowProps {
+    partita: listaPartiteType[number],
+    halfSize?: boolean,
+}
+
+export default function FixtureResultRow(
+    {
+        partita,
+        halfSize = false,
+    } : FixtureResultRowProps
+) {
     const aiCalciDiRigore =
         (partita.rigori_casa && partita.rigori_casa > 0) ||
         (partita.rigori_ospite && partita.rigori_ospite > 0);
@@ -9,9 +19,12 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
     const esitoRegolare = (partita.goal_casa || 0) + " - " + (partita.goal_ospite || 0);
     const esitoRigori = (partita.rigori_casa || 0) + " - " + (partita.rigori_ospite || 0);
 
+    const nomeCasa = halfSize ? partita.squadra_casa_acronimo : partita.squadra_casa_nome;
+    const nomeOspite = halfSize ? partita.squadra_ospite_acronimo : partita.squadra_ospite_nome;
+
     return (
         <Link href={`/partite/dettagli?id=${partita.id_partita}`}>
-            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-stone-600/50 p-4 sm:p-6 mb-4 rounded-xl"}>
+            <div className={"match-result-row flex flex-col lg:flex-row items-center justify-between bg-stone-600/50 p-4 sm:p-6 rounded-xl"}>
                 <div className={"flex flex-row lg:flex-col justify-between text-start w-full lg:w-36"}>
                     <div className={"text-gray-300 sm:text-gray-100 text-xs sm:text-base font-bold"}>
                         { partita.fase || partita.giornata || "?" }
@@ -26,9 +39,11 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
                     </div>
                 </div>
 
-                <div className={"match-info flex items-center justify-center py-2 sm:py-4 lg:py-0 w-full md:flex-1"}>
+                <div
+                    className={`${halfSize ? "lg:max-w-1/2 " : ""}match-info flex items-center justify-center py-2 sm:py-4 lg:py-0 w-full md:flex-1`}
+                >
                     <span className={"w-full sm:w-64 py-0.5 text-right text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
-                        { partita.squadra_casa_nome ?? "???" }
+                        { nomeCasa ?? "???" }
                     </span>
 
                     <div className={"flex flex-col items-center justify-center w-auto flex-shrink-0"}>
@@ -45,7 +60,7 @@ export default function FixtureResultRow({partita}: { partita: listaPartiteType[
                     </div>
 
                     <span className={"w-full sm:w-64 py-0.5 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
-                        { partita.squadra_ospite_nome ?? "???" }
+                        { nomeOspite ?? "???" }
                     </span>
                 </div>
 

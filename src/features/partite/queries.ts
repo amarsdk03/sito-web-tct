@@ -48,6 +48,7 @@ export async function getPartiteSquadra(idSquadra: number) {
 }
 
 
+
 const listaCategorieQuery = supabase
     .from('lista_categorie')
     .select(`*`)
@@ -107,6 +108,34 @@ export async function getListaPartite(
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+const prossimiIncontriQuery = supabase
+    .from('risultati_partite')
+    .select(`*`)
+    .eq('torneo_id', 0)
+    .gte('fischio_inizio', 0)
+    .order('fischio_inizio', { ascending: true })
+    .limit(6);
+
+export type prossimiIncontriType = QueryData<typeof prossimiIncontriQuery>;
+
+export async function getProssimiIncontri(idTorneo: number, dateFilter: Date) {
+    const query = supabase
+        .from('risultati_partite')
+        .select(`*`)
+        .eq('torneo_id', idTorneo)
+        .gte('fischio_inizio', dateFilter.toISOString())
+        .order('fischio_inizio', { ascending: true })
+        .limit(6);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    return (data || []) as prossimiIncontriType;
+}
+
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const datiPartitaQuery = supabase
     .from('risultati_partite')
     .select(`*`)
@@ -151,6 +180,7 @@ export async function getAzioniPartita(idPartita: number) {
 }
 
 
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const datiCampoQuery = supabase
     .from('campo')
@@ -171,6 +201,7 @@ export async function getDatiCampo(idCampo: number) {
     const result: datiCampoType = data;
     return result;
 }
+
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

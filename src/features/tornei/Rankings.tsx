@@ -215,27 +215,26 @@ export function RankingsContent() {
                                     </h2>
 
                                     {(() => {
-                                        // Invertiamo l'ordine dei gironi (es. da ["A", "B"] a ["B", "A"])
-                                        const gironiInvertiti = Object.entries(gironi).reverse();
-
-                                        // Il defaultValue sarà la chiave del primo girone dell'elenco invertito
-                                        const defaultGirone = gironiInvertiti[0]?.[0] ?? "";
+                                        const objectGironi = Object.entries(gironi).sort(([a], [b]) =>
+                                            a.localeCompare(b)
+                                        );
+                                        const defaultGirone = objectGironi[0]?.[0] ?? "";
 
                                         return (
                                             <Tabs defaultValue={defaultGirone}>
                                                 <TabsList className="flex text-lg justify-start gap-2 px-1 py-5 mb-2">
-                                                    {gironiInvertiti.map(([gironeNome]) => (
+                                                    {objectGironi.map(([gironeNome]) => (
                                                         <TabsTrigger
                                                             key={gironeNome}
                                                             value={gironeNome}
                                                             className="px-4 py-4"
                                                         >
-                                                            {gironeNome === "Unico" ? "Girone Unico" : `Girone ${gironeNome}`}
+                                                            Girone { gironeNome || "???"}
                                                         </TabsTrigger>
                                                     ))}
                                                 </TabsList>
 
-                                                {gironiInvertiti.map(([gironeNome, datiSquadre]) => (
+                                                {objectGironi.map(([gironeNome, datiSquadre]) => (
                                                     <TabsContent
                                                         key={gironeNome}
                                                         value={gironeNome}

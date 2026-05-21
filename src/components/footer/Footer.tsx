@@ -19,14 +19,14 @@ export default function Footer() {
                                 width={100}
                                 height={100}
                                 draggable={false}
+                                className={"navbar-logo -translate-y-1"}
                                 loading={"lazy"}
                             />
                         </Link>
                         <h1 className="text-2xl font-bold text-mist-100 sm:mt-4 text-center md:text-left tracking-wide">
                             Torneo Città di Trento
                         </h1>
-                        <p className="text-mist-200 text-sm mt-2 text-center md:text-left leading-relaxed">
-                            Scopri le squadre, esplora le statistiche e segui ogni partita della competizione.
+                        <p className="text-mist-300 font-medium text-sm mt-2 text-center md:text-left leading-relaxed">
                             Il torneo più iconico di Trento, ora a portata di click.
                         </p>
                     </div>
@@ -74,13 +74,14 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="max-w-7xl mx-auto border-t border-mist-800/40 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-mist-200 text-center sm:text-left">
+                <div className="max-w-7xl mx-auto border-t border-mist-800/40 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-8">
+                    <p className="text-sm text-mist-300 text-center sm:text-left">
                         &copy; {new Date().getFullYear()} Torneo Città di Trento.<br className="sm:hidden" /> Tutti i diritti riservati.
                     </p>
-                    <p className="text-xs text-mist-200 text-center sm:text-right flex items-center gap-1">
+                    <p className="text-sm text-mist-300 text-center sm:text-end px-16 sm:px-0">
                         Sito web progettato, sviluppato e mantenuto da
-                        <span className="text-white font-medium tracking-wide">Amar Sidkir</span>
+                        <span className="text-white font-medium tracking-wide"> Amar Sidkir</span> e
+                        <span className="text-white font-medium tracking-wide"> Alessandro Gremes</span>
                     </p>
                 </div>
             </footer>

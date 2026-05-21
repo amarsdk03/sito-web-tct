@@ -311,11 +311,12 @@
 .integral-title-hover {
     font-family: 'IntegralCF', 'Roboto', sans-serif;
     font-style: italic;
-    transition: all 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out, letter-spacing 0.3s ease-in-out;
 }
 
 .integral-title-hover:hover {
     color: var(--chart-1);
+    letter-spacing: 0.02em;
 }
 
 .live-circle {
