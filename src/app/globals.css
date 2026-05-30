@@ -5,31 +5,71 @@
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 900;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Heavy.woff2) format('woff');
+    font-style: normal;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Heavy.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 800;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-ExtraBold.woff2) format('woff');
+    font-style: normal;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-ExtraBold.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 700;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Bold.woff2) format('woff');
+    font-style: normal;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Bold.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 600;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Medium.woff2) format('woff');
+    font-style: normal;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Medium.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'IntegralCF';
     font-weight: 500;
-    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Regular.woff2) format('woff');
+    font-style: normal;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-Regular.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    font-weight: 900;
+    font-style: italic;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-HeavyOblique.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    font-weight: 800;
+    font-style: italic;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-ExtraBoldOblique.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    font-weight: 700;
+    font-style: italic;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-BoldOblique.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    font-weight: 600;
+    font-style: italic;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-MediumOblique.woff2) format('woff2');
+}
+
+@font-face {
+    font-family: 'IntegralCF';
+    font-weight: 500;
+    font-style: italic;
+    src: local('IntegralCF'), url(../../public/fonts/IntegralCF/IntegralCF-RegularOblique.woff2) format('woff2');
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -304,6 +344,11 @@
 }
 
 .integral-title {
+    font-family: 'IntegralCF', 'Roboto', sans-serif;
+    font-style: normal;
+}
+
+.integral-title-italic {
     font-family: 'IntegralCF', 'Roboto', sans-serif;
     font-style: italic;
 }

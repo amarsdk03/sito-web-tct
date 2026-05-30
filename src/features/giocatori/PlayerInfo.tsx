@@ -2,25 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {Suspense, useEffect, useState} from "react";
-import {useSearchParams} from "next/navigation";
+import {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 
 import {calcolaEta, calcolaRapportoContrasto} from "@/lib/utils";
-import {
-    getProfiloGiocatore,
-    getStatisticheGiocatore,
-    profiloGiocatoreType,
-    statisticheGiocatoreType
-} from "@/features/giocatori/queries";
-import {
-    datiSquadraType,
-    formazioneSquadraType,
-    getDatiSquadra,
-    getFormazioneSquadra,
-    getIdSquadraGiocatore
-} from "@/features/squadre/queries";
-import {getListaTornei} from "@/features/tornei/queries";
+import {datiGiocatoreType, statisticheGiocatoreType} from "@/server/data/players";
+import {datiSquadraType, formazioneSquadraType,} from "@/server/data/teams";
 import {
     DEFAULT_BACKGROUND_COLOR,
     DEFAULT_COLORE_SQUADRA_CASA,
@@ -29,22 +16,18 @@ import {
     DEFAULT_LOGO_PATH
 } from "@/const/defaultConstants";
 
-import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
 import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 import ShareProfileDialog from "@/features/giocatori/components/ShareProfileDialog";
 import FormationFilters from "@/components/formation/FormationFilters";
 
-import {generatePlayerSilhouette} from "@/components/formation/formationRendering";
+import {generatePlayerSilhouette} from "@/lib/formationRendering";
 import {PlayerSilhouette} from "@/features/giocatori/components/PlayerSilhouette";
 import {FormationList} from "@/components/formation/FormationList";
 
 import {Calendar1, FlagIcon, FootprintsIcon, PencilRulerIcon, RulerIcon, WeightIcon,} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner";
 import {Separator} from "@/components/ui/separator";
 import {RiInstagramLine} from "@remixicon/react";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 import PlayerStatisticRadar from "@/components/charts/PlayerStatisticRadar";
@@ -52,80 +35,32 @@ import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 
-export default function PlayerInfo() {
-    return (
-        <>
-            <Navbar />
-            <Suspense fallback={<div className="flex justify-center p-32"><Spinner /></div>}>
-                <PlayerInfoContent />
-            </Suspense>
-            <Footer />
-        </>
-    );
+/**
+ * Props passed from server component
+ * All data is pre-fetched and validated on the server
+ */
+interface PlayerInfoProps {
+    idGiocatore: number;
+    datiGiocatore: datiGiocatoreType;
+    statistiche?: statisticheGiocatoreType;
+    datiSquadra?: datiSquadraType;
+    formazioneSquadra?: formazioneSquadraType;
 }
 
-export function PlayerInfoContent() {
-    const searchParams = useSearchParams();
-    const idGiocatore = Number.parseInt(searchParams?.get("id") ?? "-1");
-
-    // Dati richiesti per la pagina
-    const [datiGiocatore, setDatiGiocatore] = useState<profiloGiocatoreType | null>(null);
-    const [statisticheGiocatore, setStatisticheGiocatore] = useState<statisticheGiocatoreType | null>(null);
-    const [datiSquadra, setDatiSquadra] = useState<datiSquadraType | null>(null);
-    const [formazioneSquadra, setFormazioneSquadra] = useState<formazioneSquadraType | null>(null);
-
+/**
+ * Client component - only handles UI state and interactivity
+ * All data comes from props (fetched server-side)
+ */
+export default function PlayerInfo(props: PlayerInfoProps) {
+    // UI state
     const [showAsSilhouette, setShowAsSilhouette] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
 
-    useEffect(() => {
-        (async () => {
-            setError(false);
-            setLoading(true);
-
-            try {
-                const [resultDatiGiocatore, idSquadraResult, resultStatisticheGiocatore, tornei] = await Promise.all([
-                    getProfiloGiocatore(idGiocatore),
-                    getIdSquadraGiocatore(idGiocatore),
-                    getStatisticheGiocatore(idGiocatore),
-                    getListaTornei()
-                ]);
-
-                if (!resultDatiGiocatore || !resultDatiGiocatore.id) {
-                    setError(true);
-                    setLoading(false);
-                    return;
-                }
-
-                setDatiGiocatore(resultDatiGiocatore);
-                setStatisticheGiocatore(resultStatisticheGiocatore);
-
-                const idSquadra = idSquadraResult?.id_squadra || -1;
-                const idUltimoTorneo = tornei[0]?.id || -1;
-
-                const [resultDatiSquadra, resultFormazioneSquadra] = await Promise.all([
-                    getDatiSquadra(idSquadra),
-                    getFormazioneSquadra(idSquadra, idUltimoTorneo)
-                ]);
-
-                setDatiSquadra(resultDatiSquadra);
-
-                // Salvo la formazione dell'ultimo torneo, ad esclusione del profilo del giocatore stesso
-                const filteredFormazioneSquadra = resultFormazioneSquadra.filter(
-                    p => p.giocatore.id !== idGiocatore
-                );
-                setFormazioneSquadra(filteredFormazioneSquadra);
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-                setLoading(false);
-            }
-            finally {
-                setLoading(false);
-            }
-        })();
-    }, [idGiocatore]);
+    const {
+        datiGiocatore: datiGiocatore,
+        statistiche,
+        datiSquadra,
+        formazioneSquadra,
+    } = props;
 
     const slideAnim = {
         start: { opacity: 0, x: -25 },
@@ -146,15 +81,7 @@ export function PlayerInfoContent() {
             .catch(err => console.error("Errore in generatePlayerSilhouette(): ", err));
     }, [coloreSquadra, stemmaSquadra]);
 
-    if (loading) {
-        return (
-            <div className={"page-container"}>
-                <div className={"page-content my-48"}>
-                    <LoadingInfo infoMessage={"Caricamento giocatore..."} />
-                </div>
-            </div>
-        )
-    } else if (!datiGiocatore || !datiSquadra || !statisticheGiocatore || error) {
+    if (!datiGiocatore || !datiSquadra || !statistiche) {
         return (
             <div className={"page-container"}>
                 <div className={"page-content my-48"}>
@@ -224,7 +151,7 @@ export function PlayerInfoContent() {
                         transition={{ duration: 0.3, delay: 0.2 }}
                         className={"w-full mt-6 sm:mt-0"}
                     >
-                        <div className={"integral-title tracking-wide flex flex-col min-w-0"}>
+                        <div className={"tracking-wide flex flex-col min-w-0"}>
                             <Link
                                 href={`/squadre/dettagli?id=${datiSquadra.id}`}
                                 className={"flex items-center gap-2"}
@@ -238,17 +165,17 @@ export function PlayerInfoContent() {
                                     draggable={false}
                                     loading={"lazy"}
                                 />
-                                <div className={"font-semibold text-sm sm:text-lg pb-1.5"}>
+                                <div className={"integral-title-italic font-semibold text-sm sm:text-lg pb-1.5"}>
                                     <span
-                                        className={`player-info-title w-full overflow-hidden text-ellipsis`}
+                                        className={`w-full overflow-hidden text-ellipsis`}
                                         style={{color: coloreLeggibile}}
                                     >
                                         {datiSquadra.nome}
                                     </span>
                                 </div>
                             </Link>
-                            <div className={"font-bold text-3xl sm:text-4xl lg:text-5xl min-w-0"}>
-                                <span className={`player-info-title shine-anim-hover block overflow-hidden text-ellipsis`}>
+                            <div className={"integral-title-italic font-bold text-3xl sm:text-4xl lg:text-5xl min-w-0"}>
+                                <span className={`shine-anim-hover px-1 block overflow-hidden text-ellipsis`}>
                                     {datiGiocatore.nome + " " + datiGiocatore.cognome}
                                 </span>
                             </div>
@@ -283,7 +210,7 @@ export function PlayerInfoContent() {
                                 <ShareProfileDialog
                                     datiGiocatore={datiGiocatore}
                                     datiSquadra={datiSquadra}
-                                    statisticheGiocatore={statisticheGiocatore}
+                                    statisticheGiocatore={statistiche}
                                     coloreSquadra={coloreSquadra}
                                 />
                             </motion.div>
@@ -384,15 +311,15 @@ export function PlayerInfoContent() {
                             Statistiche all-time
                         </div>
 
-                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
-                            <div className={"min-w-[300px] sm:mx-12"}>
+                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-6"}>
+                            <div className={"w-full lg:max-w-[800px]"}>
                                 <PlayerStatisticRadar
                                     coloreSquadra={coloreLeggibile}
-                                    mvp={statisticheGiocatore[0]?.num_mvp || 0}
-                                    goal={statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
-                                    assist={statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
-                                    gialli={statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
-                                    rossi={statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                                    mvp={statistiche[0]?.num_mvp || 0}
+                                    goal={statistiche.find(s => s.a_tipo === "Goal")?.total || 0}
+                                    assist={statistiche.find(s => s.a_tipo === "Assist")?.total || 0}
+                                    gialli={statistiche.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                    rossi={statistiche.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
                                 />
                             </div>
                             <div className={"w-full grid grid-cols-2 md:grid-cols-3 justify-items-center gap-x-4 gap-y-6 sm:gap-y-8"}>
@@ -401,7 +328,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore[0]?.n_partite || 0}
+                                        {statistiche[0]?.n_partite || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         Partite giocate
@@ -412,7 +339,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore.find(s => s.a_tipo === "Goal")?.total || 0}
+                                        {statistiche.find(s => s.a_tipo === "Goal")?.total || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         Goal segnati
@@ -423,7 +350,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore.find(s => s.a_tipo === "Assist")?.total || 0}
+                                        {statistiche.find(s => s.a_tipo === "Assist")?.total || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         Assist
@@ -434,7 +361,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
+                                        {statistiche.find(s => s.a_tipo === "Cartellino giallo")?.total || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         Cartellini gialli
@@ -445,7 +372,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
+                                        {statistiche.find(s => s.a_tipo === "Cartellino rosso")?.total || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         Cartellini rossi
@@ -456,7 +383,7 @@ export function PlayerInfoContent() {
                                         className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
-                                        {statisticheGiocatore[0]?.num_mvp || 0}
+                                        {statistiche[0]?.num_mvp || 0}
                                     </div>
                                     <div className={"text-zinc-400 font-semibold text-lg md:text-xl translate-y-5 sm:translate-y-2.5"}>
                                         MVP totali
@@ -472,7 +399,6 @@ export function PlayerInfoContent() {
                                 Compagni di squadra
                             </div>
                             <FormationFilters
-                                loading={loading}
                                 showAsSilhouette={showAsSilhouette}
                                 setShowAsSilhouette={setShowAsSilhouette}
                             />

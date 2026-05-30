@@ -1,123 +1,41 @@
 'use client';
 
-import {Suspense, useEffect, useMemo, useState} from "react";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {
-    categorieClassificaType,
-    getCategorieClassifica,
-    getListaTornei,
-    listaTorneiType
-} from "@/features/tornei/queries";
-import {getListaCategorie, getListaPartite, listaCategorieType, listaPartiteType} from "@/features/partite/queries";
-
-import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
+import {useMemo} from "react";
+import {usePathname} from "next/navigation";
 
 import PageTitle from "@/components/text/PageTitle";
-import TournamentSarchFilters from "@/features/tornei/components/RankingSearchFilters";
-
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty";
-import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner"
-import {Separator} from "@/components/ui/separator";
-import {XIcon} from "lucide-react";
-import WrongDataContact from "@/components/data-info/WrongDataContact";
-import RankingTable from "@/features/tornei/components/RankingTable";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import CategorySearchFilters from "@/components/search/CategorySearchFilters";
+import {listaCategorieType, listaPartiteType} from "@/server/data/fixtures";
+import {categorieClassificaType} from "@/server/data/rankings";
 import {calcolaClassifiche} from "@/lib/utils";
 
-export default function Rankings() {
-    return (
-        <>
-            <Navbar/>
-            <Suspense fallback={<div className="flex justify-center p-32"><Spinner/></div>}>
-                <RankingsContent />
-            </Suspense>
-            <Footer/>
-        </>
-    );
+import {XIcon} from "lucide-react";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Empty, EmptyDescription, EmptyHeader, EmptyTitle} from "@/components/ui/empty";
+import {Separator} from "@/components/ui/separator";
+import RankingTable from "@/features/tornei/components/RankingTable";
+import WrongDataContact from "@/components/data-info/WrongDataContact";
+
+interface Rankings {
+    edizioneParamName: string;
+    categoriaParamName: string;
+    gironeParamName: string;
+    listaCategorie: listaCategorieType;
+    listaPartite: listaPartiteType;
+    categorieClassifica: categorieClassificaType;
 }
 
-export function RankingsContent() {
-    const router = useRouter();
+export default function Rankings(props: Rankings) {
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
-    const torneoParamName = 'edizione';
-    const categoriaParamName = 'categoria';
-    const gironeParamName = 'girone';
-
-    const torneoParam = searchParams?.get(torneoParamName) ?? null;
-    const categoriaParam = searchParams?.get(categoriaParamName) ?? null;
-    const gironeParam = searchParams?.get(gironeParamName) ?? null;
-
-    const [listaTornei, setListaTornei] = useState<listaTorneiType>([]);
-    const [listaPartite, setListaPartite] = useState<listaPartiteType>([]);
-    const [listaCategorie, setListaCategorie] = useState<listaCategorieType>([]);
-    const [categorieClassifica, setCategorieClassifica] = useState<categorieClassificaType>();
-
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const tornei = await getListaTornei();
-                setListaTornei(tornei);
-            }
-                // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-            }
-        })();
-    }, []);
-
-    useEffect(() => {
-        if (listaTornei.length === 0) {
-            return;
-        }
-
-        (async () => {
-            setError(false);
-            setLoading(true);
-
-            try {
-                const selectedTorneoId = torneoParam ? Number.parseInt(torneoParam) : listaTornei[0]?.id;
-
-                if (!selectedTorneoId) {
-                    setLoading(false);
-                    return;
-                }
-
-                const [categorie, partite, categorieClassifica] = await Promise.all([
-                    getListaCategorie(),
-                    getListaPartite(selectedTorneoId, categoriaParam, gironeParam),
-                    getCategorieClassifica(categoriaParam ? Number.parseInt(categoriaParam) : null, selectedTorneoId),
-                ]);
-
-                setListaCategorie(categorie);
-                setListaPartite(partite);
-                setCategorieClassifica(categorieClassifica);
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                if (error.code === 'PGRST103') {
-                    const params = new URLSearchParams();
-
-                    params.set(torneoParamName, torneoParam?.toString() ?? listaTornei[0]?.id.toString() ?? '1');
-                    params.set(categoriaParamName, categoriaParam ?? '');
-                    params.set(gironeParamName, gironeParam ?? '');
-
-                    router.push(`${pathname}?${params.toString()}`);
-                } else {
-                    setError(true);
-                }
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [categoriaParam, gironeParam, listaTornei, pathname, router, torneoParam]);
+    const {
+        edizioneParamName = 'edizione',
+        categoriaParamName = 'categoria',
+        gironeParamName = 'girone',
+        listaCategorie = [],
+        listaPartite = [],
+        categorieClassifica = []
+    } = props;
 
     const edizioni = useMemo(() =>
             Array.from(
@@ -160,10 +78,9 @@ export function RankingsContent() {
                     description={"Tutte le classifiche delle varie edizioni, attuali e passate, del torneo."}
                 />
                 <div className={"mt-8"}>
-                    <TournamentSarchFilters
-                        loading={loading}
+                    <CategorySearchFilters
                         pathname={pathname}
-                        torneoParamName={torneoParamName}
+                        edizioneParamName={edizioneParamName}
                         categoriaParamName={categoriaParamName}
                         gironeParamName={gironeParamName}
                         edizioni={edizioni}
@@ -174,27 +91,7 @@ export function RankingsContent() {
 
                 <Separator className={"my-6"}/>
 
-                {error ? (
-                    <Empty className="w-full text-red-300">
-                        <EmptyHeader>
-                            <EmptyTitle className="flex items-center justify-center text-2xl">
-                                <XIcon className="me-1"/> Errore sconosciuto
-                            </EmptyTitle>
-                            <EmptyDescription className="text-base">
-                                Prova a ricaricare la pagina o resetta i filtri di ricerca
-                            </EmptyDescription>
-                            <EmptyContent className={"pt-4"}>
-                                <Button variant="outline" onClick={() => router.push(pathname)}>
-                                    Ricarica pagina
-                                </Button>
-                            </EmptyContent>
-                        </EmptyHeader>
-                    </Empty>
-                ) : loading ? (
-                    <div className={"mt-12"}>
-                        <LoadingInfo infoMessage={"Recupero classifiche in corso..."}/>
-                    </div>
-                ) : Object.keys(classifiche).length === 0 ? (
+                {Object.keys(classifiche).length === 0 ? (
                     <Empty className="w-full text-zinc-300">
                         <EmptyHeader>
                             <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">

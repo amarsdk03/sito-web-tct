@@ -194,10 +194,6 @@ The project follows a structure that separates concerns and makes it easy to nav
 -   `public/`: Static assets like images, fonts, and icons.
 -   `supabase/`: Supabase local development setup, including database migrations.
 
-## Deployment
-
-This application is deployed on [Vercel](https://vercel.com/), which provides seamless integration with Next.js for continuous deployment.
-
 ## Questions?
 
 If you have any questions, suggestions, or simply want to let me know anything, feel free to send an email to amarsdk03@gmail.com

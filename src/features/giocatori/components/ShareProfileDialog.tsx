@@ -1,8 +1,8 @@
 import Image from "next/image";
 import {useRef, useState} from "react";
 
-import {datiSquadraType} from "@/features/squadre/queries";
-import {profiloGiocatoreType, statisticheGiocatoreType} from "@/features/giocatori/queries";
+import {datiSquadraType} from "@/server/data/teams";
+import {datiGiocatoreType, statisticheGiocatoreType} from "@/server/data/players";
 import DynamicReactFlag from "@/components/country-flags/DynamicReactFlag";
 
 import {
@@ -26,7 +26,7 @@ import {
 } from "@/const/defaultConstants";
 
 interface ShareProfileDialogProps {
-    datiGiocatore: profiloGiocatoreType;
+    datiGiocatore: datiGiocatoreType;
     datiSquadra: datiSquadraType;
     statisticheGiocatore: statisticheGiocatoreType;
     coloreSquadra: string;
@@ -171,10 +171,10 @@ export default function ShareProfileDialog(
                                         {datiSquadra.nome}
                                     </div>
                                 </div>
-                                <h1 className="integral-title text-3xl font-black leading-tight">
+                                <h1 className="integral-title-italic ps-0.5 text-3xl font-black leading-tight">
                                     {datiGiocatore.nome}
                                 </h1>
-                                <h2 className="integral-title text-xl font-bold opacity-90">
+                                <h2 className="integral-title-italic ps-0.5 text-xl font-bold opacity-90">
                                     {datiGiocatore.cognome}
                                 </h2>
                             </div>

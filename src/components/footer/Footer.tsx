@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { DEFAULT_LOGO_PATH } from "@/const/defaultConstants";
+import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";
 
 export default function Footer() {
     return (

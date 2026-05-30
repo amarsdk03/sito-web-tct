@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 
-import {getListaPartite, listaPartiteType} from "@/features/partite/queries";
-import {categorieClassificaType, getCategorieClassifica, getListaTornei} from "@/features/tornei/queries";
+import {getListaPartite, listaPartiteType} from "@/server/data/fixtures";
+import {categorieClassificaType, getCategorieClassifica, getListaTornei} from "@/server/data/rankings";
 import {calcolaClassifiche} from "@/lib/utils";
 
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";

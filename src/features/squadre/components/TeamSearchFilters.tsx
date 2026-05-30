@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
 
-import {listaTorneiType} from "@/features/tornei/queries";
+import {listaTorneiType} from "@/server/data/rankings";
 
 import {
     Select,
@@ -31,7 +31,7 @@ import {FilterIcon} from "lucide-react";
 interface TeamSearchFiltersProps {
     loading?: boolean,
     pathname: string,
-    torneoParamName: string,
+    edizioneParamName: string,
     listaTornei: listaTorneiType
 }
 
@@ -39,7 +39,7 @@ export default function TeamSearchFilters(
     {
         loading = false,
         pathname,
-        torneoParamName,
+        edizioneParamName,
         listaTornei,
     }: TeamSearchFiltersProps
 ) {
@@ -59,7 +59,7 @@ export default function TeamSearchFilters(
         if (!filtroTorneo) return;
 
         const params = new URLSearchParams();
-        params.set(torneoParamName, filtroTorneo);
+        params.set(edizioneParamName, filtroTorneo);
 
         router.push(`${pathname}?${params.toString()}`);
     }
@@ -139,9 +139,12 @@ export default function TeamSearchFilters(
                             Annulla
                         </Button>
                     </DialogClose>
-                    <Button type="button" onClick={handleFiltering}>
-                        Applica
-                    </Button>
+
+                    <DialogClose asChild>
+                        <Button type="button" onClick={handleFiltering}>
+                            Applica
+                        </Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

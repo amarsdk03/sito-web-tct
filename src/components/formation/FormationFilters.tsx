@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 
-import {listaTorneiType} from "@/features/tornei/queries";
+import {listaTorneiType} from "@/server/data/rankings";
 
 import {ToggleGroup, ToggleGroupItem,} from "@/components/ui/toggle-group";
 import {
@@ -25,7 +25,7 @@ interface FormationYearFilterProps {
     pathname?: string,
     idSquadra?: number,
     squadraParamName?: string,
-    torneoParamName?: string,
+    edizioneParamName?: string,
     listaTornei?: listaTorneiType
 }
 
@@ -37,7 +37,7 @@ export default function FormationFilters(
         pathname,
         idSquadra,
         squadraParamName,
-        torneoParamName,
+        edizioneParamName,
         listaTornei,
     }: FormationYearFilterProps
 ) {
@@ -48,12 +48,12 @@ export default function FormationFilters(
     const [filtroTorneo, setFiltroTorneo] = useState<string>("");
 
     useEffect(() => {
-        if (listaTornei && torneoParamName && listaTornei.length > 0 && !hasInitialized.current) {
-            const currentUrlVal = searchParams.get(torneoParamName);
+        if (listaTornei && edizioneParamName && listaTornei.length > 0 && !hasInitialized.current) {
+            const currentUrlVal = searchParams.get(edizioneParamName);
             setFiltroTorneo(currentUrlVal || listaTornei[0].id.toString());
             hasInitialized.current = true;
         }
-    }, [listaTornei, searchParams, torneoParamName]);
+    }, [listaTornei, searchParams, edizioneParamName]);
 
     if (loading) return (
         <Button
@@ -68,13 +68,13 @@ export default function FormationFilters(
     return (
         <div className={"flex justify-start sm:justify-end gap-2"}>
             {
-                listaTornei && torneoParamName && squadraParamName && idSquadra && (
+                listaTornei && edizioneParamName && squadraParamName && idSquadra && (
                     <Select value={filtroTorneo} onValueChange={(val) => {
                         setFiltroTorneo(val);
 
                         const params = new URLSearchParams();
                         params.set(squadraParamName, idSquadra.toString());
-                        params.set(torneoParamName, val);
+                        params.set(edizioneParamName, val);
 
                         router.push(`${pathname}?${params.toString()}`, { scroll: false });
                     }}>

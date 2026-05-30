@@ -27,7 +27,7 @@ export default function PageTitle({ title, description, smallerTitle } : PageMai
                 className={"flex items-center gap-2"}
             >
                 <h1
-                    className={"page-title shine-anim-hover pe-2"}
+                    className={"page-title shine-anim-hover px-1 -translate-x-1"}
                     style={{ fontSize: smallerTitle ? "min(4.5vw, 1.6em)" : "min(11vw, 3.75em)" }}
                 >
                     { title }

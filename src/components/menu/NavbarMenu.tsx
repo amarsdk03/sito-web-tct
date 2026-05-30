@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
 import {
     Sheet,
     SheetClose,
@@ -11,8 +11,8 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
-import { RiMenuLine } from "@remixicon/react";
-import { DEFAULT_NOME_ULTIMA_EDIZIONE } from "@/const/defaultConstants";
+import {RiMenuLine} from "@remixicon/react";
+import {DEFAULT_NOME_ULTIMA_EDIZIONE} from "@/const/defaultConstants";
 
 export function NavbarMenu() {
     return (

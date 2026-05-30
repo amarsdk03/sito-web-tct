@@ -34,7 +34,7 @@ export default function TeamStatisticRadar({coloreSquadra, goalSegnati = 0, goal
     return (
         <ChartContainer
             config={chartConfig}
-            className="mx-auto w-full aspect-square"
+            className="mx-auto w-full aspect-video"
         >
             <RadarChart data={chartData}>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent />} />

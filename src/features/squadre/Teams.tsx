@@ -1,151 +1,56 @@
 'use client';
 
-import {type KeyboardEvent, Suspense, useEffect, useState} from "react";
+import {type KeyboardEvent, useState} from "react";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AnimatePresence, motion} from 'framer-motion';
-import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
-import {getListaSquadre, listaSquadreType} from "@/features/squadre/queries";
 
-import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
+import {listaTorneiType} from "@/server/data/rankings";
+import {listaSquadreContateType} from "@/app/squadre/page";
 
 import PageTitle from "@/components/text/PageTitle";
 import TeamInfoCard from "@/features/squadre/components/TeamInfoCard";
 import TeamSearchFilters from "@/features/squadre/components/TeamSearchFilters";
 
-import {Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty"
+import {Empty, EmptyDescription, EmptyHeader, EmptyTitle,} from "@/components/ui/empty"
 import {Field} from "@/components/ui/field";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {ButtonGroup} from "@/components/ui/button-group";
-import {Spinner} from "@/components/ui/spinner"
 import {Separator} from "@/components/ui/separator";
 import {SearchIcon, XIcon} from "lucide-react";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
 
-export type listaSquadreContateType = listaSquadreType & { n_giocatori: number };
-
-export default function Teams() {
-    return (
-        <>
-            <Navbar />
-            <Suspense fallback={<div className="flex justify-center p-32"><Spinner /></div>}>
-                <TeamsContent />
-            </Suspense>
-            <Footer />
-        </>
-    );
+interface TeamsProps {
+    edizioneParamName: string;
+    ricercaParamName: string;
+    listaTornei: listaTorneiType;
+    listaSquadre: listaSquadreContateType[];
 }
 
-export function TeamsContent() {
+export default function Teams(props: TeamsProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
-    const searchParamName = 'ricerca';
-    const torneoParamName = 'edizione';
-    const pageParamName = 'p';
+    const {
+        edizioneParamName = 'edizione',
+        ricercaParamName = 'ricerca',
+        listaTornei = [],
+        listaSquadre = [],
+    } = props;
 
-    const searchQueryFromParams = searchParams?.get(searchParamName) ?? '';
-    const torneoParam = searchParams?.get(torneoParamName) ?? null;
-    const pageParam = Number.parseInt(searchParams?.get(pageParamName) ?? '1');
-
-    const [listaTornei, setListaTornei] = useState<listaTorneiType>([]);
-    const [listaSquadre, setListaSquadre] = useState<listaSquadreContateType[]>([]);
-    const [searchInput, setSearchInput] = useState(searchQueryFromParams);
-
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const tornei = await getListaTornei();
-                setListaTornei(tornei);
-            }
-                // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-            }
-        })();
-    }, []);
-
-    useEffect(() => {
-        // Non fare nulla finché listaTornei non è caricato
-        if (listaTornei.length === 0) {
-            return;
-        }
-
-        (async () => {
-            setError(false);
-            setLoading(true);
-
-            try {
-                const selectedTorneoId = torneoParam ? Number.parseInt(torneoParam) : listaTornei[0]?.id;
-
-                if (!selectedTorneoId) {
-                    setLoading(false);
-                    return;
-                }
-
-                const squadre = await getListaSquadre(
-                    searchQueryFromParams,
-                    selectedTorneoId,
-                );
-
-                // Raggruppo ogni riga con la stessa squadra in un singolo risultato, sommando il numero di iscrizioni
-                const squadreMap = new Map<string, listaSquadreContateType>();
-
-                squadre?.forEach((row) => {
-                    const key = `${row.s_id}_${row.t_id}`;
-
-                    if (!squadreMap.has(key)) {
-                        squadreMap.set(key, {
-                            ...row,
-                            n_giocatori: 0,
-                        });
-                    }
-
-                    const squad = squadreMap.get(key);
-                    if (squad) {
-                        squad.n_giocatori += 1;
-                    }
-                });
-
-                setListaSquadre(Array.from(squadreMap.values()));
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                // Handles "range not satisfiable" error - reset to page 1
-                if (error.code === 'PGRST103') {
-                    const params = new URLSearchParams();
-
-                    params.set(searchParamName, searchQueryFromParams);
-                    params.set(torneoParamName, torneoParam ?? listaTornei[0]?.id.toString() ?? '1');
-                    params.set(pageParamName, '1');
-
-                    router.push(`${pathname}?${params.toString()}`);
-                } else {
-                    setError(true);
-                }
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [router, pathname, searchQueryFromParams, torneoParam, pageParam, listaTornei]);
+    const edizioneParamValue = searchParams?.get(edizioneParamName) ?? '';
+    const ricercaParamValue = searchParams?.get(ricercaParamName) ?? '';
+    const [searchInput, setSearchInput] = useState(ricercaParamValue);
 
     function handleSearch() {
-        setError(false);
         const params = new URLSearchParams();
 
-        params.set(searchParamName, searchInput);
-        params.set(torneoParamName, torneoParam ?? listaTornei[0]?.id.toString() ?? '1');
-        params.set(pageParamName, '1');
+        params.set(edizioneParamName, edizioneParamValue ?? listaTornei[0]?.id.toString() ?? '1');
+        params.set(ricercaParamName, searchInput);
 
         router.push(`${pathname}?${params.toString()}`);
     }
 
-    // Rest of your component...
     const containerAnim = {
         start: {opacity: 0},
         finish: {
@@ -178,7 +83,7 @@ export function TeamsContent() {
                             <Input
                                 id="search"
                                 type="text"
-                                placeholder="Cerca per nome squadra"
+                                placeholder="Cerca per nome squadra..."
                                 aria-label="Cerca giocatore"
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
@@ -189,9 +94,8 @@ export function TeamsContent() {
                                 value={searchInput}
                             />
                             <TeamSearchFilters
-                                loading={loading}
                                 pathname={pathname}
-                                torneoParamName={torneoParamName}
+                                edizioneParamName={edizioneParamName}
                                 listaTornei={listaTornei}
                             />
                             <Button
@@ -199,7 +103,7 @@ export function TeamsContent() {
                                 aria-label="Effettua ricerca"
                                 onClick={handleSearch}
                             >
-                                { loading ? <Spinner /> : <SearchIcon /> }
+                                <SearchIcon />
                             </Button>
                         </ButtonGroup>
                     </Field>
@@ -207,69 +111,39 @@ export function TeamsContent() {
 
                 <Separator className={"my-6"} />
 
-                {error ? (
-                    <Empty className="w-full text-red-300">
+                <motion.div
+                    variants={containerAnim}
+                    initial={"start"}
+                    animate={"finish"}
+                    className={"grid grid-cols-1 md:grid-cols-2 gap-5"}
+                >
+                    <AnimatePresence>
+                        {listaSquadre.map((infoSquadra) => (
+                            <motion.div
+                                key={infoSquadra.s_id}
+                                variants={itemAnim}
+                            >
+                                <TeamInfoCard infoSquadra={infoSquadra} />
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+
+                {listaSquadre.length === 0 ? (
+                    <Empty className="w-full text-zinc-300">
                         <EmptyHeader>
-                            <EmptyTitle className="flex items-center justify-center text-2xl">
-                                <XIcon className="me-1" /> Errore sconosciuto
+                            <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">
+                                <XIcon className="me-1" /> Nessun risultato trovato
                             </EmptyTitle>
-                            <EmptyDescription className="text-base">
-                                Prova a ricaricare la pagina o resetta i filtri di ricerca
+                            <EmptyDescription className="text-sm sm:text-base">
+                                Prova a cambiare i filtri di ricerca
                             </EmptyDescription>
-                            <EmptyContent className={"pt-4"}>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        setSearchInput('');
-                                        router.push(pathname);
-                                    }}
-                                >
-                                    Ricarica pagina
-                                </Button>
-                            </EmptyContent>
                         </EmptyHeader>
                     </Empty>
-                ) : loading ? (
-                    <div className={"mt-12"}>
-                        <LoadingInfo infoMessage={"Ricerca in corso..."} />
-                    </div>
                 ) : (
-                    <>
-                        <motion.div
-                            variants={containerAnim}
-                            initial={"start"}
-                            animate={"finish"}
-                            className={"grid grid-cols-1 md:grid-cols-2 gap-5"}
-                        >
-                            <AnimatePresence>
-                                {listaSquadre.map((infoSquadra) => (
-                                    <motion.div
-                                        key={infoSquadra.s_id}
-                                        variants={itemAnim}
-                                    >
-                                        <TeamInfoCard infoSquadra={infoSquadra} />
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
-                        </motion.div>
-
-                        {listaSquadre.length === 0 ? (
-                            <Empty className="w-full text-zinc-300">
-                                <EmptyHeader>
-                                    <EmptyTitle className="flex items-center justify-center text-xl sm:text-2xl">
-                                        <XIcon className="me-1" /> Nessun risultato trovato
-                                    </EmptyTitle>
-                                    <EmptyDescription className="text-sm sm:text-base">
-                                        Prova a cambiare i filtri di ricerca
-                                    </EmptyDescription>
-                                </EmptyHeader>
-                            </Empty>
-                        ) : (
-                            <div className="text-center text-zinc-500 mt-12">
-                                Risultati totali: <b>{listaSquadre.length}</b>
-                            </div>
-                        )}
-                    </>
+                    <div className="text-center text-zinc-500 mt-12">
+                        Risultati totali: <b>{listaSquadre.length}</b>
+                    </div>
                 )}
             </div>
         </div>

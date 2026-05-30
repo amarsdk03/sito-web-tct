@@ -9,7 +9,7 @@ import {Toaster} from "sonner";
 import {ThemeWrapper} from "@/components/theme/theme-wrapper";
 import {Analytics} from "@vercel/analytics/next";
 import {SpeedInsights} from "@vercel/speed-insights/next";
-import {dynamicMetadata} from "@/lib/metadata";
+import {dynamicMetadata} from "@/server/metadata";
 
 const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading'});
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});

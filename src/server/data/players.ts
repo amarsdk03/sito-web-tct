@@ -1,16 +1,6 @@
-"use server"
+"use server";
+import {createClient} from '@/lib/supabase/server';
 
-import {createClient} from '@/lib/supabase/client';
-import {QueryData} from '@supabase/supabase-js';
-
-const supabase = createClient();
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const listaGiocatoriQuery = supabase
-    .from('ricerca_giocatori')
-    .select(`*`, { count: 'exact' });
-
-export type listaGiocatoriType = QueryData<typeof listaGiocatoriQuery>[number];
 
 export async function getListaGiocatori(
     searchParam: string | null,
@@ -18,6 +8,8 @@ export async function getListaGiocatori(
     currentPage: number,
     resultsPerPage: number,
 ) {
+    const supabase = await createClient();
+
     let query = supabase
         .from('ricerca_giocatori')
         .select(`*`, { count: 'exact' })
@@ -37,21 +29,19 @@ export async function getListaGiocatori(
     const { data, count, error } = await query;
     if (error) throw error;
 
-    const result: listaGiocatoriType[] = data;
+    const result = data;
     return { result, count };
 }
 
+export type listaGiocatoriType = Awaited<
+    ReturnType<typeof getListaGiocatori>
+>['result'][number];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const profiloGiocatoreQuery = supabase
-    .from('giocatore')
-    .select(`*`)
-    .eq('id', 0)
-    .maybeSingle();
 
-export type profiloGiocatoreType = QueryData<typeof profiloGiocatoreQuery>;
 
-export async function getProfiloGiocatore(idGiocatore: number) {
+export async function getDatiGiocatore(idGiocatore: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('giocatore')
         .select(`*`)
@@ -64,16 +54,15 @@ export async function getProfiloGiocatore(idGiocatore: number) {
     return data;
 }
 
+export type datiGiocatoreType = Awaited<
+    ReturnType<typeof getDatiGiocatore>
+>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const statisticheGiocatoreQuery = supabase
-    .from('azioni_giocatori')
-    .select(`*`)
-    .eq('g_id', 0);
 
-export type statisticheGiocatoreType = QueryData<typeof statisticheGiocatoreQuery>;
 
 export async function getStatisticheGiocatore(idGiocatore: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('azioni_giocatori')
         .select(`*`)
@@ -84,3 +73,7 @@ export async function getStatisticheGiocatore(idGiocatore: number) {
 
     return data;
 }
+
+export type statisticheGiocatoreType = Awaited<
+    ReturnType<typeof getStatisticheGiocatore>
+>;

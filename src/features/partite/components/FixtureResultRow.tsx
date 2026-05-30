@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {listaPartiteType} from "@/features/partite/queries";
+import {listaPartiteType} from "@/server/data/fixtures";
 
 interface FixtureResultRowProps {
     partita: listaPartiteType[number],

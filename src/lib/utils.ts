@@ -1,7 +1,7 @@
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {SquadraClassifica} from "@/features/tornei/components/RankingTable";
-import {listaPartiteType} from "@/features/partite/queries";
+import {listaPartiteType} from "@/server/data/fixtures";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

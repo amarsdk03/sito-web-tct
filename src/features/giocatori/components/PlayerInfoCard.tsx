@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import {listaGiocatoriType} from "@/features/giocatori/queries";
+import {listaGiocatoriType} from "@/server/data/players";
 
 import {Card} from "@/components/ui/card";
 import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";

@@ -1,13 +1,21 @@
 import {useEffect, useRef, useState} from "react";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectSeparator,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 
-interface FixtureSearchFiltersProps {
+interface CategorySearchFiltersProps {
     loading?: boolean;
     pathname: string;
-    torneoParamName: string;
+    edizioneParamName: string;
     categoriaParamName: string;
     gironeParamName: string;
     edizioni: { id: number; nome: string }[];
@@ -15,19 +23,20 @@ interface FixtureSearchFiltersProps {
     gironi: { girone: string }[];
 }
 
-export default function FixtureSearchFilters(
+export default function CategorySearchFilters(
     {
         loading = false,
         pathname,
-        torneoParamName,
+        edizioneParamName,
         categoriaParamName,
         gironeParamName,
         edizioni,
         categorie,
         gironi,
-    } : FixtureSearchFiltersProps
+    } : CategorySearchFiltersProps
 ) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const hasInitialized = useRef(false);
 
     const [filtroEdizione, setFiltroEdizione] = useState<string>("");
@@ -36,25 +45,29 @@ export default function FixtureSearchFilters(
 
     useEffect(() => {
         if (edizioni.length > 0 && !hasInitialized.current) {
-            setFiltroEdizione(edizioni[0].id.toString());
-            setFiltroCategoria("show-all-key");
-            setFiltroGirone("show-all-key");
+            const edizioneParamValue = searchParams.get(edizioneParamName);
+            const categoriaParamValue = searchParams.get(categoriaParamName);
+            const gironeParamValue = searchParams.get(gironeParamName);
+
+            setFiltroEdizione(edizioneParamValue || edizioni[0].id.toString());
+            setFiltroCategoria(categoriaParamValue || "show-all-key");
+            setFiltroGirone(gironeParamValue || "show-all-key");
 
             hasInitialized.current = true;
         }
-    }, [edizioni, categorie, gironi]);
+    }, [searchParams, edizioni, categorie, gironi, edizioneParamName, categoriaParamName, gironeParamName]);
 
     function handleFiltering() {
         const params = new URLSearchParams();
 
-        params.set(torneoParamName, filtroEdizione);
+        params.set(edizioneParamName, filtroEdizione);
         if (filtroCategoria !== "show-all-key") params.set(categoriaParamName, filtroCategoria);
         if (filtroGirone !== "show-all-key") params.set(gironeParamName, filtroGirone);
 
         router.push(`${pathname}?${params.toString()}`);
     }
 
-    if (edizioni.length === 0 || loading) return;
+    if (edizioni.length === 0 || loading) return null;
 
     return (
         <div className={"flex flex-wrap items-end justify-start sm:justify-between mt-3 gap-2 md:gap-4"}>
@@ -99,6 +112,7 @@ export default function FixtureSearchFilters(
                                 <SelectItem value="show-all-key">
                                     Mostra tutto
                                 </SelectItem>
+                                <SelectSeparator />
                                 {categorie.map((categoria) => (
                                     <SelectItem
                                         key={categoria.id}
@@ -128,6 +142,7 @@ export default function FixtureSearchFilters(
                                 <SelectItem value="show-all-key">
                                     Mostra tutto
                                 </SelectItem>
+                                <SelectSeparator />
                                 {gironi.map((girone) => (
                                     <SelectItem
                                         key={girone.girone}

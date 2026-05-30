@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import {useMemo} from "react";
-import {azioniPartitaType} from "@/features/partite/queries";
+import {azioniPartitaType} from "@/server/data/fixtures";
 
 import {Progress as ProgressPrimitive} from "radix-ui";
 import {string_to_snake_case} from "@/lib/utils";

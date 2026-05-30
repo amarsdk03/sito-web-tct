@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -43,7 +43,7 @@ export default function Homepage() {
                         initial="start"
                         whileInView="finish"
                         viewport={{ once: true, amount: 0.2 }}
-                        className={"px-6 mt-8 sm:mt-16 text-center max-w-3xl mx-auto"}
+                        className={"px-4 mt-8 sm:mt-16 text-center max-w-3xl mx-auto"}
                     >
                         <AnimatePresence>
                             <motion.h1 key={1} variants={heroItemAnim} className={"integral-title-hover text-3xl sm:text-6xl font-extrabold text-mist-100"}>

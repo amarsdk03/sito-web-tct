@@ -3,19 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import {motion} from "framer-motion";
-import {Suspense, useEffect, useState} from "react";
-import {usePathname, useSearchParams} from "next/navigation";
+import {useState} from "react";
+import {usePathname} from "next/navigation";
 
-import {
-    datiSquadraType,
-    formazioneSquadraType,
-    getDatiSquadra,
-    getFormazioneSquadra,
-    getStatisticheSquadra,
-    statisticheSquadraType
-} from "@/features/squadre/queries";
-import {getPartiteSquadra, partiteSquadraType} from "@/features/partite/queries";
-import {getListaTornei, listaTorneiType} from "@/features/tornei/queries";
+import {datiSquadraType, formazioneSquadraType, statisticheSquadraType} from "@/server/data/teams";
+import {partiteSquadraType} from "@/server/data/fixtures";
+import {listaTorneiType} from "@/server/data/rankings";
 import {FormationList} from "@/components/formation/FormationList";
 import {
     DEFAULT_BACKGROUND_COLOR,
@@ -26,10 +19,7 @@ import {
 } from "@/const/defaultConstants";
 import {calcolaRapportoContrasto} from "@/lib/utils";
 
-import Navbar from "@/components/navbar/Navbar";
-import Footer from "@/components/footer/Footer";
 import ErrorInfo from "@/components/data-info/ErrorInfo";
-import LoadingInfo from "@/components/data-info/LoadingInfo";
 import WrongDataContact from "@/components/data-info/WrongDataContact";
 import TeamStatisticRadar from "@/components/charts/TeamStatisticRadar";
 import DetailsPageMenu from "@/components/menu/DetailsPageMenu";
@@ -46,7 +36,6 @@ import {
 import {RiInstagramLine} from "@remixicon/react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
-import {Spinner} from "@/components/ui/spinner";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
@@ -65,7 +54,7 @@ interface statisticheTotaliType {
 function aggregateStatisticheSquadra(
     statistiche: statisticheSquadraType,
     partite: partiteSquadraType,
-    squadId: number
+    idSquadra: number
 ): statisticheTotaliType {
     const matchesMap = new Map<number, {
         goalSegnati: number;
@@ -97,21 +86,21 @@ function aggregateStatisticheSquadra(
         const match = matchesMap.get(matchId)!;
 
         if (row.a_tipo === "Goal") {
-            if (row.id_squadra_azione === squadId) {
+            if (row.id_squadra_azione === idSquadra) {
                 match.goalSegnati += 1;
             } else {
                 match.goalSubiti += 1;
             }
         } else if (row.a_tipo === "Assist") {
-            if (row.id_squadra_azione === squadId) {
+            if (row.id_squadra_azione === idSquadra) {
                 match.assistCompiuti += 1;
             }
         } else if (row.a_tipo === "Cartellino giallo") {
-            if (row.id_squadra_azione === squadId) {
+            if (row.id_squadra_azione === idSquadra) {
                 match.cartelliniGialli += 1;
             }
         } else if (row.a_tipo === "Cartellino rosso") {
-            if (row.id_squadra_azione === squadId) {
+            if (row.id_squadra_azione === idSquadra) {
                 match.cartelliniRossi += 1;
             }
         }
@@ -138,14 +127,14 @@ function aggregateStatisticheSquadra(
             // Vittoria a tavolino
             if (match.vintaATabolino === "Casa") {
                 // Home team won
-                if (squadId === match.idSquadraCasa) {
+                if (idSquadra === match.idSquadraCasa) {
                     totaleVittorie += 1;
                 } else {
                     totaleSconfitte += 1;
                 }
             } else {
                 // Away team won
-                if (squadId === match.idSquadraOspite) {
+                if (idSquadra === match.idSquadraOspite) {
                     totaleVittorie += 1;
                 } else {
                     totaleSconfitte += 1;
@@ -176,110 +165,39 @@ function aggregateStatisticheSquadra(
     };
 }
 
-export default function TeamInfo() {
-    return (
-        <>
-            <Navbar />
-            <Suspense fallback={<div className="flex justify-center p-32"><Spinner /></div>}>
-                <TeamInfoContent />
-            </Suspense>
-            <Footer />
-        </>
-    );
+interface TeamInfoProps {
+    idSquadra: number;
+    idParamName: string;
+    edizioneParamName: string;
+    datiSquadra: datiSquadraType;
+    listaTornei: listaTorneiType;
+    partiteSquadra: partiteSquadraType;
+    datiStatisticheSquadra: statisticheSquadraType;
+    formazioneSquadra: formazioneSquadraType;
 }
 
-export function TeamInfoContent() {
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-
-    const squadraParamName = 'id';
-    const torneoParamName = 'edizione';
-    const idSquadra = Number.parseInt(searchParams?.get(squadraParamName) ?? "-1");
-    const [idTorneo, setIdTorneo] = useState(-1);
-
-    // Dati richiesti per la pagina
-    const [listaTornei, setListaTornei] = useState<listaTorneiType>([]);
-    const [datiSquadra, setDatiSquadra] = useState<datiSquadraType | null>(null);
-    const [partiteSquadra, setPartiteSquadra] = useState<partiteSquadraType | null>(null);
-    const [statisticheSquadra, setStatisticheSquadra] = useState<statisticheTotaliType>();
-    const [formazioneSquadra, setFormazioneSquadra] = useState<formazioneSquadraType | null>(null);
-
+export default function Team(props: TeamInfoProps) {
+    // UI state
     const [showAsSilhouette, setShowAsSilhouette] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [loadingFormazione, setLoadingFormazione] = useState(true);
-    const [error, setError] = useState(false);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const tornei = await getListaTornei();
-                setListaTornei(tornei);
-                setIdTorneo(Number.parseInt(searchParams?.get(torneoParamName) ?? tornei[0].id.toString()));
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-            }
-        })();
-    }, [searchParams]);
+    const pathname = usePathname();
 
-    useEffect(() => {
-        (async () => {
-            setError(false);
-            setLoading(true);
+    const {
+        idSquadra = -1,
+        idParamName = 'id',
+        edizioneParamName = 'edizione',
+        datiSquadra,
+        listaTornei = [],
+        partiteSquadra = [],
+        datiStatisticheSquadra = [],
+        formazioneSquadra = [],
+    } = props;
 
-            try {
-                const [resultDatiSquadra, resultPartiteSquadra, resultStatisticheSquadra] = await Promise.all([
-                    getDatiSquadra(idSquadra),
-                    getPartiteSquadra(idSquadra),
-                    getStatisticheSquadra(idSquadra),
-                ]);
-
-                if (!resultDatiSquadra || !resultDatiSquadra.id) {
-                    setError(true);
-                    setLoading(false);
-                    return;
-                }
-
-                const objectStatisticheSquadra = aggregateStatisticheSquadra(
-                    resultStatisticheSquadra,
-                    resultPartiteSquadra,
-                    idSquadra
-                );
-
-                setDatiSquadra(resultDatiSquadra);
-                setPartiteSquadra(resultPartiteSquadra);
-                setStatisticheSquadra(objectStatisticheSquadra);
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-                setLoading(false);
-            }
-            finally {
-                setLoading(false);
-            }
-        })();
-    }, [idSquadra]);
-
-    useEffect(() => {
-        (async () => {
-            setError(false);
-            setLoadingFormazione(true);
-
-            try {
-                const resultFormazioneSquadra = await getFormazioneSquadra(idSquadra, idTorneo);
-                setFormazioneSquadra(resultFormazioneSquadra);
-            }
-            // eslint-disable-next-line
-            catch (error: any) {
-                setError(true);
-            }
-            finally {
-                setLoadingFormazione(false);
-            }
-        })();
-    }, [idSquadra, idTorneo]);
+    const statisticheSquadra = aggregateStatisticheSquadra(
+        datiStatisticheSquadra,
+        partiteSquadra,
+        idSquadra
+    );
 
     const slideAnim = {
         start: { opacity: 0, x: -25 },
@@ -291,15 +209,7 @@ export function TeamInfoContent() {
         ? coloreSquadra
         : DEFAULT_FALLBACK_COLOR;
 
-    if (loading) {
-        return (
-            <div className={"page-container"}>
-                <div className={"page-content my-48"}>
-                    <LoadingInfo infoMessage={"Caricamento squadra..."} />
-                </div>
-            </div>
-        )
-    } else if (!datiSquadra || !datiSquadra || !statisticheSquadra || error) {
+    if (!datiSquadra || !datiSquadra || !statisticheSquadra) {
         return (
             <div className={"page-container"}>
                 <div className={"page-content my-48"}>
@@ -321,7 +231,7 @@ export function TeamInfoContent() {
                     pageTitle={"Dettagli squadra"}
                 />
 
-                <div className={"integral-title flex flex-row items-center ssm:items-start gap-4 sm:gap-6 mb-2 sm:mb-0 sm:mt-2"}>
+                <div className={"flex flex-row items-center ssm:items-start gap-4 sm:gap-6 mb-2 sm:mb-0 sm:mt-2"}>
                     <motion.div
                         variants={slideAnim}
                         initial={"start"}
@@ -345,16 +255,16 @@ export function TeamInfoContent() {
                         transition={{ duration: 0.3, delay: 0.2 }}
                         className={"flex flex-col justify-center sm:-translate-y-2 min-w-0"}
                     >
-                        <div className={"font-semibold text-sm sm:text-lg lg:text-xl translate-x-0.5 sm:translate-x-2"}>
+                        <div className={"integral-title font-semibold text-sm sm:text-lg lg:text-xl"}>
                                 <span
-                                    className={`player-info-title w-full overflow-hidden text-ellipsis`}
+                                    className={`w-full overflow-hidden text-ellipsis`}
                                     style={{color: coloreLeggibile}}
                                 >
                                     {datiSquadra.acronimo || ""}
                                 </span>
                         </div>
-                        <div className="font-bold text-3xl sm:text-4xl lg:text-6xl min-w-0 sm:translate-x-0.5">
-                            <span className="player-info-title shine-anim-hover block wrap-anywhere pe-1">
+                        <div className="integral-title-italic font-bold text-3xl sm:text-4xl lg:text-6xl min-w-0">
+                            <span className="shine-anim-hover block wrap-anywhere px-2 -translate-x-2">
                                 {datiSquadra.nome}
                             </span>
                         </div>
@@ -497,8 +407,8 @@ export function TeamInfoContent() {
                             Statistiche all-time
                         </div>
 
-                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-16"}>
-                            <div className={"min-w-[300px] sm:mx-12"}>
+                        <div className={"w-full flex flex-col lg:flex-row items-center gap-6 lg:gap-6"}>
+                            <div className={"w-full lg:max-w-[800px]"}>
                                 <TeamStatisticRadar
                                     coloreSquadra={coloreLeggibile}
                                     goalSegnati={statisticheSquadra?.totaleGoalSegnati || 0}
@@ -511,7 +421,7 @@ export function TeamInfoContent() {
                             <div className={"w-full grid grid-cols-2 md:grid-cols-3 justify-items-center gap-x-4 gap-y-6 sm:gap-y-12"}>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { statisticheSquadra?.totaleGoalSegnati || 0 }
@@ -522,7 +432,7 @@ export function TeamInfoContent() {
                                 </div>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { statisticheSquadra?.totaleGoalSubiti || 0 }
@@ -533,7 +443,7 @@ export function TeamInfoContent() {
                                 </div>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { (statisticheSquadra?.totaleGoalSegnati || 0) - (statisticheSquadra?.totaleGoalSubiti || 0) }
@@ -544,7 +454,7 @@ export function TeamInfoContent() {
                                 </div>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { statisticheSquadra?.totaleAssistCompiuti || 0 }
@@ -555,7 +465,7 @@ export function TeamInfoContent() {
                                 </div>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { statisticheSquadra?.totaleCartelliniGialli || 0 }
@@ -566,7 +476,7 @@ export function TeamInfoContent() {
                                 </div>
                                 <div className={"grid grid-rows-2 text-center"}>
                                     <div
-                                        className={"integral-title-hover text-zinc-100 font-bold text-5xl"}
+                                        className={"integral-title text-zinc-100 font-bold text-5xl"}
                                         style={{ color: coloreLeggibile }}
                                     >
                                         { statisticheSquadra?.totaleCartelliniRossi || 0 }
@@ -585,13 +495,12 @@ export function TeamInfoContent() {
                                 Rosa della squadra
                             </div>
                             <FormationFilters
-                                loading={loading}
                                 showAsSilhouette={showAsSilhouette}
                                 setShowAsSilhouette={setShowAsSilhouette}
                                 pathname={pathname}
                                 idSquadra={idSquadra}
-                                squadraParamName={squadraParamName}
-                                torneoParamName={torneoParamName}
+                                squadraParamName={idParamName}
+                                edizioneParamName={edizioneParamName}
                                 listaTornei={listaTornei}
                             />
                         </div>
@@ -608,9 +517,7 @@ export function TeamInfoContent() {
                             ) : (
                                 <div className={"w-full"}>
                                     <div className={"text-zinc-400 font-semibold text-md md:text-2xl"}>
-                                        {
-                                            loadingFormazione ? "Caricamento..." : "Nessuna formazione trovata."
-                                        }
+                                        Nessuna formazione trovata.
                                     </div>
                                 </div>
                             )

@@ -13,7 +13,7 @@ import {
 interface SearchPaginationProps {
     pathname: string;
     searchParams: ReadonlyURLSearchParams;
-    pageParamName: string;
+    paginaParamName: string;
     totalResults: number;
     resultsPerPage: number;
     currentPage: number;
@@ -49,7 +49,7 @@ function paginationItems(currentPage: number, maxPage: number) {
 export function SearchPagination({
     pathname,
     searchParams,
-    pageParamName,
+    paginaParamName,
     totalResults,
     resultsPerPage,
     currentPage,
@@ -63,7 +63,7 @@ export function SearchPagination({
 
     function buildHref(page: number) {
         const params = new URLSearchParams(searchParams);
-        params.set(pageParamName, page.toString());
+        params.set(paginaParamName, page.toString());
         return `${pathname}?${params.toString()}`;
     }
 

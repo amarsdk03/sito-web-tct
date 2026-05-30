@@ -1,7 +1,7 @@
 import UnderMaintainance from "@/components/redirects/UnderMaintainance";
 
 import {Metadata} from "next";
-import {dynamicMetadata} from "@/lib/metadata";
+import {dynamicMetadata} from "@/server/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
     "In manutenzione",

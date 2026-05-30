@@ -1,30 +1,13 @@
-"use server"
+"use server";
+import {createClient} from '@/lib/supabase/server';
 
-import {createClient} from '@/lib/supabase/client';
-import {QueryData} from '@supabase/supabase-js';
-
-const supabase = createClient();
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const listaSquadreQuery = supabase
-    .from('ricerca_squadre')
-    .select(`
-            t_id,
-            t_nome,
-            s_id,
-            s_nome,
-            s_id_capitano,
-            s_acronimo,
-            s_link_stemma,
-            s_colore_squadra
-        `);
-
-export type listaSquadreType = QueryData<typeof listaSquadreQuery>[number];
 
 export async function getListaSquadre(
     searchParam: string | null,
     idTorneo: number,
 ) {
+    const supabase = await createClient();
+
     let query = supabase
         .from('ricerca_squadre')
         .select(`
@@ -51,28 +34,18 @@ export async function getListaSquadre(
     const { data, error } = await query;
     if (error) throw error;
 
-    const result: listaSquadreType[] = data;
-    return result;
+    return data;
 }
 
+export type listaSquadreType = Awaited<
+    ReturnType<typeof getListaSquadre>
+>[number];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const datiSquadraQuery = supabase
-    .from('squadra')
-    .select(`
-            *,
-            giocatore:id_capitano(
-                id,
-                nome,
-                cognome
-            )
-        `)
-    .eq('id', 0)
-    .maybeSingle();
 
-export type datiSquadraType = QueryData<typeof datiSquadraQuery>;
 
 export async function getDatiSquadra(idSquadra: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('squadra')
         .select(`
@@ -92,16 +65,15 @@ export async function getDatiSquadra(idSquadra: number) {
     return data;
 }
 
+export type datiSquadraType = Awaited<
+    ReturnType<typeof getDatiSquadra>
+>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const statisticheSquadraQuery = supabase
-    .from('azioni_partite')
-    .select(`*`)
-    .or(`p_id_squadra_casa.eq.0,p_id_squadra_ospite.eq.0`);
 
-export type statisticheSquadraType = QueryData<typeof statisticheSquadraQuery>;
 
 export async function getStatisticheSquadra(idSquadra: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('azioni_partite')
         .select(`*`)
@@ -113,29 +85,15 @@ export async function getStatisticheSquadra(idSquadra: number) {
     return data;
 }
 
+export type statisticheSquadraType = Awaited<
+    ReturnType<typeof getStatisticheSquadra>
+>;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const formazioneSquadraQuery = supabase
-    .from('iscrizione')
-    .select(`
-            *,
-            giocatore(
-                id,
-                nome,
-                cognome,
-                is_capitano,
-                ruolo_principale,
-                link_foto,
-                nome_maglia,
-                numero_maglia
-            )
-        `)
-    .eq('id_torneo', 0)
-    .eq('id_squadra', 0);
 
-export type formazioneSquadraType = QueryData<typeof formazioneSquadraQuery>;
 
 export async function getFormazioneSquadra(idSquadra: number, idTorneo: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('iscrizione')
         .select(`
@@ -160,8 +118,15 @@ export async function getFormazioneSquadra(idSquadra: number, idTorneo: number) 
     return data;
 }
 
+export type formazioneSquadraType = Awaited<
+    ReturnType<typeof getFormazioneSquadra>
+>;
+
+
 
 export async function getIdSquadraGiocatore(idGiocatore: number) {
+    const supabase = await createClient();
+
     const query = supabase
         .from('iscrizione')
         .select(`id_squadra`)

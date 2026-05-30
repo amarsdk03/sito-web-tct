@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import {listaSquadreContateType} from "@/features/squadre/Teams";
+import {listaSquadreContateType} from "@/app/squadre/page";
 
 import {Card} from "@/components/ui/card";
 import {DEFAULT_LOGO_PATH} from "@/const/defaultConstants";

@@ -1,7 +1,13 @@
 import Link from "next/link";
 import {Card} from "@/components/ui/card";
 import Image from "next/image";
-import {navbarLink} from "@/types/otherTypes";
+
+export interface navbarLink {
+    title: string,
+    href: string,
+    imageSrc: string,
+    imageTranslate?: number,
+}
 
 const navbarLinks: navbarLink[] = [
     {

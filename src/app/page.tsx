@@ -1,7 +1,7 @@
 import Homepage from "@/features/homepage/Homepage";
 
 import {Metadata} from "next";
-import {dynamicMetadata} from "@/lib/metadata";
+import {dynamicMetadata} from "@/server/metadata";
 
 export const metadata: Metadata = dynamicMetadata(
     "Home"

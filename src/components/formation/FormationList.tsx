@@ -4,7 +4,7 @@ import Link from "next/link";
 import {memo, useEffect, useMemo, useState} from 'react';
 
 import {Constants} from "@/types/database.types";
-import {formazioneSquadraType} from "@/features/squadre/queries";
+import {formazioneSquadraType} from "@/server/data/teams";
 
 import {PlayerSilhouette} from "@/features/giocatori/components/PlayerSilhouette";
 import {Badge} from "@/components/ui/badge";
@@ -15,7 +15,7 @@ import {
     DEFAULT_FALLBACK_COLOR,
     DEFAULT_LOGO_PATH
 } from "@/const/defaultConstants";
-import {generatePlayerSilhouette} from "@/components/formation/formationRendering";
+import {generatePlayerSilhouette} from "@/lib/formationRendering";
 
 interface TeamComponentsTableProps {
     showAsSilhouette?: boolean,
@@ -74,7 +74,7 @@ export const FormationList = memo(
             return (
                 <div key={role} className={"mb-6"}>
                     <h3
-                        className="integral-title font-semibold tracking-wide text-xl sm:text-3xl mb-4 sm:mb-6 -translate-x-0.75"
+                        className="integral-title-italic font-semibold tracking-wide text-xl sm:text-3xl mb-4 sm:mb-6 -translate-x-0.75"
                         style={{color: coloreLeggibile}}
                     >
                         {role === null ? "Senza ruolo" : role.slice(0, -1) + "i"}

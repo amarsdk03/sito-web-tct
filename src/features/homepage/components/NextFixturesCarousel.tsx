@@ -1,16 +1,10 @@
 import {useEffect, useState} from "react";
 
-import {getListaTornei} from "@/features/tornei/queries";
-import {getProssimiIncontri, prossimiIncontriType} from "@/features/partite/queries";
+import {getListaTornei} from "@/server/data/rankings";
+import {getProssimiIncontri, prossimiIncontriType} from "@/server/data/fixtures";
 import FixtureResultRow from "@/features/partite/components/FixtureResultRow";
 
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel";
+import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
 
 export default function NextFixturesCarousel() {
