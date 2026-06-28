@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
             {
                 protocol: 'https',
                 hostname: '**.fbcdn.net',
+            },{
+                protocol: 'https',
+                hostname: 'i.ibb.co', // For temporary(?) hosting of team badges
             },
         ],
     },

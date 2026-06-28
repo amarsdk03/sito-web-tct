@@ -76,10 +76,10 @@ export default function PlayerInfo(props: PlayerInfoProps) {
     const [playerSilhouette, setPlayerSilhouette] = useState<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
-        generatePlayerSilhouette(coloreSquadra, stemmaSquadra || undefined, DEFAULT_LOGO_PATH)
+        generatePlayerSilhouette(coloreSquadra, datiSquadra?.link_stemma || undefined, DEFAULT_LOGO_PATH)
             .then(setPlayerSilhouette)
             .catch(err => console.error("Errore in generatePlayerSilhouette(): ", err));
-    }, [coloreSquadra, stemmaSquadra]);
+    }, [coloreSquadra, datiSquadra?.link_stemma, stemmaSquadra]);
 
     if (!datiGiocatore || !datiSquadra || !statistiche) {
         return (

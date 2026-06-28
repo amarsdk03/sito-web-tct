@@ -12,7 +12,7 @@ import {
 } from "@/server/data/fixtures";
 import FixtureInfo from "@/features/partite/FixtureInfo";
 import {getFormazioneSquadra} from "@/server/data/teams";
-import {getCategorieClassifica} from "@/server/data/rankings";
+import {getCategorieClassifica, getDatiTorneo} from "@/server/data/rankings";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
@@ -90,12 +90,14 @@ async function FixtureInfoServer({id}: paramProps) {
         </div>
     );
 
+    const datiTorneoPerCampo = await getDatiTorneo(datiPartita.torneo_id);
+
     const idTorneo = datiPartita.torneo_id || -1;
     const idCategoria = datiPartita.categoria_id || -1;
     const valGirone = datiPartita.girone || "?";
     const idSquadraCasa = datiPartita.squadra_casa_id || -1;
     const idSquadraOspite = datiPartita.squadra_ospite_id || -1;
-    const idCampo = datiPartita.campo_svolgimento || -1;
+    const idCampo = datiPartita.campo_svolgimento || datiTorneoPerCampo.svolto_in || -1;
 
     const [
         azioniPartita,

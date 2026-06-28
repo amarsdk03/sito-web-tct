@@ -37,6 +37,27 @@ export type listaTorneiType = Awaited<
 
 
 
+export async function getDatiTorneo(idTorneo: number) {
+    const supabase = await createClient();
+
+    const query = supabase
+        .from('torneo')
+        .select(`*`)
+        .eq('id', idTorneo)
+        .maybeSingle();
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    return data;
+}
+
+export type datiTorneoType = Awaited<
+    ReturnType<typeof getDatiTorneo>
+>;
+
+
+
 export async function getCategorieClassifica(idCategoria: number | null, idTorneo?: number) {
     const supabase = await createClient();
 

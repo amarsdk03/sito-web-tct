@@ -36,6 +36,7 @@ export default function Homepage() {
                         height={1440}
                         className={"w-full lg:px-4 mx-auto mt-4 sm:mt-8 object-cover drop-shadow-2xl"}
                         loading={"eager"}
+                        hidden={true}
                     />
 
                     <motion.div
@@ -90,7 +91,7 @@ export default function Homepage() {
                         <SearchCards />
                     </div>
 
-                    <div className={"mt-12"}>
+                    <div className={"mt-12"} hidden={true}>
                         <div className={"bg-zinc-900/50 border border-amber-500/30 rounded-2xl p-8 sm:p-12 text-center relative overflow-hidden"}>
                             <div className={"absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-full bg-amber-500/5 blur-3xl rounded-full pointer-events-none"} />
 
