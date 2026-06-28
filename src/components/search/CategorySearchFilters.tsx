@@ -37,25 +37,24 @@ export default function CategorySearchFilters(
 ) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const hasInitialized = useRef(false);
 
+    const prevEdizioneRef = useRef<string>("");
     const [filtroEdizione, setFiltroEdizione] = useState<string>("");
     const [filtroCategoria, setFiltroCategoria] = useState<string>("");
     const [filtroGirone, setFiltroGirone] = useState<string>("");
 
     useEffect(() => {
-        if (edizioni.length > 0 && !hasInitialized.current) {
-            const edizioneParamValue = searchParams.get(edizioneParamName);
-            const categoriaParamValue = searchParams.get(categoriaParamName);
-            const gironeParamValue = searchParams.get(gironeParamName);
+        const edizioneParamValue = searchParams.get(edizioneParamName) || edizioni[0]?.id.toString() || "";
+        const categoriaParamValue = searchParams.get(categoriaParamName);
+        const gironeParamValue = searchParams.get(gironeParamName);
 
-            setFiltroEdizione(edizioneParamValue || edizioni[0].id.toString());
+        if (edizioneParamValue !== prevEdizioneRef.current) {
+            setFiltroEdizione(edizioneParamValue);
             setFiltroCategoria(categoriaParamValue || "show-all-key");
             setFiltroGirone(gironeParamValue || "show-all-key");
-
-            hasInitialized.current = true;
+            prevEdizioneRef.current = edizioneParamValue;
         }
-    }, [searchParams, edizioni, categorie, gironi, edizioneParamName, categoriaParamName, gironeParamName]);
+    }, [searchParams, edizioni, edizioneParamName, categoriaParamName, gironeParamName]);
 
     function handleFiltering() {
         const params = new URLSearchParams();
@@ -77,7 +76,18 @@ export default function CategorySearchFilters(
                     <label className="text-sm font-medium mb-2 block">
                         Filtra per edizione:
                     </label>
-                    <Select value={filtroEdizione} onValueChange={setFiltroEdizione}>
+                    <Select
+                        value={filtroEdizione}
+                        onValueChange={(value) => {
+                            setFiltroEdizione(value);
+                            setFiltroCategoria("show-all-key");
+                            setFiltroGirone("show-all-key");
+
+                            const params = new URLSearchParams();
+                            params.set(edizioneParamName, value);
+                            router.push(`${pathname}?${params.toString()}`);
+                        }}
+                    >
                         <SelectTrigger className="w-full max-w-full sm:max-w-48 lg:max-w-52 rounded-lg">
                             <SelectValue placeholder="Seleziona edizione" />
                         </SelectTrigger>

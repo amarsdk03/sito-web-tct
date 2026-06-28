@@ -6,8 +6,11 @@ import FixtureResultRow from "@/features/partite/components/FixtureResultRow";
 
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
 import LoadingInfo from "@/components/data-info/LoadingInfo";
+import useIsMobile from "@/lib/isMobile";
 
 export default function NextFixturesCarousel() {
+    const isMobile = useIsMobile();
+
     const [listaPartite, setListaPartite] = useState<prossimiIncontriType>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -70,8 +73,8 @@ export default function NextFixturesCarousel() {
                     ))
                 }
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious size={isMobile ? "xs" : "default"} className={"size-6 sm:size-10 ms-2 lg:ms-0 translate-x-0 lg:translate-x-[-30%]"} />
+            <CarouselNext size={isMobile ? "xs" : "default"} className={"size-6 sm:size-10 me-2 lg:me-0 translate-x-0 lg:translate-x-[30%]"} />
         </Carousel>
     )
 }

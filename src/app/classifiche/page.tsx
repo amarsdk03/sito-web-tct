@@ -91,6 +91,7 @@ async function RankingsServer({idEdizione, idCategoria, nomeGirone}: paramProps)
     return (
         <Rankings
             edizioneParamName={edizioneParamName}
+            selectedEdizioneId={selectedTorneoId}
             categoriaParamName={categoriaParamName}
             gironeParamName={gironeParamName}
             listaCategorie={categorie}

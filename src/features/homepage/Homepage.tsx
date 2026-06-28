@@ -11,8 +11,6 @@ import SearchCards from "@/features/homepage/components/SearchCards";
 import NextFixturesCarousel from "@/features/homepage/components/NextFixturesCarousel";
 import CurrentRankingsTables from "@/features/homepage/components/CurrentRankingsTables";
 
-// 1. Definiamo le varianti QUI (con il tipo corretto)
-
 export default function Homepage() {
     const heroContainerAnim = {
         start: { opacity: 0 },
@@ -56,18 +54,11 @@ export default function Homepage() {
                             <motion.p key={3} variants={heroItemAnim} className={"text-mist-300 text-base sm:text-lg"}>
                                 scopri le squadre, esplora le statistiche e segui ogni partita della competizione.
                             </motion.p>
-                            <motion.p key={4} variants={heroItemAnim} className={"text-mist-100 text-lg sm:text-2xl font-bold mt-6 sm:mt-8"}>
+                            <motion.p key={4} variants={heroItemAnim} className={"text-mist-100 text-lg sm:text-xl lg:text-2xl font-bold mt-6 sm:mt-8"}>
                                 Il torneo più iconico di Trento, ora a portata di click.
                             </motion.p>
                         </AnimatePresence>
                     </motion.div>
-                </div>
-
-                <div className={"w-full mt-8 sm:mt-16"}>
-                    <div className={"text-center font-semibold text-sm uppercase tracking-widest text-mist-500 mb-6"}>
-                        Grazie al supporto di
-                    </div>
-                    <CarouselSponsor />
                 </div>
 
                 <div className={"page-content"}>
@@ -85,6 +76,16 @@ export default function Homepage() {
                         <PageTitle title={"Ultime classifiche"} smallerTitle={true} />
                         <CurrentRankingsTables />
                     </div>
+                </div>
+
+                <div className={"w-full mt-16"}>
+                    <div className={"text-center font-semibold text-sm uppercase tracking-widest text-mist-500 mb-6"}>
+                        Grazie al supporto di
+                    </div>
+                    <CarouselSponsor />
+                </div>
+
+                <div className={"page-content"}>
 
                     <div className={"mt-12 sm:mt-16"}>
                         <PageTitle title={"Esplora"} smallerTitle={true} />

@@ -12,6 +12,8 @@ export default function FixtureResultRow(
         halfSize = false,
     } : FixtureResultRowProps
 ) {
+    const partitaFutura = new Date(partita.fischio_inizio) > new Date();
+
     const aiCalciDiRigore =
         (partita.rigori_casa && partita.rigori_casa > 0) ||
         (partita.rigori_ospite && partita.rigori_ospite > 0);
@@ -46,9 +48,9 @@ export default function FixtureResultRow(
                         { nomeCasa ?? "???" }
                     </span>
 
-                    <div className={"flex flex-col items-center justify-center w-auto flex-shrink-0"}>
-                        <span className={"integral-title text-xl sm:text-3xl text-chart-1 font-bold -translate-y-0.5 sm:-translate-y-0.75"}>
-                            { esitoRegolare }
+                    <div className={"flex flex-col items-center justify-center w-auto shrink-0"}>
+                        <span className={`integral-title text-xl ${partitaFutura ? 'sm:text-2xl text-stone-300' : 'sm:text-3xl text-chart-1 sm:-translate-y-0.75'} font-bold -translate-y-0.5`}>
+                            { partitaFutura ? 'vs' : esitoRegolare }
                         </span>
                         {
                             aiCalciDiRigore === true && (

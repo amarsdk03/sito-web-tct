@@ -92,6 +92,7 @@ async function FixturesServer({idEdizione, idCategoria, nomeGirone}: paramProps)
     return (
         <Fixtures
             edizioneParamName={edizioneParamName}
+            selectedEdizioneId={selectedTorneoId}
             categoriaParamName={categoriaParamName}
             gironeParamName={gironeParamName}
             listaCategorie={categorie}

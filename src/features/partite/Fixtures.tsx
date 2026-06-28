@@ -16,6 +16,7 @@ import WrongDataContact from "@/components/data-info/WrongDataContact";
 
 interface FixturesProps {
     edizioneParamName: string;
+    selectedEdizioneId: string | null;
     categoriaParamName: string;
     gironeParamName: string;
     listaCategorie: listaCategorieType;
@@ -27,6 +28,7 @@ export default function Fixtures(props: FixturesProps) {
 
     const {
         edizioneParamName = 'edizione',
+        selectedEdizioneId = null,
         categoriaParamName = 'categoria',
         gironeParamName = 'girone',
         listaCategorie = [],
@@ -44,24 +46,31 @@ export default function Fixtures(props: FixturesProps) {
         [listaCategorie]
     );
 
+    const filteredByEdizione = useMemo(() =>
+            selectedEdizioneId
+                ? listaCategorie.filter(p => p.torneo_id?.toString() === selectedEdizioneId)
+                : listaCategorie,
+        [listaCategorie, selectedEdizioneId]
+    );
+
     const categorie = useMemo(() =>
             Array.from(
                 new Map(
-                    listaCategorie
+                    filteredByEdizione
                         .filter(p => p.categoria_id && p.categoria_nome)
                         .map(p => [p.categoria_id, { id: p.categoria_id!.toString(), nome: p.categoria_nome! }])
                 ).values()
             ),
-        [listaCategorie]
+        [filteredByEdizione]
     );
 
     const gironi = useMemo(() =>
             Array.from(
-                new Set(listaCategorie.filter(p => p.girone).map(p => p.girone!))
+                new Set(filteredByEdizione.filter(p => p.girone).map(p => p.girone!))  // 👈 was listaCategorie
             )
                 .map(g => ({ girone: g }))
                 .sort((a, b) => a.girone.localeCompare(b.girone)),
-        [listaCategorie]
+        [filteredByEdizione]
     );
 
     const containerAnim = {

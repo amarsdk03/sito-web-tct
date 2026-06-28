@@ -113,7 +113,7 @@ export default function RankingTable(
                                                 </td>
                                             )
                                         }
-                                        <td className="ranking-row-hover px-3 py-2 sm:px-4 sm:py-3.5 font-medium text-mist-100 sm:min-w-[180px]">
+                                        <td className="ranking-row-hover px-3 py-2 sm:px-4 sm:py-3.5 font-medium text-mist-100 sm:min-w-45">
                                             <div className="flex items-center gap-3">
                                                 <Link
                                                     href={`/squadre/dettagli?id=${squadra.id}`}
