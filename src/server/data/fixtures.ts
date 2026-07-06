@@ -113,6 +113,27 @@ export type prossimiIncontriType = Awaited<
 
 
 
+export async function getUltimiIncontri(idTorneo: number, nUltimePartite: number) {
+    const supabase = await createClient();
+
+    const {data, error} = await supabase
+        .from('risultati_partite')
+        .select(`*`)
+        .eq('torneo_id', idTorneo)
+        .order('fischio_inizio', {ascending: false})
+        .limit(nUltimePartite);
+
+    if (error) throw error;
+
+    return data ?? [];
+}
+
+export type ultimiIncontriType = Awaited<
+    ReturnType<typeof getUltimiIncontri>
+>;
+
+
+
 export async function getDatiPartita(idPartita: number) {
     const supabase = await createClient();
 

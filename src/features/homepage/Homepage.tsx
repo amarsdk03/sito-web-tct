@@ -64,7 +64,7 @@ export default function Homepage() {
                 <div className={"page-content"}>
 
                     <div className={"mt-12"}>
-                        <PageTitle title={"Prossimi incontri"} smallerTitle={true} />
+                        <PageTitle title={"Ultimi incontri"} smallerTitle={true} />
                         <div className={"flex flex-col items-center justify-between mt-6 sm:mt-8"}>
                             <div className={"max-w-4/5 sm:max-w-9/10 lg:max-w-full"}>
                                 <NextFixturesCarousel />

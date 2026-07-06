@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 
 import {getListaTornei} from "@/server/data/rankings";
-import {getProssimiIncontri, prossimiIncontriType} from "@/server/data/fixtures";
+import {getProssimiIncontri, getUltimiIncontri, prossimiIncontriType} from "@/server/data/fixtures";
 import FixtureResultRow from "@/features/partite/components/FixtureResultRow";
 
 import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,} from "@/components/ui/carousel";
@@ -29,10 +29,7 @@ export default function NextFixturesCarousel() {
                 }
 
                 const ultimoTorneo = tornei[0].id;
-                const dataOggi = new Date();
-                dataOggi.setHours(0, 0, 0, 0);
-
-                const partite = await getProssimiIncontri(ultimoTorneo, dataOggi);
+                const partite = await getUltimiIncontri(ultimoTorneo, 4);
                 setListaPartite(partite);
             }
             // eslint-disable-next-line

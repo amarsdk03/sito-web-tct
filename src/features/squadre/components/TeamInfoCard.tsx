@@ -18,7 +18,7 @@ export default function TeamInfoCard({infoSquadra}: { infoSquadra: listaSquadreC
                     background: `linear-gradient(145deg, ${coloreSquadra}e3 -100%, ${coloreSquadra}80 100%)`,
                 }}
             >
-                <div className="flex-shrink-0 squad-result-badge flex items-center justify-center">
+                <div className="shrink-0 squad-result-badge flex items-center justify-center">
                     <Image
                         src={linkStemma}
                         alt="Stemma Squadra"

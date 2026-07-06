@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import {listaPartiteType} from "@/server/data/fixtures";
+import useIsMobile from "@/lib/isMobile";
 
 interface FixtureResultRowProps {
     partita: listaPartiteType[number],
@@ -12,6 +14,8 @@ export default function FixtureResultRow(
         halfSize = false,
     } : FixtureResultRowProps
 ) {
+    const isMobile = useIsMobile();
+
     const partitaFutura = new Date(partita.fischio_inizio) > new Date();
 
     const aiCalciDiRigore =
@@ -23,6 +27,9 @@ export default function FixtureResultRow(
 
     const nomeCasa = halfSize ? partita.squadra_casa_acronimo : partita.squadra_casa_nome;
     const nomeOspite = halfSize ? partita.squadra_ospite_acronimo : partita.squadra_ospite_nome;
+
+    const giornoFischioInizio = partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleDateString() : "TBD";
+    const oraFischioInizio = partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleTimeString().substring(0, 5) : "TBD";
 
     return (
         <Link href={`/partite/dettagli?id=${partita.id_partita}`}>
@@ -37,16 +44,32 @@ export default function FixtureResultRow(
                     </div>
 
                     <div className={"text-gray-300 sm:text-gray-100 text-xs sm:text-base font-bold block lg:hidden"}>
-                        { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleDateString() : "TBD" }
+                        { giornoFischioInizio }
                     </div>
                 </div>
 
                 <div
-                    className={`${halfSize ? "lg:max-w-1/2 " : ""}match-info flex items-center justify-center py-2 sm:py-4 lg:py-0 w-full md:flex-1`}
+                    className={`${halfSize && "lg:max-w-1/2 "}${isMobile ? "justify-around " : "justify-center "}match-info flex items-center py-2 sm:py-4 lg:py-0 w-full md:flex-1`}
                 >
-                    <span className={"w-full sm:w-64 py-0.5 text-right text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
-                        { nomeCasa ?? "???" }
-                    </span>
+                    {
+                        halfSize ? (
+                            <div className="shrink-0 squad-result-badge flex items-center justify-center">
+                                <Image
+                                    src={partita.squadra_casa_stemma}
+                                    alt="Stemma Squadra"
+                                    width={40}
+                                    height={40}
+                                    className={`bg-none rounded-full object-cover`}
+                                    draggable={false}
+                                    loading={"lazy"}
+                                />
+                            </div>
+                        ) : (
+                            <span className={"w-full sm:w-64 py-0.5 text-right text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
+                                { nomeCasa ?? "???" }
+                            </span>
+                        )
+                    }
 
                     <div className={"flex flex-col items-center justify-center w-auto shrink-0"}>
                         <span className={`integral-title text-xl ${partitaFutura ? 'sm:text-2xl text-stone-300' : 'sm:text-3xl text-chart-1 sm:-translate-y-0.75'} font-bold -translate-y-0.5`}>
@@ -60,10 +83,25 @@ export default function FixtureResultRow(
                             )
                         }
                     </div>
-
-                    <span className={"w-full sm:w-64 py-0.5 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
-                        { nomeOspite ?? "???" }
-                    </span>
+                    {
+                        halfSize ? (
+                            <div className="shrink-0 squad-result-badge flex items-center justify-center">
+                                <Image
+                                    src={partita.squadra_ospite_stemma}
+                                    alt="Stemma Squadra"
+                                    width={40}
+                                    height={40}
+                                    className={`bg-none rounded-full object-cover`}
+                                    draggable={false}
+                                    loading={"lazy"}
+                                />
+                            </div>
+                        ) : (
+                            <span className={"w-full sm:w-64 py-0.5 text-left text-sm sm:text-xl font-bold translate-y-0 overflow-hidden text-ellipsis block"}>
+                                { nomeOspite ?? "???" }
+                            </span>
+                        )
+                    }
                 </div>
 
                 <div className={"flex flex-row lg:flex-col justify-between text-end w-full lg:w-36"}>
@@ -72,11 +110,11 @@ export default function FixtureResultRow(
                     </div>
 
                     <div className={"font-bold hidden lg:block"}>
-                        { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleDateString() : "TBD" }
+                        { halfSize ? giornoFischioInizio.substring(0, 5) : giornoFischioInizio }
                     </div>
 
                     <div className={"text-gray-200 lg:text-gray-300 text-xs sm:text-sm"}>
-                        { partita.fischio_inizio ? new Date(partita.fischio_inizio).toLocaleTimeString().substring(0, 5) : "TBD" }
+                        { oraFischioInizio }
                     </div>
                 </div>
             </div>
